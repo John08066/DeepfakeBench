@@ -2,6 +2,8 @@
 # email: zhiyuanyan@link.cuhk.edu.cn
 # date: 2023-03-30
 # description: training code.
+# 这是John添加的注释
+
 
 import os
 import argparse    # 用于解析命令行参数
