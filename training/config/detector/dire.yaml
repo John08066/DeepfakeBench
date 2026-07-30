@@ -1,0 +1,119 @@
+# log dir
+log_dir: ./logs/training/csy/
+
+# model setting
+pretrained: /root/csy-7pw03c/disk/project/DeepfakeBench-main/training/pretrained/celebahq_sdv2.pth
+model_name: dire
+backbone_name: resnet50
+
+# DIRE classifier
+dire_classifier_arch: resnet50
+dire_imagenet_pretrained: false
+dire_classifier_pretrained: /root/csy-7pw03c/disk/project/DeepfakeBench-main/training/pretrained/celebahq_sdv2.pth
+dire_classifier_mean: [0.485, 0.456, 0.406]
+dire_classifier_std: [0.229, 0.224, 0.225]
+
+# Online DIRE reconstruction. Set guided_diffusion_path to the official
+# DIRE/guided-diffusion directory and model_path to the unconditional 256 model.
+dire_lazy_load: true
+dire_diffusion:
+  guided_diffusion_path: /root/csy-7pw03c/disk/project/DeepfakeBench-main/training/guided-diffusion
+  model_path: /root/csy-7pw03c/disk/project/DeepfakeBench-main/training/pretrained/256x256_diffusion_uncond.pt
+  use_ddim: true
+  clip_denoised: true
+  real_step: 0
+  model_kwargs:
+    attention_resolutions: "32,16,8"
+    class_cond: false
+    diffusion_steps: 1000
+    dropout: 0.1
+    image_size: 256
+    learn_sigma: true
+    noise_schedule: linear
+    num_channels: 256
+    num_head_channels: 64
+    num_res_blocks: 2
+    resblock_updown: true
+    timestep_respacing: ddim20
+    use_fp16: true
+    use_scale_shift_norm: true
+
+# backbone setting, kept for DeepfakeBench config compatibility
+backbone_config:
+  mode: original
+  num_classes: 2
+  inc: 3
+  dropout: false
+
+# dataset
+all_dataset: [FaceForensics++, FF-F2F, FF-DF, FF-FS, FF-NT, FaceShifter, DeepFakeDetection, Celeb-DF-v1, Celeb-DF-v2, DFDCP, DFDC, DeeperForensics-1.0, UADFV]
+train_dataset: [FaceForensics++]
+test_dataset: [Celeb-DF-v1, Celeb-DF-v2, DFDCP]
+
+compression: c23
+train_batchSize: 32
+test_batchSize: 32
+workers: 8
+frame_num: {'train': 8, 'test': 32}
+resolution: 224
+with_mask: false
+with_landmark: false
+
+# data augmentation
+use_data_augmentation: true
+data_aug:
+  flip_prob: 0.5
+  rotate_prob: 0.5
+  rotate_limit: [-10, 10]
+  blur_prob: 0.5
+  blur_limit: [3, 7]
+  brightness_prob: 0.5
+  brightness_limit: [-0.1, 0.1]
+  contrast_limit: [-0.1, 0.1]
+  quality_lower: 40
+  quality_upper: 100
+
+# DeepfakeBench input normalization. DIRE denormalizes this before reconstruction.
+mean: [0.5, 0.5, 0.5]
+std: [0.5, 0.5, 0.5]
+
+# optimizer config
+optimizer:
+  type: adam
+  adam:
+    lr: 0.0001
+    beta1: 0.9
+    beta2: 0.999
+    eps: 0.00000001
+    weight_decay: 0.0005
+    amsgrad: false
+  sgd:
+    lr: 0.0001
+    momentum: 0.9
+    weight_decay: 0.0005
+
+# training config
+lr_scheduler: null
+nEpochs: 10
+start_epoch: 0
+save_epoch: 1
+rec_iter: 100
+logdir: ./logs
+manualSeed: 1024
+save_ckpt: true
+save_feat: true
+save_tsne: false
+
+# loss function
+loss_func: cross_entropy
+losstype: null
+
+# metric
+metric_scoring: auc
+
+# cuda
+ngpu: 1
+cuda: true
+cudnn: true
+
+save_avg: true

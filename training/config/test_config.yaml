@@ -1,0 +1,163 @@
+mode: test
+lmdb: False
+#rgb_dir: '/disk/jh/datasets/deepfake'
+#lmdb_dir:  '/home/csy/disk1/dataset/DeepfakeBench/lmdb'
+#dataset_json_folder: '/disk/jh/datasets/deepfake/dataset_json'
+
+#rgb_dir: '/home/csy/disk1/dataset/DeepfakeBench/rgb'
+#lmdb_dir:  '/home/csy/disk1/dataset/DeepfakeBench/lmdb'
+#dataset_json_folder: '/home/csy/disk1/dataset/DeepfakeBench/config/dataset_json'
+
+# dataset2
+rgb_dir: '/datasets/Deepfake/DeepfakeBench/rgb'
+lmdb_dir:  '/datasets/Deepfake/DeepfakeBench/lmdb'
+dataset_json_folder: '/datasets/Deepfake/DeepfakeBench/config/dataset_json'
+
+save_tsne: true
+
+label_dict:
+  # DFD
+  DFD_fake: 1
+  DFD_real: 0
+  # FF++ + FaceShifter(FF-real+FF-FH)
+  FF-SH: 1
+  FF-F2F: 1
+  FF-DF: 1
+  FF-FS: 1
+  FF-NT: 1
+  FF-FH: 1
+  FF-real: 0
+  # CelebDF
+  CelebDFv1_real: 0
+  CelebDFv1_fake: 1
+  CelebDFv2_real: 0
+  CelebDFv2_fake: 1
+  # DFDCP
+  DFDCP_Real: 0
+  DFDCP_FakeA: 1
+  DFDCP_FakeB: 1
+  # DFDC
+  DFDC_Fake: 1
+  DFDC_Real: 0
+  # DeeperForensics-1.0
+  DF_fake: 1
+  DF_real: 0
+  # UADFV
+  UADFV_Fake: 1
+  UADFV_Real: 0
+  # Roop
+  roop_Real: 0
+  roop_Fake: 1
+
+  # VQGAN
+  VQGAN_Real: 0
+  VQGAN_Fake: 1
+
+  #StyleGAN2
+  StyleGAN2_Real: 0
+  StyleGAN2_Fake: 1
+
+  #StyleGANXL
+  StyleGANXL_Real: 0
+  StyleGANXL_Fake: 1
+
+  #SiT
+  SiT_Real: 0
+  SiT_Fake: 1
+
+  #Sd2.1
+  sd2.1_Real: 0
+  sd2.1_Fake: 1
+
+  #rddm
+  rddm_Real: 0
+  rddm_Fake: 1
+
+  #ddim
+  ddim_Real: 0
+  ddim_Fake: 1
+
+  #pixart
+  pixart_Real: 0
+  pixart_Fake: 1
+
+  #DiT
+  DiT_Real: 0
+  DiT_Fake: 1
+
+  #whichisreal
+  whichisreal_Real: 0
+  whichisreal_Fake: 1
+
+spe_label_dict:
+
+  FF-F2F: 1
+  FF-DF: 2
+  FF-FS: 3
+  FF-NT: 4
+  FF-real: 0
+  # DFD
+  DFD_fake: 1
+  DFD_real: 0
+
+  # CelebDF
+  CelebDFv1_real: 0
+  CelebDFv1_fake: 1
+  CelebDFv2_real: 0
+  CelebDFv2_fake: 1
+  # DFDCP
+  DFDCP_Real: 0
+  DFDCP_FakeA: 1
+  DFDCP_FakeB: 1
+  # DFDC
+  DFDC_Fake: 1
+  DFDC_Real: 0
+  # DeeperForensics-1.0
+  DF_fake: 1
+  DF_real: 0
+  # UADFV
+  UADFV_Fake: 1
+  UADFV_Real: 0
+  # Roop
+  roop_Real: 0
+  roop_Fake: 1
+
+  # VQGAN
+  VQGAN_Real: 0
+  VQGAN_Fake: 1
+
+  #StyleGAN2
+  StyleGAN2_Real: 0
+  StyleGAN2_Fake: 1
+
+  #StyleGANXL
+  StyleGANXL_Real: 0
+  StyleGANXL_Fake: 1
+
+  #SiT
+  SiT_Real: 0
+  SiT_Fake: 1
+
+  #Sd2.1
+  sd2.1_Real: 0
+  sd2.1_Fake: 1
+
+  #rddm
+  rddm_Real: 0
+  rddm_Fake: 1
+
+  #ddim
+  ddim_Real: 0
+  ddim_Fake: 1
+
+  #pixart
+  pixart_Real: 0
+  pixart_Fake: 1
+
+  #DiT
+  DiT_Real: 0
+  DiT_Fake: 1
+
+  #whichisreal
+  whichisreal_Real: 0
+  whichisreal_Fake: 1
