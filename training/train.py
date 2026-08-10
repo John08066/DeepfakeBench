@@ -144,7 +144,7 @@ def prepare_training_data(config):
                 dataset=train_set,
                 batch_size=config['train_batchSize'],
                 shuffle=True,
-                num_workers=int(config['workers']),
+                num_workers=int(config['workers']), #控制多少个子进程并行准备数据
                 collate_fn=train_set.collate_fn,
                 )
     return train_data_loader
@@ -152,19 +152,18 @@ def prepare_training_data(config):
 # 准备测试数据加载器
 def prepare_testing_data(config):
     def get_test_data_loader(config, test_name):
-        # 创建配置的副本，防止修改原始配置
         # update the config dictionary with the specific testing dataset
-        config = config.copy()  # create a copy of config to avoid altering the original one
-        config['test_dataset'] = test_name  # specify the current test dataset     # 设置当前测试数据集
-        if not config.get('dataset_type', None) == 'lrl':
-            test_set = DeepfakeAbstractBaseDataset(    # 默认测试数据集
-                    config=config,
-                    mode='test',
-            )
-        else:
+        config = config.copy()  # 创建配置的副本，防止修改原始配置 create a copy of config to avoid altering the original one
+        config['test_dataset'] = test_name  # 原始config保留完整测试集列表 局部config只保存当前测试集名字 specify the current test dataset
+        if config.get('dataset_type', None) == 'lrl':
             test_set = LRLDataset(         # 使用LRL测试数据集
                 config=config,
                 mode='test',
+            )
+        else:
+            test_set = DeepfakeAbstractBaseDataset(    # 默认测试数据集
+                    config=config,
+                    mode='test', # mode='test' 很重要
             )
 
         # 数据加载器
@@ -182,7 +181,7 @@ def prepare_testing_data(config):
         return test_data_loader
 
     # 创建多个测试数据加载器
-    test_data_loaders = {}
+    test_data_loaders = {} #{}为空字典 []为空列表 set()为空集合 ()为空元组
     for one_test_name in config['test_dataset']:
         test_data_loaders[one_test_name] = get_test_data_loader(config, one_test_name)
     return test_data_loaders
@@ -380,4 +379,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
