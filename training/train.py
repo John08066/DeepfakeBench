@@ -187,10 +187,10 @@ def prepare_testing_data(config):
     return test_data_loaders
 
 
-# 选择优化器
-def choose_optimizer(model, config):
+# 选择优化器 梯度告诉你往哪个方向走，优化器决定具体怎样走、走多远
+def choose_optimizer(model, config): 
     opt_name = config['optimizer']['type']
-    if opt_name == 'sgd':
+    if opt_name == 'sgd': 
         optimizer = optim.SGD(
             params=model.parameters(),
             lr=config['optimizer'][opt_name]['lr'],
@@ -216,10 +216,10 @@ def choose_optimizer(model, config):
             momentum=config['optimizer'][opt_name]['momentum'],
         )
     else:
-        raise NotImplementedError('Optimizer {} is not implemented'.format(config['optimizer']))
+        raise NotImplementedError(f"Optimizer {config['optimizer']} is not implemented")
     return optimizer
 
-# 选择学习率
+# 学习率调度器 优化器决定怎么更新，scheduler决定学习率如何随训练变化。
 def choose_scheduler(config, optimizer):
     if config['lr_scheduler'] is None:   # 如果使none，说明不需要学习率调度器
         return None
@@ -243,138 +243,106 @@ def choose_scheduler(config, optimizer):
             config['nEpochs'],    # 总共的训练 epoch 数。
             int(config['nEpochs']/4),   # 指定从什么时候开始线性衰减学习率（可能表示最后四分之一阶段）
         )
+        return scheduler
     else:
-        raise NotImplementedError('Scheduler {} is not implemented'.format(config['lr_scheduler']))
+        raise NotImplementedError(f"Scheduler {config['lr_scheduler']} is not implemented")
 
-# 选择评价指标
-def choose_metric(config):
-    metric_scoring = config['metric_scoring']
+def choose_metric(config):# 选择评价指标
+    metric_scoring = config['metric_scoring'] #selection metric 用哪个指标挑选最佳 checkpoint
     if metric_scoring not in ['eer', 'auc', 'acc', 'ap']:
-        raise NotImplementedError('metric {} is not implemented'.format(metric_scoring))
+        raise NotImplementedError(f"metric {metric_scoring} is not implemented")
     return metric_scoring
 
 
 def main():
-    # parse options and load config
-    with open(args.detector_path, 'r') as f:   # 打开分类器的配置文件
+    with open(args.detector_path, 'r') as f:   # 打开分类器的配置文件  parse options and load config
         config = yaml.safe_load(f)
     with open('/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/config/train_config.yaml', 'r') as f:  # 打开训练配置文件，也就是训练集
         config2 = yaml.safe_load(f)
     if 'label_dict' in config:
         config2['label_dict']=config['label_dict']
-     # 使用config2更新config,如果 config2 中的某个键在 config 中已经存在，则 config 中该键的值会被 config2 中对应的值替换。如果 config2 中的某个键在 config 中不存在，则会将该键值对添加到 config 中。
-    config.update(config2)
+
+     # 参数优先级命：令行指定值 > train_config.yaml > detector YAML  
+    config.update(config2)# 存在，则 config 中该键的值会被 config2 中对应的值替换。不存在，则会将该键值对添加到 config 中。
     config['local_rank']=args.local_rank  # 配置训练设备
-    # 如果是 dry_run 模式，设置为仅用于测试流程（不进行实际训练）
-    if config['dry_run']:        # 通常表示一种“试运行”或“测试运行”模式
+    
+    if config['dry_run']:       # 如果是 dry_run 模式，设置为仅用于测试流程（不进行实际训练） # 通常表示一种“试运行”或“测试运行”模式
         config['nEpochs'] = 0      # 设置训练轮数为 0
         config['save_feat']=False  # 不保存特征数据
-    # 如果从命令行提供了数据集路径参数，则覆盖配置文件中的路径设置
-    # If arguments are provided, they will overwrite the yaml settings
-    if args.train_dataset:
+
+    if args.train_dataset: # 如果从命令行提供了数据集路径参数，则覆盖配置文件中的路径设置 #  If arguments are provided, they will overwrite the yaml settings
         config['train_dataset'] = args.train_dataset
     if args.test_dataset:
         config['test_dataset'] = args.test_dataset
-    # 配置模型保存路径
-    config['save_ckpt'] = args.save_ckpt
-    # 配置是否保存训练特征
-    config['save_feat'] = args.save_feat
+  
+    config['save_ckpt'] = args.save_ckpt   # 配置模型保存路径
+    config['save_feat'] = args.save_feat    # 配置是否保存训练特征
+    config['ddp'] = args.ddp    # 设置分布式训练参数
 
-    # 如果启用了 LMDB 数据集格式，设置数据集 JSON 文件路径
-    if config['lmdb']:
-        config['dataset_json_folder'] = '/datasets2/Deepfake/DeepfakeBench/config/dataset_json/'  # 配置训练json路径 /datasets2/Deepfake/DeepfakeBench/config/dataset_json
-    # create logger
-    # 创建日志文件夹并初始化日志记录器
-    timenow=datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    task_str = f"_{config['task_target']}" if config.get('task_target', None) is not None else ""
+    if config['lmdb']: # 如果启用了 LMDB 数据集格式，设置数据集 JSON 文件路径
+        config['dataset_json_folder'] = '/datasets2/Deepfake/DeepfakeBench/config/dataset_json/'  # 配置训练json路径被硬编码为： /datasets2/Deepfake/DeepfakeBench/config/dataset_json
+  
+    # 创建日志文件夹并初始化日志记录器  # create logger
+    timenow = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    task_str = f"_{config['task_target']}" if config.get('task_target', None) is not None else ""  # dict.get()：安全读取 dict['key']：强制读取
     logger_path =  os.path.join(
                 config['log_dir'],   # 日志存储目录
                 config['model_name'] + task_str + '_' + timenow   # 日志文件夹名
             )
     os.makedirs(logger_path, exist_ok=True)    # 创建文件夹（若不存在则创建）
     logger = create_logger(os.path.join(logger_path, 'training.log'))   # 创建日志记录器
-    logger.info('Save log to {}'.format(logger_path))    # 记录日志文件存储路径
-
-    # 设置分布式训练参数
-    config['ddp']= args.ddp
-    # 打印完整的配置信息
-    # print configuration
-    logger.info("--------------- Configuration ---------------")
+    logger.info(f"Save log to {logger_path}")    # 记录日志文件存储路径
+    logger.info("--------------- Configuration ---------------")  # 打印完整的配置信息 # print configuration
     params_string = "Parameters: \n"
-    for key, value in config.items():
-        params_string += "{}: {}".format(key, value) + "\n"
+    for key, value in config.items():  #items()它里面每个元素是一个二元组 tuple (key, value)
+        params_string += f"{key}: {value}" + "\n"
     logger.info(params_string)
 
-    # 初始化随机种子，确保实验可重复性
-    # init seed
-    init_seed(config)
-    # set_seed(1024)
-
-     # 如果启用 cudnn 加速，设置 benchmark 模式以提升性能
-    # set cudnn benchmark if needed
-    if config['cudnn']:
+    init_seed(config)# 初始化随机种子，确保实验可重复性  # init seed set_seed(1024)# 如果启用 cudnn 加速，设置 benchmark 模式以提升性能
+    
+    if config['cudnn']:# set cudnn benchmark if needed
         cudnn.benchmark = True
-
-    # 如果启用分布式数据并行（DDP），初始化通信进程组
-    if config['ddp']:
+    
+    if config['ddp']:# 如果启用分布式数据并行（DDP），初始化通信进程组
         # dist.init_process_group(backend='gloo')
         dist.init_process_group(
             backend='nccl',     # 使用 NCCL 后端进行通信（适用于 GPU）
             timeout=timedelta(minutes=30)    # 设置通信超时时间为 30 分钟
         )
         logger.addFilter(RankFilter(0))    # 仅记录主进程日志
-    # prepare the training data loader
-    train_data_loader = prepare_training_data(config)
 
-    # prepare the testing data loader
-    test_data_loaders = prepare_testing_data(config)
+    train_data_loader = prepare_training_data(config)    # prepare the training data loader
+    test_data_loaders = prepare_testing_data(config)  # prepare the testing data loader
+   
+    model_class = DETECTOR[config['model_name']] # prepare the model (detector)
+    model = model_class(config)   # 实例化模型  这就是大型框架常见的“插件化”设计：
 
-    # prepare the model (detector)
-    model_class = DETECTOR[config['model_name']]
-    model = model_class(config)   # 实例化模型
+    optimizer = choose_optimizer(model, config)    # prepare the optimizer
+    scheduler = choose_scheduler(config, optimizer)  # prepare the scheduler
+  
+    metric_scoring = choose_metric(config)  # prepare the metric
 
-    # prepare the optimizer
-    optimizer = choose_optimizer(model, config)
-
-    # prepare the scheduler
-    scheduler = choose_scheduler(config, optimizer)
-
-    # prepare the metric
-    metric_scoring = choose_metric(config)
-
-    # 初始化训练器
-    # prepare the trainer
-    trainer = Trainer(config, model, optimizer, scheduler, logger, metric_scoring, time_now=timenow)
-
-    # 开始训练
-    # start training
+    # 开始训练  # start training
+    trainer = Trainer(config, model, optimizer, scheduler, logger, metric_scoring, time_now=timenow)# 初始化训练器 # prepare the trainer
     for epoch in range(config['start_epoch'], config['nEpochs'] + 1):
         trainer.model.epoch = epoch   # 更新模型当前训练的 epoch
-        # 每个 epoch 训练并测试模型，返回最佳评估指标
-        best_metric = trainer.train_epoch(
+        best_metric = trainer.train_epoch( # 这句虽然只有几行，但它大概率触发了绝大多数实际工作 每个epoch训练并测试模型，返回最佳评估指标
                     epoch=epoch,
                     train_data_loader=train_data_loader,
                     test_data_loaders=test_data_loaders,
                 )
-        # 如果存在最佳评估指标，记录日志
-        if best_metric is not None:
+        if best_metric is not None: # 如果存在最佳评估指标，记录日志
             logger.info(f"===> Epoch[{epoch}] end with testing {metric_scoring}: {parse_metric_for_print(best_metric)}!")
-    logger.info("Stop Training on best Testing metric {}".format(parse_metric_for_print(best_metric)))
-    # update
+    logger.info(f"Stop Training on best Testing metric {parse_metric_for_print(best_metric)}")
 
-    # 如果模型为 'svdd' 类型，更新 R 参数
-    if 'svdd' in config['model_name']:
+    if 'svdd' in config['model_name']:  # 如果模型为 'svdd' 类型，更新 R 参数    # update
         model.update_R(epoch)
 
-    # 更新学习率调度器（如果有）
-    if scheduler is not None:
+    if scheduler is not None:# 更新学习率调度器（如果有）
         scheduler.step()
 
-    # 关闭 TensorBoard 写入器（释放资源）
-    # close the tensorboard writers
-    for writer in trainer.writers.values():
+    for writer in trainer.writers.values():# 关闭 TensorBoard 写入器（释放资源）# close the tensorboard writers
         writer.close()
-
 
 
 if __name__ == '__main__':
