@@ -118,15 +118,15 @@ class Trainer(object):
         self.model.eval()
         self.train = False
 
-    def load_ckpt(self, model_path):
+    def load_ckpt(self, model_path): # 磁盘 checkpoint恢复到 self.model
         if os.path.isfile(model_path):
-            saved = torch.load(model_path, map_location='cpu')
+            saved = torch.load(model_path, map_location='cpu') #把 checkpoint 先加载到 CPU。保存checkpoint的GPU编号和当前机器GPU编号可能不同
             suffix = model_path.split('.')[-1]
-            if suffix == 'p':
-                self.model.load_state_dict(saved.state_dict())
+            if suffix == 'p': 
+                self.model.load_state_dict(saved.state_dict())  # 文件中保存整个 model 对象
             else:
-                self.model.load_state_dict(saved)
-            self.logger.info('Model found in {}'.format(model_path))
+                self.model.load_state_dict(saved)   # 文件里直接保存 state_dict
+            self.logger.info('Model found in {}'.format(model_path)) 
         else:
             raise NotImplementedError(
                 "=> no model found at '{}'".format(model_path))
