@@ -34,7 +34,6 @@ from metrics.utils import get_test_metrics
 FFpp_pool=['FaceForensics++','FF-DF','FF-F2F','FF-FS','FF-NT']#
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-
 class Trainer(object):
     def __init__(
         self,
@@ -47,8 +46,8 @@ class Trainer(object):
         time_now = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'),
         swa_model=None
         ):
-        # check if all the necessary components are implemented
-        if config is None or model is None or optimizer is None or logger is None:
+       
+        if config is None or model is None or optimizer is None or logger is None: # check if all the necessary components are implemented
             raise ValueError("config, model, optimizier, logger, and tensorboard writer must be implemented")
 
         self.config = config
@@ -59,67 +58,60 @@ class Trainer(object):
         self.writers = {}  # dict to maintain different tensorboard writers for each dataset and metric
         self.logger = logger
         self.metric_scoring = metric_scoring
-        # maintain the best metric of all epochs
-        # 初始化一个字典，用于记录所有 epoch 中最佳指标
-        # 如果指标是 'eer'（等错误率），初始化为正无穷，否则为负无穷
+        self.speed_up()  # 调用加速方法（将模型移动到 GPU 上）# move model to GPU
+        self.timenow = time_now # get current time 由 train.py 已经创建过 这样两边使用完全相同的实验 ID
+
+        # 初始化一个字典，用于记录所有 epoch 中最佳指标   best_metrics_all_time['test']如果不存在：自动创建：float('-inf') 
         self.best_metrics_all_time = defaultdict(
-            lambda: defaultdict(lambda: float('-inf')
+            lambda: defaultdict(lambda: float('-inf') #lambda : 100 没有输入参数：输出100 把值包装成函数 defaultdict 不接受值，只接受函数
             if self.metric_scoring != 'eer' else float('inf'))
         )
-        # 调用加速方法（将模型移动到 GPU 上）
-        self.speed_up()  # move model to GPU
 
-        # get current time
-        self.timenow = time_now
-        # create directory path
+        # create directory path # 如果没有特定任务目标，直接用模型名称和时间戳命名目录   # 如果有特定任务目标，则将其加入目录名称
         if 'task_target' not in config:
-            # 如果没有特定任务目标，直接用模型名称和时间戳命名目录
             self.log_dir = os.path.join(
-                self.config['log_dir'],
+                self.config['log_dir'], # 日志根目录
                 self.config['model_name'] + '_' + self.timenow
             )
         else:
-            # 如果有特定任务目标，则将其加入目录名称
             task_str = f"_{config['task_target']}" if config['task_target'] is not None else ""
             self.log_dir = os.path.join(
                 self.config['log_dir'],   # 日志根目录
                 self.config['model_name'] + task_str + '_' + self.timenow   # 模型名称 + 任务目标 + 时间戳
             )
-        # 创建日志目录，如果目录已存在则忽略
-        os.makedirs(self.log_dir, exist_ok=True)
+        os.makedirs(self.log_dir, exist_ok=True)  # 创建日志目录，如果目录已存在则忽略
 
-
-    def get_writer(self, phase, dataset_key, metric_key):
+    def get_writer(self, phase, dataset_key, metric_key):   #你告诉我： 阶段 + 数据集 + 指标  我给你： 对应的 TensorBoard 写入器 
         writer_key = f"{phase}-{dataset_key}-{metric_key}"
-        if writer_key not in self.writers:
-            # update directory path
-            writer_path = os.path.join(
+        if writer_key not in self.writers:  #这里采用的是懒创建。判断这个 TensorBoard 写入器有没有创建过
+            writer_path = os.path.join(  
                 self.log_dir,
                 phase,
                 dataset_key,
                 metric_key,
                 "metric_board"
             )
-            os.makedirs(writer_path, exist_ok=True)
-            # update writers dictionary
-            self.writers[writer_key] = SummaryWriter(writer_path)
+            os.makedirs(writer_path, exist_ok=True) # 创建目录，exist_ok=True如果目录已经存在，不报错，直接跳过。
+            self.writers[writer_key] = SummaryWriter(writer_path) #创建真正的 TensorBoard writer 深度学习工程里非常典型的：用字典管理大量对象实例。
         return self.writers[writer_key]
 
-
     def speed_up(self):
-        self.model.to(device)
-        self.model.device = device
+        self.model.to(device) #真正把模型搬到 GPU
+        self.model.device = device  #它只是给 Python 对象增加一个属性，告诉这个模型对象：我的设备在哪里？"但是它不会移动任何参数
         if self.config['ddp'] == True:
-            num_gpus = torch.cuda.device_count()
+            num_gpus = torch.cuda.device_count() #计数本台机器的GPU数量
             print(f'avai gpus: {num_gpus}')
-            # self.config['local_rank'] = [i for i in range(0,num_gpus)]
+            # self.config['local_rank'] = [i for i in range(0,num_gpus)] #  调试代码 列表推导式 range 本身不是列表，它是一个可迭代对象 
             # print(self.config['local_rank'])
-            # local_rank=[i for i in range(0,num_gpus)]
-            self.model = DDP(self.model, device_ids=[self.config['local_rank']],find_unused_parameters=True, output_device=self.config['local_rank'])
-            #self.optimizer =  nn.DataParallel(self.optimizer, device_ids=[int(os.environ['LOCAL_RANK'])])
+            self.model = DDP(
+                self.model, device_ids=[self.config['local_rank']],
+                find_unused_parameters=True,  #  允许：某一次 forward 中，有些参数没有参与 loss 的计算。
+                output_device=self.config['local_rank']
+                )
+            #就是给模型外面套了一层 DDP 包装器： self.model.module才是原始模型。
 
-    def setTrain(self):
-        self.model.train()
+    def setTrain(self): # 真正影响的是例如：Dropout BatchNorm
+        self.model.train()                                                                                                   =
         self.train = True
 
     def setEval(self):
