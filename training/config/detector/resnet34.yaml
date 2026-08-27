@@ -72,7 +72,7 @@ save_epoch: 1   # interval epochs for saving models
 rec_iter: 100   # interval iterations for recording
 logdir: ./logs   # folder to output images and logs
 manualSeed: 1024   # manual seed for random number generation
-save_ckpt: false   # whether to save checkpoint
+# save_ckpt: false   # whether to save checkpoint#
 
 # loss function
 loss_func: cross_entropy   # loss function to use

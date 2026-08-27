@@ -1,9 +1,13 @@
+# region authorinfo
+
 # author: Zhiyuan Yan
 # email: zhiyuanyan@link.cuhk.edu.cn
 # date: 2023-03-30
 # description: training code.
 # 这是John添加的注释
 # 这是笔记本加的注释
+
+# endregion authorinfo
 
 import os
 import argparse    # 用于解析命令行参数
@@ -59,13 +63,11 @@ torch.cuda.set_device(args.local_rank)     # 设置当前进程的CUDA设备
 
 # 初始化随机种子，确保结果的可复现性
 def init_seed(config):
-    if config['manualSeed'] is None:    # 如果配置中没有配置随机函数，则随机生成一个种子
-        config['manualSeed'] = random.randint(1, 10000)     # 随机生成一个种子
+    config['manualSeed'] = random.randint(1, 10000) if config['manualSeed'] is None else config['manualSeed']   #如果配置中没有配置随机函数，则随机生成一个种子；随机生成一个种子
     random.seed(config['manualSeed'])    # 使每次运行都输出相同的数
-    if config['cuda']:   # 如果启用CUDA，则设置CUDA随机种子
-        torch.manual_seed(config['manualSeed'])  # 设置CPU随机种子
-        torch.cuda.manual_seed_all(config['manualSeed']) # 设置GPU随机种子
+    (torch.manual_seed(config['manualSeed']),torch.cuda.manual_seed_all(config['manualSeed'])) if config['cuda'] else None  # 如果启用CUDA，则设置CPU/GPU随机种子
 
+# region old_seed_code
 # def set_seed(seed, use_cuda=True):
 #     # seed init.
 #     random.seed(seed)
@@ -85,10 +87,9 @@ def init_seed(config):
 #
 #     # avoiding nondeterministic algorithms (see https://pytorch.org/docs/stable/notes/randomness.html)
 #     # torch.use_deterministic_algorithms(True)
+# endregion
 
-# 准备训练数据加载器，根据配置文件选择不同的数据集类
-def prepare_training_data(config):
-    # Only use the blending dataset class in training
+def prepare_training_data(config):# 准备训练数据加载器，根据配置文件选择不同的数据集类# Only use the blending dataset class in training
     if 'dataset_type' in config and config['dataset_type'] == 'blend':
         if config['model_name'] == 'facexray':
             train_set = FFBlendDataset(config)   # 使用Face X-ray数据集
@@ -99,22 +100,17 @@ def prepare_training_data(config):
         elif config['model_name'] == 'lsda':
             train_set = LSDADataset(config, mode='train')     # 使用LSDA数据集这里调用得到了所有数的路径
         else:
-            raise NotImplementedError(
-                'Only facexray, fwa, sbi, and lsda are currently supported for blending dataset'
-            )
-    elif 'dataset_type' in config and config['dataset_type'] == 'pair':
+            raise NotImplementedError('Only facexray, fwa, sbi, and lsda are currently supported for blending dataset')  # 抛出未实现错误，仅支持facexray/fwa/sbi/lsda混合数据集
+    elif 'dataset_type' in config and config['dataset_type'] == 'pair': # 一对有关联的图像，通常用于视频帧对或图像对的训练。
         train_set = pairDataset(config, mode='train')  # Only use the pair dataset class in training
-    elif 'dataset_type' in config and config['dataset_type'] == 'iid':
+    elif 'dataset_type' in config and config['dataset_type'] == 'iid': # independent / individual sample 风格：每张图自己作为一个训练样本。
         train_set = IIDDataset(config, mode='train')
     elif 'dataset_type' in config and config['dataset_type'] == 'I2G':
         train_set = I2GDataset(config, mode='train')
-    elif 'dataset_type' in config and config['dataset_type'] == 'lrl':
+    elif 'dataset_type' in config and config['dataset_type'] == 'lrl': # Local Relation Learning
         train_set = LRLDataset(config, mode='train')
     else:
-        train_set = DeepfakeAbstractBaseDataset(    # 默认数据集
-                    config=config,
-                    mode='train',
-                )
+        train_set = DeepfakeAbstractBaseDataset(config=config, mode='train')    # 默认数据集
 
     # 根据模型名称或配置决定是否使用自定义采样器或分布式采样器
     if config['model_name'] == 'lsda':
@@ -122,175 +118,123 @@ def prepare_training_data(config):
         custom_sampler = CustomSampler(num_groups=2*360, n_frame_per_vid=config['frame_num']['train'], batch_size=config['train_batchSize'], videos_per_group=5) # 实例化一个自定义采样器，CustomSampler 可以控制如何在每个批次中选择视频和帧
         train_data_loader = \
             torch.utils.data.DataLoader( # 使用DataLoader加载数据
-                dataset=train_set,
-                batch_size=config['train_batchSize'],
-                num_workers=int(config['workers']),
-                sampler=custom_sampler,
-                collate_fn=train_set.collate_fn,
+                dataset = train_set,
+                batch_size = config['train_batchSize'],
+                num_workers = int(config['workers']),
+                sampler = custom_sampler,
+                collate_fn = train_set.collate_fn,
             )
     elif config['ddp']:    # 如果启用分布式数据并行
         sampler = DistributedSampler(train_set)    # 使用分布式采样器
         train_data_loader = \
             torch.utils.data.DataLoader(
-                dataset=train_set,
-                batch_size=config['train_batchSize'],
-                num_workers=int(config['workers']),
-                collate_fn=train_set.collate_fn,
-                sampler=sampler
+                dataset = train_set,
+                batch_size = config['train_batchSize'],
+                num_workers = int(config['workers']),
+                collate_fn = train_set.collate_fn,
+                sampler = sampler
             )
     else:  # 单GPU或普通训练
         train_data_loader = \
             torch.utils.data.DataLoader(
-                dataset=train_set,
-                batch_size=config['train_batchSize'],
-                shuffle=True,
-                num_workers=int(config['workers']), #控制多少个子进程并行准备数据
-                collate_fn=train_set.collate_fn,
+                dataset = train_set,
+                batch_size = config['train_batchSize'],
+                shuffle = True,
+                num_workers = int(config['workers']), #控制多少个子进程并行准备数据
+                collate_fn = train_set.collate_fn,
                 )
     return train_data_loader
 
-# 准备测试数据加载器
-def prepare_testing_data(config):
+def prepare_testing_data(config):# 准备测试数据加载器
     def get_test_data_loader(config, test_name):
-        # update the config dictionary with the specific testing dataset
         config = config.copy()  # 创建配置的副本，防止修改原始配置 create a copy of config to avoid altering the original one
         config['test_dataset'] = test_name  # 原始config保留完整测试集列表 局部config只保存当前测试集名字 specify the current test dataset
-        if config.get('dataset_type', None) == 'lrl':
-            test_set = LRLDataset(         # 使用LRL测试数据集
-                config=config,
-                mode='test',
-            )
-        else:
-            test_set = DeepfakeAbstractBaseDataset(    # 默认测试数据集
-                    config=config,
-                    mode='test', # mode='test' 很重要
-            )
-
-        # 数据加载器
+        test_set = LRLDataset(config=config, mode='test') if config.get('dataset_type', None) == 'lrl' else DeepfakeAbstractBaseDataset(config=config, mode='test',) # 三元表达式选择测试集：'lrl' 用LRL数据集，否则用默认数据集；mode='test' 很重要
         test_data_loader = \
             torch.utils.data.DataLoader(
-                dataset=test_set,
-                batch_size=config['test_batchSize'],
-                shuffle=False,      # 测试时不打乱数据
-                num_workers=int(config['workers']),
-                collate_fn=test_set.collate_fn,
+                dataset = test_set,
+                batch_size = config['test_batchSize'],
+                shuffle = False,      # 测试时不打乱数据
+                num_workers = int(config['workers']),
+                collate_fn = test_set.collate_fn,
                 # drop_last = (test_name=='DeepFakeDetection'),
                 drop_last = False,   # 保留所有批次
             )
-
         return test_data_loader
 
-    # 创建多个测试数据加载器
     test_data_loaders = {} #{}为空字典 []为空列表 set()为空集合 ()为空元组
-    for one_test_name in config['test_dataset']:
+    for one_test_name in config['test_dataset']:# 创建多个测试数据加载器
         test_data_loaders[one_test_name] = get_test_data_loader(config, one_test_name)
     return test_data_loaders
 
-
-# 选择优化器 梯度告诉你往哪个方向走，优化器决定具体怎样走、走多远
-def choose_optimizer(model, config): 
+def choose_optimizer(model, config): # 选择优化器 梯度告诉你往哪个方向走，优化器决定具体怎样走、走多远
     opt_name = config['optimizer']['type']
     if opt_name == 'sgd': 
         optimizer = optim.SGD(
-            params=model.parameters(),
-            lr=config['optimizer'][opt_name]['lr'],
-            momentum=config['optimizer'][opt_name]['momentum'],
-            weight_decay=config['optimizer'][opt_name]['weight_decay']
+            params = model.parameters(),
+            lr = config['optimizer'][opt_name]['lr'],
+            momentum = config['optimizer'][opt_name]['momentum'],
+            weight_decay = config['optimizer'][opt_name]['weight_decay']
         )
         return optimizer
     elif opt_name == 'adam':
         optimizer = optim.Adam(
-            params=model.parameters(),
-            lr=config['optimizer'][opt_name]['lr'],
-            weight_decay=config['optimizer'][opt_name]['weight_decay'],
-            betas=(config['optimizer'][opt_name]['beta1'], config['optimizer'][opt_name]['beta2']),
-            eps=config['optimizer'][opt_name]['eps'],
-            amsgrad=config['optimizer'][opt_name]['amsgrad'],
+            params = model.parameters(),
+            lr = config['optimizer'][opt_name]['lr'],
+            weight_decay = config['optimizer'][opt_name]['weight_decay'],
+            betas = (config['optimizer'][opt_name]['beta1'], config['optimizer'][opt_name]['beta2']),
+            eps = config['optimizer'][opt_name]['eps'],
+            amsgrad = config['optimizer'][opt_name]['amsgrad'], # AMSGrad 就加了一条规则：二阶矩只允许保留“历史最大值”，不允许往回变小 的主要是改善 Adam 在某些理论场景下的收敛问题，使有效学习率不会因为二阶矩下降而再次异常增大
         )
         return optimizer
     elif opt_name == 'sam':
-        optimizer = SAM(
-            model.parameters(),
-            optim.SGD,
-            lr=config['optimizer'][opt_name]['lr'],
-            momentum=config['optimizer'][opt_name]['momentum'],
-        )
-    else:
-        raise NotImplementedError(f"Optimizer {config['optimizer']} is not implemented")
+        optimizer = SAM(model.parameters(), optim.SGD, lr=config['optimizer'][opt_name]['lr'], momentum=config['optimizer'][opt_name]['momentum'])
+    else:raise NotImplementedError(f"Optimizer {config['optimizer']} is not implemented")
     return optimizer
 
-# 学习率调度器 优化器决定怎么更新，scheduler决定学习率如何随训练变化。
-def choose_scheduler(config, optimizer):
+def choose_scheduler(config, optimizer):# 学习率调度器 优化器决定怎么更新，scheduler决定学习率如何随训练变化。Scheduler 并不直接更新模型参数 scheduler → optimizer.param_groups[i]['lr'] → 影响下一次 optimizer.step() 的步长
     if config['lr_scheduler'] is None:   # 如果使none，说明不需要学习率调度器
         return None
-    elif config['lr_scheduler'] == 'step':      # 说明要使用StepLR调度器
-        scheduler = optim.lr_scheduler.StepLR(  # 作用：每隔固定的 step_size 个 epoch，将学习率乘以一个因子 gamma
-            optimizer,                       # 用于控制的优化器。
-            step_size=config['lr_step'],     # 每隔多少个 epoch 调整一次学习率
-            gamma=config['lr_gamma'],        # 学习率缩放因子
-        )
-        return scheduler  # 初始化好的 StepLR 调度器
+    elif config['lr_scheduler'] == 'step': # 说明要使用StepLR调度器 作用：每隔固定的 step_size 个 epoch，将学习率乘以一个因子 gamma，用于控制的优化器，每隔多少个 epoch 调整一次学习率，学习率缩放因子
+        scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=config['lr_step'], gamma=config['lr_gamma'])  
+        return scheduler  
     elif config['lr_scheduler'] == 'cosine':     # 如果配置中 lr_scheduler 被设置为 'cosine'，说明要使用CosineAnnealingLR调度器。
-        scheduler = optim.lr_scheduler.CosineAnnealingLR(  # 作用：根据余弦退火曲线调整学习率，适合训练中后期逐步减小学习率的情况。
-            optimizer,
-            T_max=config['lr_T_max'],   # 周期的最大 epoch 数，表示完成一个周期时学习率最小
-            eta_min=config['lr_eta_min'],  # 最小学习率（退火曲线的最低点）
-        )
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config['lr_T_max'], eta_min=config['lr_eta_min'])  # 余弦退火：T_max为周期最大epoch数，eta_min为最小学习率
         return scheduler
     elif config['lr_scheduler'] == 'linear':   # 如果配置中 lr_scheduler 被设置为 'linear'，说明要使用LinearDecayLR调度器。
-        scheduler = LinearDecayLR(     # 线性递减学习率。
-            optimizer,
-            config['nEpochs'],    # 总共的训练 epoch 数。
-            int(config['nEpochs']/4),   # 指定从什么时候开始线性衰减学习率（可能表示最后四分之一阶段）
-        )
+        scheduler = LinearDecayLR(optimizer, config['nEpochs'], int(config['nEpochs']/4))  # 线性递减学习率：总共的训练 epoch 数，最后四分之一阶段开始线性衰减
         return scheduler
     else:
         raise NotImplementedError(f"Scheduler {config['lr_scheduler']} is not implemented")
 
 def choose_metric(config):# 选择评价指标
     metric_scoring = config['metric_scoring'] #selection metric 用哪个指标挑选最佳 checkpoint
-    if metric_scoring not in ['eer', 'auc', 'acc', 'ap']:
-        raise NotImplementedError(f"metric {metric_scoring} is not implemented")
+    if metric_scoring not in ['eer', 'auc', 'acc', 'ap']:raise NotImplementedError(f"metric {metric_scoring} is not implemented")
     return metric_scoring
 
 
 def main():
-    with open(args.detector_path, 'r') as f:   # 打开分类器的配置文件  parse options and load config
+    with open(args.detector_path, 'r') as f:   # 打开分类器的配置文件  配置文件参数优先级：命令行指定值 > train_config.yaml > detector YAML
         config = yaml.safe_load(f)
     with open('/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/config/train_config.yaml', 'r') as f:  # 打开训练配置文件，也就是训练集
         config2 = yaml.safe_load(f)
-    if 'label_dict' in config:
-        config2['label_dict']=config['label_dict']
-
-     # 参数优先级命：令行指定值 > train_config.yaml > detector YAML  
+    if 'label_dict' in config:config2['label_dict']=config['label_dict']
     config.update(config2)# 存在，则 config 中该键的值会被 config2 中对应的值替换。不存在，则会将该键值对添加到 config 中。
     config['local_rank']=args.local_rank  # 配置训练设备
-    
-    if config['dry_run']:       # 如果是 dry_run 模式，设置为仅用于测试流程（不进行实际训练） # 通常表示一种“试运行”或“测试运行”模式
-        config['nEpochs'] = 0      # 设置训练轮数为 0
-        config['save_feat']=False  # 不保存特征数据
-
-    if args.train_dataset: # 如果从命令行提供了数据集路径参数，则覆盖配置文件中的路径设置 #  If arguments are provided, they will overwrite the yaml settings
-        config['train_dataset'] = args.train_dataset
-    if args.test_dataset:
-        config['test_dataset'] = args.test_dataset
-  
+    config['nEpochs'], config['save_feat'] = (0, False) if config['dry_run'] else (config['nEpochs'], config['save_feat'])  # 如果是 dry_run 模式（试运行/测试流程，不进行实际训练）//设置训练轮数为 0//不保存特征数据
+    config['train_dataset'] = args.train_dataset if args.train_dataset else config['train_dataset']# 如果从命令行提供了数据集路径参数，则覆盖配置文件中的路径设置 
+    config['test_dataset'] = args.test_dataset if args.test_dataset else config['test_dataset']
     config['save_ckpt'] = args.save_ckpt   # 配置模型保存路径
     config['save_feat'] = args.save_feat    # 配置是否保存训练特征
     config['ddp'] = args.ddp    # 设置分布式训练参数
-
-    if config['lmdb']: # 如果启用了 LMDB 数据集格式，设置数据集 JSON 文件路径
-        config['dataset_json_folder'] = '/datasets2/Deepfake/DeepfakeBench/config/dataset_json/'  # 配置训练json路径被硬编码为： /datasets2/Deepfake/DeepfakeBench/config/dataset_json
+    config['dataset_json_folder'] = '/datasets2/Deepfake/DeepfakeBench/config/dataset_json/' if config['lmdb'] else config['dataset_json_folder']  # 如果启用了 LMDB 数据集格式，设置数据集 JSON 文件路径
   
     # 创建日志文件夹并初始化日志记录器  # create logger
     timenow = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
     task_str = f"_{config['task_target']}" if config.get('task_target', None) is not None else ""  # dict.get()：安全读取 dict['key']：强制读取
-    logger_path =  os.path.join(
-                config['log_dir'],   # 日志存储目录
-                config['model_name'] + task_str + '_' + timenow   # 日志文件夹名
-            )
+    logger_path = os.path.join(config['log_dir'], config['model_name'] + task_str + '_' + timenow)  # 日志存储目录/日志文件夹名
     os.makedirs(logger_path, exist_ok=True)    # 创建文件夹（若不存在则创建）
-    logger = create_logger(os.path.join(logger_path, 'training.log'))   # 创建日志记录器
+    logger = create_logger(os.path.join(logger_path, 'training.log'))   # 创建日志记录器 之后交给Trainer使用
     logger.info(f"Save log to {logger_path}")    # 记录日志文件存储路径
     logger.info("--------------- Configuration ---------------")  # 打印完整的配置信息 # print configuration
     params_string = "Parameters: \n"
@@ -299,51 +243,33 @@ def main():
     logger.info(params_string)
 
     init_seed(config)# 初始化随机种子，确保实验可重复性  # init seed set_seed(1024)# 如果启用 cudnn 加速，设置 benchmark 模式以提升性能
-    
-    if config['cudnn']:# set cudnn benchmark if needed
-        cudnn.benchmark = True
-    
+    if config['cudnn']:cudnn.benchmark = True   # set cudnn benchmark if needed
     if config['ddp']:# 如果启用分布式数据并行（DDP），初始化通信进程组
         # dist.init_process_group(backend='gloo')
-        dist.init_process_group(
-            backend='nccl',     # 使用 NCCL 后端进行通信（适用于 GPU）
-            timeout=timedelta(minutes=30)    # 设置通信超时时间为 30 分钟
-        )
+        dist.init_process_group(backend='nccl', timeout=timedelta(minutes=30))  # 使用 NCCL 后端进行通信（适用于 GPU），设置通信超时时间为 30 分钟
         logger.addFilter(RankFilter(0))    # 仅记录主进程日志
 
     train_data_loader = prepare_training_data(config)    # prepare the training data loader
     test_data_loaders = prepare_testing_data(config)  # prepare the testing data loader
-   
     model_class = DETECTOR[config['model_name']] # prepare the model (detector)
     model = model_class(config)   # 实例化模型  这就是大型框架常见的“插件化”设计：
-
     optimizer = choose_optimizer(model, config)    # prepare the optimizer
     scheduler = choose_scheduler(config, optimizer)  # prepare the scheduler
-  
     metric_scoring = choose_metric(config)  # prepare the metric
 
     # 开始训练  # start training
     trainer = Trainer(config, model, optimizer, scheduler, logger, metric_scoring, time_now=timenow)# 初始化训练器 # prepare the trainer
     for epoch in range(config['start_epoch'], config['nEpochs'] + 1):
         trainer.model.epoch = epoch   # 更新模型当前训练的 epoch
-        best_metric = trainer.train_epoch( # 这句虽然只有几行，但它大概率触发了绝大多数实际工作 每个epoch训练并测试模型，返回最佳评估指标
-                    epoch=epoch,
-                    train_data_loader=train_data_loader,
-                    test_data_loaders=test_data_loaders,
-                )
-        if best_metric is not None: # 如果存在最佳评估指标，记录日志
-            logger.info(f"===> Epoch[{epoch}] end with testing {metric_scoring}: {parse_metric_for_print(best_metric)}!")
+        best_metric = trainer.train_epoch(epoch=epoch, train_data_loader=train_data_loader, test_data_loaders=test_data_loaders)  # 这句虽然只有几行，但它大概率触发了绝大多数实际工作 每个epoch训练并测试模型，返回最佳评估指标
+        logger.info(f"===> Epoch[{epoch}] end with testing {metric_scoring}: {parse_metric_for_print(best_metric)}!") if best_metric is not None else None  # 如果存在最佳评估指标，记录日志
+        if scheduler is not None:
+            scheduler.step()  # 每个 epoch 结束后更新学习率，供下一个 epoch 使用
     logger.info(f"Stop Training on best Testing metric {parse_metric_for_print(best_metric)}")
 
-    if 'svdd' in config['model_name']:  # 如果模型为 'svdd' 类型，更新 R 参数    # update
-        model.update_R(epoch)
-
-    if scheduler is not None:# 更新学习率调度器（如果有）
-        scheduler.step()
-
-    for writer in trainer.writers.values():# 关闭 TensorBoard 写入器（释放资源）# close the tensorboard writers
-        writer.close()
-
+    if 'svdd' in config['model_name']:model.update_R(epoch)  # 如果模型为 'svdd' 类型，更新 R 参数    
+    for writer in trainer.writers.values():writer.close()   # 关闭 TensorBoard 写入器（释放资源）# close the tensorboard writers
+        
 
 if __name__ == '__main__':
     main()

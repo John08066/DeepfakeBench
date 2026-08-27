@@ -1,3 +1,4 @@
+# region info
 '''
 # author: Zhiyuan Yan
 # email: zhiyuanyan@link.cuhk.edu.cn
@@ -27,6 +28,7 @@ Reference:
 Notes:
 We chose to use ResNet-34 as the backbone instead of ResNet-50 because the number of parameters in ResNet-34 is relatively similar to that of Xception. This similarity allows us to make a more meaningful and fair comparison between different architectures.
 '''
+#endregion info
 
 import os
 import datetime
@@ -50,8 +52,8 @@ from detectors import DETECTOR
 from networks import BACKBONE
 from loss import LOSSFUNC
 
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 @DETECTOR.register_module(module_name='resnet34')
 class ResnetDetector(AbstractDetector):
     def __init__(self, config):

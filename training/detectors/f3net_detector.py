@@ -66,7 +66,7 @@ class F3netDetector(AbstractDetector):
         # modules only use in FAD
         img_size = config['resolution']
         self.FAD_head = FAD_Head(img_size)
-
+    '''
     # def build_backbone(self, config):
     #     # prepare the backbone
     #     backbone_class = BACKBONE[config['backbone_name']]
@@ -90,6 +90,7 @@ class F3netDetector(AbstractDetector):
     #        backbone.conv1.weight.data[:, i*3:(i+1)*3, :, :] = conv1_data / 4.0
     #     logger.info('Copy conv1 from pretrained model')
     #     return backbone
+    '''
 
     def build_backbone(self, config):  # 改造后支持4通道输入的EfficientNetB4
         # 准备基础模型

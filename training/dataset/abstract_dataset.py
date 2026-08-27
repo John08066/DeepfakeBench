@@ -7,7 +7,7 @@ import sys
 
 import lmdb
 
-sys.path.append('.')
+
 
 import os
 import math
@@ -32,7 +32,7 @@ import albumentations as A
 from .albu import IsotropicResize
 
 # from utils.distortions import get_distortion_parameter, get_distortion_function
-
+sys.path.append('.')
 FFpp_pool = ['FaceForensics++', 'FaceShifter', 'DeepFakeDetection', 'FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT']  #
 
 
@@ -118,7 +118,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
 
         self.transform = self.init_data_aug_method()
 
-        # ==== 手动开关：测试期鲁棒性失真（默认 None 关闭）====
+        # region  ==== 手动开关：测试期鲁棒性失真（默认 None 关闭）====
         # 读取扰动配置（类型和等级），若未配置则为 None / True
         # self.test_distortion = None
         # if self.test_distortion is not None:
@@ -127,7 +127,8 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
         # else:
         #     self.distortion_type = None
         #     self.distortion_level = None
-
+        # endregion  ==== 手动开关：测试期鲁棒性失真（默认 None 关闭）====
+        
     def init_data_aug_method(self):
         trans = A.Compose([
             A.HorizontalFlip(p=self.config['data_aug']['flip_prob']),
