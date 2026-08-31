@@ -1,0 +1,51 @@
+﻿# IDE
+.idea/
+.vscode/
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+
+# 数据与实验输出
+datasets/
+data/
+logs/
+runs/
+outputs/
+checkpoints/
+checkpoint/
+wandb/
+tensorboard/
+tf-logs/
+
+# 模型权重
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.safetensors
+
+# 外部预训练模型
+training/pretrained/*.dat
+
+# 临时文件
+tmp/
+temp/
+*.log
+*.tmp
+
+# 系统文件
+.DS_Store
+Thumbs.db
+# dlib
+preprocessing/dlib_tools/*.dat
+training/pretrained/*.dat
+
+# 论文
+相关论文/
+
+# 临时目录
+作废/
+
+# zip
+*.zip
