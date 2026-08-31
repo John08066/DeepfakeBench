@@ -46,10 +46,27 @@ from skimage.transform import AffineTransform, warp
 from dataset.abstract_dataset import DeepfakeAbstractBaseDataset
 
 
-# Define face detector and predictor models
+# Define the face detector eagerly, but defer loading the optional FWA landmark
+# predictor until FWA is actually used. Importing the dataset registry should
+# not require weights for an unrelated detector.
 face_detector = dlib.get_frontal_face_detector()
-predictor_path = '/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/pretrained/shape_predictor_81_face_landmarks.dat'
-face_predictor = dlib.shape_predictor(predictor_path)
+predictor_path = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    'pretrained',
+    'shape_predictor_81_face_landmarks.dat',
+)
+face_predictor = None
+
+
+def get_face_predictor():
+    global face_predictor
+    if face_predictor is None:
+        if not os.path.isfile(predictor_path):
+            raise FileNotFoundError(
+                f'FWA landmark predictor not found: {predictor_path}'
+            )
+        face_predictor = dlib.shape_predictor(predictor_path)
+    return face_predictor
 
 
 mean_face_x = np.array([
@@ -369,7 +386,7 @@ class FWABlendDataset(DeepfakeAbstractBaseDataset):
         im = np.array(self.load_rgb(img_path))
 
         # Get the alignment of the head
-        face_cache = align(im, face_detector, face_predictor)
+        face_cache = align(im, face_detector, get_face_predictor())
 
         # Get the aligned face and landmarks
         aligned_im_head, aligned_shape = get_aligned_face_and_landmarks(im, face_cache)

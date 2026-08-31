@@ -1,4 +1,6 @@
 #!/bin/bash
+#这个 install.sh 更像“作者当时环境依赖的安装清单”，不能严格称为完整、可靠的环境复现方案。
+#它更接近：“在一个已经具有正确 Python + CUDA + PyTorch 基础环境的机器上，再把 DeepfakeBench 所需 Python 包补齐。”
 
 pip install numpy==1.21.5 -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install pandas==1.4.2 -i https://pypi.tuna.tsinghua.edu.cn/simple
