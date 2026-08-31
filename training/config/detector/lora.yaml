@@ -9,7 +9,7 @@ backbone_name: vit  # backbone name
 # VAE 模型的本地路径
 pretrained_root: null  # PRD_PRETRAINED_ROOT overrides the project-adjacent default.
 clip_path: clip-vit-large-patch14
-vae_path: sd-vae-ft-mse
+vae_path: vae_original
 
 #backbone setting
 backbone_config:
@@ -24,7 +24,7 @@ train_dataset: [FaceForensics++]
 test_dataset: [Celeb-DF-v2, DFDCP, DFDC]
 
 compression: c23  # compression-level for videos
-train_batchSize: 16   # training batch size
+train_batchSize: 8   # training batch size
 test_batchSize: 16   # test batch size
 workers: 8   # number of data loading workers
 frame_num: {'train': 8, 'test': 32}   # number of frames to use per video in training and testing

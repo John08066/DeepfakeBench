@@ -2,11 +2,11 @@ import os
 from pathlib import Path
 
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent
-TRAINING_ROOT = PROJECT_ROOT / "training"
+PROJECT_ROOT = Path(__file__).resolve().parent.parent  # DeepfakeBench 项目根目录
+TRAINING_ROOT = PROJECT_ROOT / "training"  # 训练代码与配置目录
 
-DEFAULT_DATA_ROOT = Path("/home/zhaoting.ding/disk/Datasets")
-DEFAULT_PRETRAINED_ROOT = PROJECT_ROOT.parent / "pretrained"
+DEFAULT_DATA_ROOT = Path("/home/zhaoting.ding/disk/Datasets")  # 实验室共享数据集根目录
+DEFAULT_PRETRAINED_ROOT = PROJECT_ROOT.parent / "pretrained"  # PRD 预训练权重根目录
 
 
 def _root_from_config(config, config_key, env_key, default):
