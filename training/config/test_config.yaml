@@ -1,17 +1,9 @@
 mode: test
 lmdb: False
-#rgb_dir: '/disk/jh/datasets/deepfake'
-#lmdb_dir:  '/home/csy/disk1/dataset/DeepfakeBench/lmdb'
-#dataset_json_folder: '/disk/jh/datasets/deepfake/dataset_json'
-
-#rgb_dir: '/home/csy/disk1/dataset/DeepfakeBench/rgb'
-#lmdb_dir:  '/home/csy/disk1/dataset/DeepfakeBench/lmdb'
-#dataset_json_folder: '/home/csy/disk1/dataset/DeepfakeBench/config/dataset_json'
-
-# dataset2
-rgb_dir: '/datasets/Deepfake/DeepfakeBench/rgb'
-lmdb_dir:  '/datasets/Deepfake/DeepfakeBench/lmdb'
-dataset_json_folder: '/datasets/Deepfake/DeepfakeBench/config/dataset_json'
+data_root: null  # DEEPFAKE_DATA_ROOT overrides the server default.
+rgb_dir: DeepfakeBench_rgb/rgb
+lmdb_dir: DeepfakeBench/lmdb
+dataset_json_folder: DeepfakeBench/config/dataset_json
 
 save_tsne: true
 

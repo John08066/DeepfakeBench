@@ -42,11 +42,12 @@ from detectors import DETECTOR         # 检测器模块
 from dataset import *                 # 数据集相关模块
 from metrics.utils import parse_metric_for_print     # 工具函数，用于格式化评价指标输出
 from logger import create_logger, RankFilter      # 日志记录模块wat
+from path_config import TRAINING_ROOT, resolve_data_paths
 
 # 命令行参数解析器，用于接收训练相关配置
 parser = argparse.ArgumentParser(description='Process some paths.') #创建一个 ArgumentParser 类型的对象
 parser.add_argument('--detector_path', type=str,#它是在告诉 ArgumentParser：我的程序支持一个叫 --detector_path 的命令行选项。
-                    default='/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/config/detector/lora.yaml', 
+                    default=str(TRAINING_ROOT / 'config/detector/lora.yaml'),
                     # 这里应该全部使用相对路径，方便后来人复现  ！！！！！
                     # 想要换backbone，先配置config下的detector的配置文件，然后在这里指定路径
                     help='path to detector YAML file')
@@ -195,7 +196,7 @@ def choose_metric(config):# 选择评价指标
 def main():
     with open(args.detector_path, 'r') as f:   # 打开分类器的配置文件  配置文件参数优先级：命令行指定值 > train_config.yaml > detector YAML
         config = yaml.safe_load(f)
-    with open('/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/config/train_config.yaml', 'r') as f:  # 打开训练配置文件，也就是训练集
+    with open(TRAINING_ROOT / 'config/train_config.yaml', 'r') as f:  # 打开训练配置文件，也就是训练集
         config2 = yaml.safe_load(f)
     if 'label_dict' in config:config2['label_dict']=config['label_dict']
     config.update(config2)# 存在，则 config 中该键的值会被 config2 中对应的值替换。不存在，则会将该键值对添加到 config 中。
@@ -206,7 +207,7 @@ def main():
     config['save_ckpt'] = args.save_ckpt   # 配置模型保存路径
     config['save_feat'] = args.save_feat    # 配置是否保存训练特征
     config['ddp'] = args.ddp    # 设置分布式训练参数
-    config['dataset_json_folder'] = '/datasets2/Deepfake/DeepfakeBench/config/dataset_json/' if config['lmdb'] else config['dataset_json_folder']  # 如果启用了 LMDB 数据集格式，设置数据集 JSON 文件路径
+    resolve_data_paths(config)
   
     # 创建日志文件夹并初始化日志记录器  # create logger
     timenow = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')

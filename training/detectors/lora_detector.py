@@ -26,6 +26,7 @@ from peft import LoraConfig, get_peft_model
 
 from transformers import AutoProcessor, CLIPModel, ViTModel, ViTConfig
 from diffusers import AutoencoderKL
+from path_config import resolve_pretrained_path
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +56,8 @@ class LoraDetector(nn.Module):
         clip_mean_tensor = torch.tensor(clip_mean_list)
         clip_std_tensor = torch.tensor(clip_std_list)
 
-        self.vae_augmenter = VAEDataAugmentation(config['vae_path'], clip_mean_tensor, clip_std_tensor)
+        vae_path = resolve_pretrained_path(config, 'vae_path', 'sd-vae-ft-mse')
+        self.vae_augmenter = VAEDataAugmentation(vae_path, clip_mean_tensor, clip_std_tensor)
 
         #-------------------------------------
 
@@ -71,8 +73,9 @@ class LoraDetector(nn.Module):
 
     def build_backbone(self, config):
         # 1. 加载预训练的 CLIP 模型
-        # 请根据你的实际路径修改
-        clip_path = "/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/pretrained/clip14/"
+        clip_path = resolve_pretrained_path(
+            config, 'clip_path', 'clip-vit-large-patch14'
+        )
         try:
             # 优先加载本地
             clip_model = CLIPModel.from_pretrained(clip_path)

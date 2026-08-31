@@ -37,14 +37,15 @@ from collections import defaultdict
 # ["VQGAN_ff","StyleGAN2_ff","StyleGAN3_ff","StyleGANXL_ff","sd2.1_ff","ddim_ff","rddm_ff","pixart_ff","DiT_ff","SiT_ff","whichisreal"]
 import argparse
 from logger import create_logger
+from path_config import TRAINING_ROOT, resolve_data_paths
 
 parser = argparse.ArgumentParser(description='Process some paths.')
 parser.add_argument('--detector_path', type=str, 
-                    default='/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/config/detector/lora.yaml',       # 检测器路径
+                    default=str(TRAINING_ROOT / 'config/detector/lora.yaml'),       # 检测器路径
                     help='path to detector YAML file')
 parser.add_argument("--test_dataset", nargs="+",default=["FaceForensics++"])
 parser.add_argument('--weights_path', type=str,
-                    default='/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/logs/training/lora_2025-11-30-00-23-18/test/avg/ckpt_best.pth')    # 权重路径
+                    default=None)    # 权重路径
 # /root/csy-7pw03c/disk/project/DeepfakeBench-main/training/logs/training/lora_2025-11-28-14-19-40/test/avg/ckpt_best.pth  lora
 # /root/csy-7pw03c/disk/project/DeepfakeBench-main/training/logs/training/lora_2025-11-30-00-23-18/test/avg/ckpt_best.pth   lora+vae  - lora.yaml
 # /home/csy/disk1/project_1/deepfakeBench/DeepfakeBench-main/training/logs/training/our_noise_0.2/test/avg/ckpt_best.pth
@@ -182,9 +183,10 @@ def main():
     # parse options and load config
     with open(args.detector_path, 'r') as f:
         config = yaml.safe_load(f)
-    with open('/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/config/test_config.yaml', 'r') as f:
+    with open(TRAINING_ROOT / 'config/test_config.yaml', 'r') as f:
         config2 = yaml.safe_load(f)
     config.update(config2)
+    resolve_data_paths(config)
     if 'label_dict' in config:
         config2['label_dict']=config['label_dict']
     weights_path = None
@@ -225,7 +227,7 @@ def main():
     print('===> Test Done!')
 
     # save tsne
-    fixed_save_path = "/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/tsne/our_diff.pkl"
+    fixed_save_path = str(TRAINING_ROOT / "tsne/our_diff.pkl")
 
     if config['save_tsne']:
         # (可选，但强烈推荐): 确保目录存在，如果不存在就创建它

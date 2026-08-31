@@ -7,7 +7,9 @@ model_name: lora   # model name
 backbone_name: vit  # backbone name
 
 # VAE 模型的本地路径
-vae_path: "/root/csy-7pw03c/disk/project/DeepfakeBench-main/training/pretrained/vae"
+pretrained_root: null  # PRD_PRETRAINED_ROOT overrides the project-adjacent default.
+clip_path: clip-vit-large-patch14
+vae_path: sd-vae-ft-mse
 
 #backbone setting
 backbone_config:
