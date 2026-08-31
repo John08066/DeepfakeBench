@@ -53,6 +53,7 @@ parser.add_argument('--detector_path', type=str,#它是在告诉 ArgumentParser�
                     help='path to detector YAML file')
 parser.add_argument("--train_dataset", nargs="+")    # nargs="+"支持多训练数据集 例python train.py --train_dataset FF++ CelebDF DFDC
 parser.add_argument("--test_dataset", nargs="+")    # 支持多测试数据集
+parser.add_argument('--train_batchSize', type=int, default=None, help='override training batch size')
 parser.add_argument('--no-save_ckpt', dest='save_ckpt', action='store_false', default=True) # 是否保存模型检查点 默认保存
 parser.add_argument('--no-save_feat', dest='save_feat', action='store_false', default=True) # 是否保存特征 输入--no-save_feat 不保存
 parser.add_argument("--ddp", action='store_true', default=False)     # 是否启用分布式数据并行
@@ -204,6 +205,8 @@ def main():
     config['nEpochs'], config['save_feat'] = (0, False) if config['dry_run'] else (config['nEpochs'], config['save_feat'])  # 如果是 dry_run 模式（试运行/测试流程，不进行实际训练）//设置训练轮数为 0//不保存特征数据
     config['train_dataset'] = args.train_dataset if args.train_dataset else config['train_dataset']# 如果从命令行提供了数据集路径参数，则覆盖配置文件中的路径设置 
     config['test_dataset'] = args.test_dataset if args.test_dataset else config['test_dataset']
+    config['train_batchSize'] = args.train_batchSize if args.train_batchSize is not None else config['train_batchSize']
+    config['task_target'] = args.task_target if args.task_target else config.get('task_target')
     config['save_ckpt'] = args.save_ckpt   # 配置模型保存路径
     config['save_feat'] = args.save_feat    # 配置是否保存训练特征
     config['ddp'] = args.ddp    # 设置分布式训练参数
