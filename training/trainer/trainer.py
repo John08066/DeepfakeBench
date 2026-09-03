@@ -8,7 +8,7 @@
 # endregion authorinfo
 
 import os
-import sys
+import sys  # 用于判断标准错误流是否连接交互终端，避免进度条污染重定向日志
 import pickle
 import datetime
 import logging
@@ -149,7 +149,7 @@ class Trainer(object):
         file_path = os.path.join(save_dir, f'dataset_metadata_{phase}.pickle') #.pickle 是 Python 用来保存序列化后的 Python 对象的一种二进制文件。
         with open(file_path, 'wb') as file:
             pickle.dump(dataset_metadata, file)  # {'image': [...], 'label': [...], 'video': [...]}
-        self.logger.info(f"\nDataset metadata saved to {file_path}")
+        self.logger.info(f"Dataset metadata saved to {file_path}")  # 保持单行日志格式，避免额外空行
 
     def save_metrics(self, phase, metric_one_dataset, dataset_key):
         save_dir = os.path.join(self.log_dir, phase, dataset_key)
@@ -186,7 +186,7 @@ class Trainer(object):
         test_data_loaders=None,  # 测试数据加载器（默认为None）
         ):  # 训练一个 epoch，并在指定的步骤上进行测试和记录。
 
-        self.logger.info(f"\n===> Epoch[{epoch}] start!")    # 日志记录当前epoch开始的信息
+        self.logger.info(f"===> Epoch[{epoch}] start!")  # 单行记录当前 epoch 开始，保持与旧日志格式一致
         times_per_epoch = 2 if epoch >= 1 else 1  # 设置每个epoch的测试次数，如果是第一轮测试只进行一次，否则进行两次
         test_step = len(train_data_loader) // times_per_epoch    # 计算在每个epoch中的测试间隔步数 //是取整除法
         step_cnt = epoch * len(train_data_loader)    # 计算当前epoch开始时的全局训练步数
@@ -195,7 +195,7 @@ class Trainer(object):
         train_recorder_loss = defaultdict(Recorder)    # 记录训练损失 模型forward→losses→Recorder.update()→保存整个epoch历史→average()→TensorBoard / log  
         train_recorder_metric = defaultdict(Recorder)   # 记录训练指标
 
-        for iteration, batch_data in tqdm(enumerate(train_data_loader),total=len(train_data_loader)): #遍历训练数据 iteration为局部计数，step_cnt 为全局计数 batch_data 是当前一个 batch 的数据
+        for iteration, batch_data in tqdm(enumerate(train_data_loader), total=len(train_data_loader), disable=not sys.stderr.isatty()):  # 仅交互终端显示进度条，重定向日志时禁用
             self.setTrain()   # 设置模型为训练模式
             for key in batch_data.keys():    # 将当前 batch 中的张量转移到 GPU
                 batch_data[key] = batch_data[key].cuda() if torch.is_tensor(batch_data[key]) else batch_data[key]    # 仅对张量调用 .cuda()，自动跳过字符串（如 name）、None 等其他类型
@@ -221,9 +221,9 @@ class Trainer(object):
                     for k, v in rec_items.items():
                         v_avg = v.average()  # 计算平均值
                         if v_avg == None:
-                            log_str += f"{rec_name}, {k}: not calculated"
+                            log_str += f"    {rec_name}, {k}: not calculated    "  # 未计算项也保持旧版单行分隔格式
                             continue
-                        log_str += f"\n{rec_name}--{k}: {v_avg}" # 类似 training-loss--overall: 0.45 training-loss--cls: 0.30 training-loss--aux: 0.15
+                        log_str += f"    {rec_name}, {k}: {v_avg}    "  # 将同一步的损失或指标写在同一日志行
                         writer = self.get_writer('train', ','.join(self.config['train_dataset']), k) # 创建'test/Celeb-DF-v2/auc' 的 TensorBoard
                         writer.add_scalar(f'{tag}/{k}', v_avg, global_step=step_cnt) # tag → 这条曲线叫什么  v_avg → Y轴：记录的指标值  step_cnt → X轴：当前训练到了第几步
                     self.logger.info(log_str) # 每次 logger.info() 会生成一条独立的日志记录，日志 Handler/Formatter 通常会在输出末尾加换行。
@@ -233,7 +233,7 @@ class Trainer(object):
             
             if (step_cnt+1) % test_step == 0:# 按照测试间隔进行测试   #从0计数 step_cnt+1 
                 if test_data_loaders is not None and (not self.config['ddp'] or dist.get_rank() == 0):  # 有测试集 且（非 DDP 或 rank 0）时才执行测试
-                    self.logger.info("\n===> Test start!\n")
+                    self.logger.info("===> Test start!")  # 单行记录测试开始，避免额外空行
                     test_best_metric = self.test_epoch(epoch, iteration, test_data_loaders, step_cnt)
                 else:  # 无测试集，或 DDP 下非 rank 0，跳过测试
                     test_best_metric = None
@@ -252,7 +252,7 @@ class Trainer(object):
     def test_one_dataset(self, data_loader): # 这个函数只负责一个测试集，把 DataLoader 人为切开的 batch 边界重新消除
         test_recorder_loss = defaultdict(Recorder)  # define test recorderc
         prediction_lists, feature_lists, label_lists = [], [], []  # 分别保存预测概率、特征、标签的列表
-        for iteration, batch_data in tqdm(enumerate(data_loader),total=len(data_loader)):  # 遍历测试集中的 batch；测试阶段不执行 optimizer.step()
+        for iteration, batch_data in tqdm(enumerate(data_loader), total=len(data_loader), disable=not sys.stderr.isatty()):  # 测试进度条仅在交互终端显示
             if 'label_spe' in batch_data: 
                 batch_data.pop('label_spe')  # get data 删除特定类别标签 字典删除键值对的语法
             batch_data['label'] = torch.where(batch_data['label']!=0, 1, 0)  # 把所有非零标签统一变成 fake 这说明当前 Trainer 的评测指标主要面向二分类检测。
@@ -291,9 +291,9 @@ class Trainer(object):
                 self.save_feat('test', features_one_dataset, key)  # 只保存当前测试集最佳指标对应的特征，avg不对应单一特征矩阵
             self.save_metrics('test', metric_one_dataset, key)
 
-        metric_str = f"dataset:{key} step:{step}"  # avg没有loss记录器，但仍需要初始化指标日志
+        metric_str = f"dataset: {key}    step: {step}    "  # 按旧版日志格式初始化测试指标行
         if losses_one_dataset_recorder is not None: #记录所有测试指标
-            loss_str = f"dataset:{key} step:{step}"
+            loss_str = f"dataset: {key}    step: {step}    "  # 按旧版日志格式初始化测试损失行
             for k, v in losses_one_dataset_recorder.items(): # K = overall,cls_loss,contrastive_loss etc.
                 writer = self.get_writer('test', key, k) #  阶段 + 数据集 + 指标 对应的 TensorBoard 写入器 
                 v_avg = v.average()
@@ -312,7 +312,7 @@ class Trainer(object):
 
         if 'pred' in metric_one_dataset: # 单个测试集：含 pred/label，可以计算分类别准确率。avg 虚拟测试集：只有五项平均指标，没有逐样本 pred/label，因此跳过。
             acc_real, acc_fake = self.get_respect_acc(metric_one_dataset['pred'], metric_one_dataset['label'])
-            metric_str += f'testing-metric, acc_real:{acc_real}; acc_fake:{acc_fake}'
+            metric_str += f'    testing-metric, acc_real: {acc_real}; acc_fake: {acc_fake}'  # 以单行字段追加分类准确率
             writer = self.get_writer('test', key, 'class_acc')  # 为两类准确率单独创建Writer，避免复用前面metric循环遗留的writer
             writer.add_scalar(f'test_metrics/acc_real', acc_real, global_step=step)
             writer.add_scalar(f'test_metrics/acc_fake', acc_fake, global_step=step)
