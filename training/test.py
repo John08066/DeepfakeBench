@@ -2,6 +2,8 @@
 eval pretained model.
 """
 import os
+import sys  # 用于识别非交互输出，避免 tqdm 进度条污染持久日志
+import json  # 用于保存可复核的逐数据集测试指标
 import numpy as np
 from os.path import join
 import cv2
@@ -46,6 +48,8 @@ parser.add_argument('--detector_path', type=str,
 parser.add_argument("--test_dataset", nargs="+",default=["FaceForensics++"])
 parser.add_argument('--weights_path', type=str,
                     default=None)    # 权重路径
+parser.add_argument('--output_dir', type=str, default=None, help='directory for evaluation reports')  # 指定持久化测试报告目录
+parser.add_argument('--no-save_tsne', dest='save_tsne', action='store_false', default=None, help='disable t-SNE feature export')  # 评测时可关闭非必要特征导出
 # /root/csy-7pw03c/disk/project/DeepfakeBench-main/training/logs/training/lora_2025-11-28-14-19-40/test/avg/ckpt_best.pth  lora
 # /root/csy-7pw03c/disk/project/DeepfakeBench-main/training/logs/training/lora_2025-11-30-00-23-18/test/avg/ckpt_best.pth   lora+vae  - lora.yaml
 # /home/csy/disk1/project_1/deepfakeBench/DeepfakeBench-main/training/logs/training/our_noise_0.2/test/avg/ckpt_best.pth
@@ -109,7 +113,7 @@ def test_one_dataset(model, data_loader):
     label_lists = []
     spe_label_list = []
 
-    for i, data_dict in tqdm(enumerate(data_loader), total=len(data_loader)):
+    for i, data_dict in tqdm(enumerate(data_loader), total=len(data_loader), disable=not sys.stderr.isatty()):  # 重定向日志时禁用滚动进度条
         # get data
         data, label, mask, landmark = \
         data_dict['image'], data_dict['label'], data_dict['mask'], data_dict['landmark']
@@ -158,10 +162,7 @@ def test_epoch(model, test_data_loaders):
                                               img_names=data_dict['image'])
         metrics_all_datasets[key] = metric_one_dataset
         
-        # info for each dataset
-        tqdm.write(f"dataset: {key}")
-        for k, v in metric_one_dataset.items():
-            tqdm.write(f"{k}: {v}")
+        print(f"dataset: {key}")  # 每个数据集仅输出一个稳定标识，详细指标写入持久报告
 
 
         if model.config['save_tsne']:
@@ -177,6 +178,32 @@ def test_epoch(model, test_data_loaders):
 def inference(model, data_dict):
     predictions = model(data_dict, inference=True)
     return predictions
+
+
+def save_metrics_report(metrics_all_datasets, output_dir, config, weights_path):
+    scalar_metrics = {name: {key: float(value) for key, value in metrics.items() if key not in {'pred', 'label'}} for name, metrics in metrics_all_datasets.items()}  # 去除逐样本数组以生成紧凑 JSON
+    frame_datasets = ['Celeb-DF-v1', 'Celeb-DF-v2', 'DeepFakeDetection', 'DFDC', 'DFDCP']  # 论文五集 frame AUC 的固定顺序
+    video_datasets = ['Celeb-DF-v2', 'DeepFakeDetection', 'DFDC', 'DFDCP']  # 论文四集 video AUC 的固定顺序
+    frame_average = float(np.mean([scalar_metrics[name]['auc'] for name in frame_datasets]))  # 计算五集 frame AUC 平均值
+    video_average = float(np.mean([scalar_metrics[name]['video_auc'] for name in video_datasets]))  # 计算四集 video AUC 平均值
+    results = {'checkpoint': weights_path, 'data_root': config['data_root'], 'datasets': scalar_metrics, 'paper_summary': {'frame_auc_5set': frame_average, 'video_auc_4set': video_average}}  # 汇总可复核的评测元数据与指标
+    os.makedirs(output_dir, exist_ok=True)  # 创建独立结果目录，避免覆盖训练日志
+    with open(os.path.join(output_dir, 'metrics.json'), 'w', encoding='utf-8') as file:  # 以机器可读格式保存逐集指标
+        json.dump(results, file, indent=2, ensure_ascii=False)  # 保留完整浮点精度与中文可读性
+    with open(os.path.join(output_dir, 'evaluation.log'), 'w', encoding='utf-8') as file:  # 以论文阅读友好的文本格式保存指标
+        file.write(f"Checkpoint: {weights_path}\nData root: {config['data_root']}\n\n")  # 记录权重和本地数据来源
+        file.write("Frame AUC (5 sets)\n")  # 写入论文主表的 frame 指标段落
+        for name in frame_datasets:  # 按论文顺序写入五个数据集 AUC
+            file.write(f"{name}: {scalar_metrics[name]['auc']:.6f}\n")  # 写入单数据集 frame AUC
+        file.write(f"Frame Avg (5 sets): {frame_average:.6f}\n\n")  # 写入五集 frame AUC 平均值
+        file.write("Video AUC (4 sets)\n")  # 写入论文主表的 video 指标段落
+        for name in video_datasets:  # 按论文顺序写入四个数据集 video AUC
+            file.write(f"{name}: {scalar_metrics[name]['video_auc']:.6f}\n")  # 写入单数据集 video AUC
+        file.write(f"Video Avg (4 sets): {video_average:.6f}\n\n")  # 写入四集 video AUC 平均值
+        file.write("All scalar metrics\n")  # 附加保存所有可用评测标量，供论文复核
+        for name, metrics in scalar_metrics.items():  # 逐数据集输出 acc、auc、eer、ap 和 video_auc
+            file.write(f"{name}: {metrics}\n")  # 保留完整单数据集标量字典
+    return results
 
 
 def main():
@@ -196,6 +223,8 @@ def main():
     if args.weights_path:
         config['weights_path'] = args.weights_path
         weights_path = args.weights_path
+    if args.save_tsne is not None:
+        config['save_tsne'] = args.save_tsne  # 命令行显式覆盖配置中的特征导出开关
     
     # init seed
     init_seed(config)
@@ -226,6 +255,10 @@ def main():
     best_metric, tsne_dict = test_epoch(model, test_data_loaders)
     print('===> Test Done!')
 
+    output_dir = args.output_dir or os.path.join('logs', 'testing', f"{config['model_name']}_{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}")  # 默认使用时间戳目录保存独立报告
+    save_metrics_report(best_metric, output_dir, config, weights_path)  # 保存论文五集汇总和全部逐集指标
+    print(f'===> Results saved to {output_dir}')  # 输出结果目录供 tmux/console 日志直接定位
+
     # save tsne
     fixed_save_path = str(TRAINING_ROOT / "tsne/our_diff.pkl")
 
@@ -240,4 +273,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
