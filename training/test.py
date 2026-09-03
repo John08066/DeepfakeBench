@@ -2,7 +2,6 @@
 eval pretained model.
 """
 import os
-import sys  # 用于识别非交互输出，避免 tqdm 进度条污染持久日志
 import json  # 用于保存可复核的逐数据集测试指标
 import numpy as np
 from os.path import join
@@ -112,8 +111,9 @@ def test_one_dataset(model, data_loader):
     feature_lists = []
     label_lists = []
     spe_label_list = []
+    total_batches = len(data_loader)  # 固定总 batch 数，用于输出可追踪的普通文本进度
 
-    for i, data_dict in tqdm(enumerate(data_loader), total=len(data_loader), disable=not sys.stderr.isatty()):  # 重定向日志时禁用滚动进度条
+    for i, data_dict in tqdm(enumerate(data_loader), total=total_batches, disable=True):  # 始终禁用光标控制进度条，避免 tmux 和日志出现 ANSI 控制符
         # get data
         data, label, mask, landmark = \
         data_dict['image'], data_dict['label'], data_dict['mask'], data_dict['landmark']
@@ -132,6 +132,8 @@ def test_one_dataset(model, data_loader):
         if model.config['save_tsne']:
             feature_lists += list(predictions['feat_diff'].cpu().detach().numpy())  # 差分特征：仅用于提供feat_diff的Detector
             # feature_lists += list(predictions['feat'].cpu().detach().numpy())  # 通用特征：注释上一行并取消本行注释即可切换
+        if (i + 1) % 50 == 0 or i + 1 == total_batches:
+            print(f"progress: {i + 1}/{total_batches}", flush=True)  # 每 50 个 batch 输出一行稳定进度，最后一个 batch 也输出
     
     return np.array(prediction_lists), np.array(label_lists),np.array(feature_lists)
     
@@ -147,6 +149,7 @@ def test_epoch(model, test_data_loaders):
     # testing for all test data
     keys = test_data_loaders.keys()
     for key in keys:
+        print(f"dataset: {key}", flush=True)  # 在推理前立即标记当前测试集，避免长时间无输出
         data_dict = test_data_loaders[key].dataset.data_dict
         # compute loss for each dataset
         predictions_nps, label_nps,feat_nps = test_one_dataset(model, test_data_loaders[key])
@@ -162,9 +165,6 @@ def test_epoch(model, test_data_loaders):
                                               img_names=data_dict['image'])
         metrics_all_datasets[key] = metric_one_dataset
         
-        print(f"dataset: {key}")  # 每个数据集仅输出一个稳定标识，详细指标写入持久报告
-
-
         if model.config['save_tsne']:
             # print(f"before concat, feat shape is: {tsne_dict['feat'][0].shape}, label is: {tsne_dict['label']}")
             tsne_dict[key]['feat'] = np.concatenate(tsne_dict[key]['feat'], axis=0)
