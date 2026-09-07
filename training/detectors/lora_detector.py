@@ -27,6 +27,9 @@ from peft import LoraConfig, get_peft_model
 from transformers import AutoProcessor, CLIPModel, ViTModel, ViTConfig
 from diffusers import AutoencoderKL
 from path_config import resolve_pretrained_path
+from .probe_operators import BaseProbeOperator, GaussianBlurProbeOperator, IdentityProbeOperator
+from .prd_features import classifier_input_dim, compose_features, compute_residual
+from .feature_encoders import build_feature_encoder
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +42,9 @@ class LoraDetector(nn.Module):
 
         # 构建带 LoRA 的骨干网络
         self.backbone = self.build_backbone(config)
+        self.encoder = build_feature_encoder(config.get('encoder'), self.backbone)
+        self.residual_type = (config.get('residual') or {}).get('type', 'signed_diff')
+        self.feature_mode = config.get('feature_mode', 'concat')
 
         # 分类头 (全精度训练)
         # self.head = nn.Linear(1024, 2)
@@ -56,20 +62,40 @@ class LoraDetector(nn.Module):
         clip_mean_tensor = torch.tensor(clip_mean_list)
         clip_std_tensor = torch.tensor(clip_std_list)
 
-        vae_path = resolve_pretrained_path(config, 'vae_path', 'sd-vae-ft-mse')
-        self.vae_augmenter = VAEDataAugmentation(vae_path, clip_mean_tensor, clip_std_tensor)
+        self.vae_augmenter = self.build_probe_operator(config, clip_mean_tensor, clip_std_tensor)
 
         #-------------------------------------
 
+        feature_dim = self.backbone.config.hidden_size
+        head_input_dim = classifier_input_dim(feature_dim, self.residual_type, self.feature_mode)
+
         # vae 分类头
         self.head = nn.Sequential(
-            nn.Linear(2048, 1024),
+            nn.Linear(head_input_dim, 1024),
             nn.BatchNorm1d(1024),
             nn.ReLU(inplace=True),
             nn.Dropout(0.5),
 
             nn.Linear(1024, 2)
         )
+
+    def build_probe_operator(self, config, clip_mean, clip_std):
+        """Build a probe while retaining ``vae_augmenter`` state_dict keys for the baseline."""
+        probe_config = config.get('probe') or {}
+        probe_type = probe_config.get('type', 'sd15_vae')
+        if probe_type == 'sd15_vae':
+            vae_path = resolve_pretrained_path(config, 'vae_path', 'sd-vae-ft-mse')
+            return VAEDataAugmentation(vae_path, clip_mean, clip_std)
+        if probe_type == 'gaussian_blur':
+            return GaussianBlurProbeOperator(probe_config.get('sigma', 1.0))
+        if probe_type == 'identity':
+            return IdentityProbeOperator()
+        if probe_type == 'sdvae_alt':
+            alt_path = probe_config.get('vae_path')
+            if not alt_path:
+                raise ValueError('probe.type=sdvae_alt requires probe.vae_path; no weights are downloaded automatically.')
+            return VAEDataAugmentation(alt_path, clip_mean, clip_std)
+        raise ValueError(f'Unsupported probe.type: {probe_type}')
 
     def build_backbone(self, config):
         # 1. 加载预训练的 CLIP 模型
@@ -118,9 +144,8 @@ class LoraDetector(nn.Module):
     #     return feat
 
     def features(self, data) -> torch.tensor:
-        # PEFT 模型的调用方式与原模型一致
-        feat = self.backbone(data)['pooler_output']
-        return feat
+        # Adapter keeps all encoder outputs in [B, D] form.
+        return self.encoder.forward_features(data)
 
     def classifier(self, features: torch.tensor) -> torch.tensor:
         return self.head(features)
@@ -177,7 +202,7 @@ class LoraDetector(nn.Module):
 
         # 3. 核心创新点：计算特征差异
         # 逻辑：如果 feat_diff 很大，说明是假图；如果很小，说明是真图
-        feat_diff = feat_orig - feat_vae
+        feat_diff = compute_residual(feat_orig, feat_vae, self.residual_type)
 
         # diff_metric = torch.abs(feat_diff).mean(dim=1)
 
@@ -188,16 +213,16 @@ class LoraDetector(nn.Module):
         # 这里简单起见，直接用差异特征去分类，或者用 orig + diff
         # final_feat = feat_diff  # 类似于残差连接，强调差异
 
-        final_feat = torch.cat([feat_orig, feat_diff], dim=1)
+        final_feat = compose_features(feat_orig, feat_diff, self.feature_mode)
 
         # 4. 分类
         pred = self.classifier(final_feat)
         prob = torch.softmax(pred, dim=1)[:, 1]
-        return {'cls': pred, 'prob': prob, 'feat': final_feat, 'feat_orig':feat_orig, 'feat_vae':feat_vae, 'feat_diff':feat_diff}
+        return {'cls': pred, 'prob': prob, 'feat': final_feat, 'feat_orig':feat_orig, 'feat_vae':feat_vae, 'feat_diff':feat_diff, 'residual':feat_diff}
 
 
 # --------------VAE 模块---------------------
-class VAEDataAugmentation(nn.Module):
+class VAEDataAugmentation(BaseProbeOperator):
     """
     一个封装了 VAE 重建逻辑的模块。
 
@@ -250,12 +275,11 @@ class VAEDataAugmentation(nn.Module):
 
 
     @torch.no_grad()  # VAE 冻结，不计算梯度
-    def forward(self, images, labels=None):
+    def reconstruct(self, images):
         """
         输入:
             images: [B, 3, 224, 224] (CLIP Normalized)
-            labels: [B] (为了接口兼容保留，实际不再使用)
-        输出:
+            输出:
             processed_images: [B, 3, 224, 224] (全量经过 VAE 重建并恢复到 CLIP Normalized)
         """
 

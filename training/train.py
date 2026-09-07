@@ -43,6 +43,7 @@ from dataset import *                 # 数据集相关模块
 from metrics.utils import parse_metric_for_print     # 工具函数，用于格式化评价指标输出
 from logger import create_logger, RankFilter      # 日志记录模块wat
 from path_config import TRAINING_ROOT, resolve_data_paths
+from experiment_metadata import write_run_metadata
 
 # 命令行参数解析器，用于接收训练相关配置
 parser = argparse.ArgumentParser(description='Process some paths.') #创建一个 ArgumentParser 类型的对象
@@ -218,6 +219,7 @@ def main():
     logger_path = os.path.join(config['log_dir'], config['model_name'] + task_str + '_' + timenow)  # 日志存储目录/日志文件夹名
     os.makedirs(logger_path, exist_ok=True)    # 创建文件夹（若不存在则创建）
     logger = create_logger(os.path.join(logger_path, 'training.log'))   # 创建日志记录器 之后交给Trainer使用
+    write_run_metadata(logger_path, config)  # 保存配置、Git revision 和实验组件，供离线复核
     logger.info(f"Save log to {logger_path}")    # 记录日志文件存储路径
     logger.info("--------------- Configuration ---------------")  # 打印完整的配置信息 # print configuration
     params_string = "Parameters: \n"

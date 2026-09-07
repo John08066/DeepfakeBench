@@ -39,6 +39,8 @@ from collections import defaultdict
 import argparse
 from logger import create_logger
 from path_config import TRAINING_ROOT, resolve_data_paths
+from analysis.prd_statistics import class_statistics
+from experiment_metadata import write_run_metadata
 
 parser = argparse.ArgumentParser(description='Process some paths.')
 parser.add_argument('--detector_path', type=str, 
@@ -106,11 +108,12 @@ def choose_metric(config):
     return metric_scoring
 
 
-def test_one_dataset(model, data_loader):
+def test_one_dataset(model, data_loader, collect_analysis=False, max_statistics_samples=2048):
     prediction_lists = []
     feature_lists = []
     label_lists = []
     spe_label_list = []
+    analysis_lists = {'feat_orig': [], 'feat_vae': [], 'residual': [], 'label': []}
     total_batches = len(data_loader)  # 固定总 batch 数，用于输出可追踪的普通文本进度
 
     for i, data_dict in tqdm(enumerate(data_loader), total=total_batches, disable=True):  # 始终禁用光标控制进度条，避免 tmux 和日志出现 ANSI 控制符
@@ -132,10 +135,16 @@ def test_one_dataset(model, data_loader):
         if model.config['save_tsne']:
             feature_lists += list(predictions['feat_diff'].cpu().detach().numpy())  # 差分特征：仅用于提供feat_diff的Detector
             # feature_lists += list(predictions['feat'].cpu().detach().numpy())  # 通用特征：注释上一行并取消本行注释即可切换
+        if collect_analysis and (len(analysis_lists['label']) < max_statistics_samples):
+            remaining = max_statistics_samples - len(analysis_lists['label'])
+            analysis_lists['feat_orig'].extend(predictions['feat_orig'].detach().cpu().numpy()[:remaining])
+            analysis_lists['feat_vae'].extend(predictions['feat_vae'].detach().cpu().numpy()[:remaining])
+            analysis_lists['residual'].extend(predictions['residual'].detach().cpu().numpy()[:remaining])
+            analysis_lists['label'].extend(data_dict['label'].detach().cpu().numpy()[:remaining])
         if (i + 1) % 50 == 0 or i + 1 == total_batches:
             print(f"progress: {i + 1}/{total_batches}", flush=True)  # 每 50 个 batch 输出一行稳定进度，最后一个 batch 也输出
     
-    return np.array(prediction_lists), np.array(label_lists),np.array(feature_lists)
+    return np.array(prediction_lists), np.array(label_lists), np.array(feature_lists), {key: np.array(value) for key, value in analysis_lists.items()}
     
 def test_epoch(model, test_data_loaders):
     # set model to eval mode
@@ -145,6 +154,8 @@ def test_epoch(model, test_data_loaders):
     metrics_all_datasets = {}
 
     tsne_dict = defaultdict(lambda: defaultdict(list))
+    analysis_config = model.config.get('analysis') or {}
+    collect_analysis = analysis_config.get('save_features', False) or analysis_config.get('compute_statistics', False)
 
     # testing for all test data
     keys = test_data_loaders.keys()
@@ -152,7 +163,7 @@ def test_epoch(model, test_data_loaders):
         print(f"dataset: {key}", flush=True)  # 在推理前立即标记当前测试集，避免长时间无输出
         data_dict = test_data_loaders[key].dataset.data_dict
         # compute loss for each dataset
-        predictions_nps, label_nps,feat_nps = test_one_dataset(model, test_data_loaders[key])
+        predictions_nps, label_nps,feat_nps,analysis_arrays = test_one_dataset(model, test_data_loaders[key], collect_analysis, analysis_config.get('statistics_max_samples', 2048))
 
         # 读取 spe_label 和 feat
         if model.config['save_tsne']:
@@ -164,6 +175,17 @@ def test_epoch(model, test_data_loaders):
         metric_one_dataset = get_test_metrics(y_pred=predictions_nps, y_true=label_nps,
                                               img_names=data_dict['image'])
         metrics_all_datasets[key] = metric_one_dataset
+        if collect_analysis:
+            experiment_name = (model.config.get('experiment') or {}).get('name', model.config['model_name'])
+            if analysis_config.get('compute_statistics', False):
+                stats_dir = os.path.join('analysis', 'statistics')
+                os.makedirs(stats_dir, exist_ok=True)
+                with open(os.path.join(stats_dir, f'{experiment_name}_{key}.json'), 'w', encoding='utf-8') as file:
+                    json.dump(class_statistics(analysis_arrays['residual'], analysis_arrays['label']), file, indent=2)
+            if analysis_config.get('save_features', False):
+                feature_dir = os.path.join('analysis', 'features', experiment_name)
+                os.makedirs(feature_dir, exist_ok=True)
+                np.savez_compressed(os.path.join(feature_dir, f'{key}.npz'), dataset=key, **analysis_arrays)
         
         if model.config['save_tsne']:
             # print(f"before concat, feat shape is: {tsne_dict['feat'][0].shape}, label is: {tsne_dict['label']}")
@@ -188,6 +210,7 @@ def save_metrics_report(metrics_all_datasets, output_dir, config, weights_path):
     video_average = float(np.mean([scalar_metrics[name]['video_auc'] for name in video_datasets]))  # 计算四集 video AUC 平均值
     results = {'checkpoint': weights_path, 'data_root': config['data_root'], 'datasets': scalar_metrics, 'paper_summary': {'frame_auc_5set': frame_average, 'video_auc_4set': video_average}}  # 汇总可复核的评测元数据与指标
     os.makedirs(output_dir, exist_ok=True)  # 创建独立结果目录，避免覆盖训练日志
+    write_run_metadata(output_dir, config, {'checkpoint': weights_path, 'metrics': scalar_metrics})
     with open(os.path.join(output_dir, 'metrics.json'), 'w', encoding='utf-8') as file:  # 以机器可读格式保存逐集指标
         json.dump(results, file, indent=2, ensure_ascii=False)  # 保留完整浮点精度与中文可读性
     with open(os.path.join(output_dir, 'evaluation.log'), 'w', encoding='utf-8') as file:  # 以论文阅读友好的文本格式保存指标
