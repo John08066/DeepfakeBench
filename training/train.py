@@ -44,6 +44,7 @@ from metrics.utils import parse_metric_for_print     # 工具函数，用于格�
 from logger import create_logger, RankFilter      # 日志记录模块wat
 from path_config import TRAINING_ROOT, resolve_data_paths
 from experiment_metadata import write_run_metadata
+from early_stopping import ConsecutiveDeclineStopper
 
 # 命令行参数解析器，用于接收训练相关配置
 parser = argparse.ArgumentParser(description='Process some paths.') #创建一个 ArgumentParser 类型的对象
@@ -244,10 +245,26 @@ def main():
 
     # 开始训练  # start training
     trainer = Trainer(config, model, optimizer, scheduler, logger, metric_scoring, time_now=timenow)# 初始化训练器 # prepare the trainer
+    stopper = ConsecutiveDeclineStopper(lower_is_better=metric_scoring == 'eer')
     for epoch in range(config['start_epoch'], config['nEpochs'] + 1):
         trainer.model.epoch = epoch   # 更新模型当前训练的 epoch
         best_metric = trainer.train_epoch(epoch=epoch, train_data_loader=train_data_loader, test_data_loaders=test_data_loaders)  # 这句虽然只有几行，但它大概率触发了绝大多数实际工作 每个epoch训练并测试模型，返回最佳评估指标
         logger.info(f"===> Epoch[{epoch}] end with testing {metric_scoring}: {parse_metric_for_print(best_metric)}!") if best_metric is not None else None  # 如果存在最佳评估指标，记录日志
+        # Count only the last complete evaluation of this epoch.
+        should_stop = False
+        latest = getattr(trainer, 'latest_epoch_metric', None)
+        if not config['ddp'] or dist.get_rank() == 0:
+            if latest is not None and latest[0] == epoch:
+                should_stop = stopper.update(latest[1])
+                logger.info(f'[EarlyStop] epoch={epoch} current_avg_{metric_scoring}={latest[1]:.8f} consecutive_declines={stopper.declines} stop={should_stop}')
+        if config['ddp']:
+            # All ranks exit together to avoid a distributed training hang.
+            stop_flag = torch.tensor(int(should_stop), device=f"cuda:{args.local_rank}")
+            dist.broadcast(stop_flag, src=0)
+            should_stop = bool(stop_flag.item())
+        if should_stop:
+            logger.info('[EarlyStop] More than 3 consecutive declining epochs; retaining saved best checkpoints.')
+            break
         if scheduler is not None:
             scheduler.step()  # 每个 epoch 结束后更新学习率，供下一个 epoch 使用
     logger.info(f"Stop Training on best Testing metric {parse_metric_for_print(best_metric)}")

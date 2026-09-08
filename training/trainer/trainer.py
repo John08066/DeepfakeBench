@@ -354,6 +354,8 @@ class Trainer(object):
                 if metric_name != 'dataset_dict':avg_metric_dict[metric_name] /= len(all_testsets_name_list)  # 算各指标的平均值（总累计值/数据集数量)
             self.save_best(epoch, iteration, step, None, 'avg', avg_metric_dict, None) # 将平均指标视为一个虚拟数据集进行保存（avg没有对应的单一特征矩阵）
  
+        # Current values are separate from the historical best used for saving.
+        self.latest_epoch_metric = (epoch, sum(avg_metric_dict['dataset_dict'].values()) / len(all_testsets_name_list)) if all_testsets_name_list else None
         self.logger.info('===> Test Done!')
         return self.best_metrics_all_time  # return all types of mean metrics for determining the best ckpt
 
