@@ -9,8 +9,8 @@ from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-LOG = ROOT / 'logs/training/csy/lora_prd_sd15_signed_clip_2026-09-07-09-14-33/training.log'
-STATE = ROOT / '.state/prd_early_stop_watch'
+LOG = ROOT / 'logs/training/csy/lora_prd_t2_blur_signed_clip_2026-09-09-00-04-18/training.log'
+STATE = ROOT / '.state/prd_t2_early_stop_watch'
 DATASETS = {'Celeb-DF-v2', 'DFDCP', 'DFDC'}
 
 
