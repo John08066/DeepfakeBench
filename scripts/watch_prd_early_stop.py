@@ -5,10 +5,13 @@ import re
 import shutil
 import subprocess
 import time
+import sys
 from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / 'training'))
+from experiment_summary import write_experiment_summary
 LOG = ROOT / 'logs/training/csy/lora_prd_t2_blur_signed_clip_2026-09-09-00-04-18/training.log'
 STATE = ROOT / '.state/prd_t2_early_stop_watch'
 DATASETS = {'Celeb-DF-v2', 'DFDCP', 'DFDC'}
@@ -66,6 +69,9 @@ def main():
         (STATE / 'status.json').write_text(json.dumps(event, indent=2))
         print(json.dumps(event), flush=True)
         if event['trigger_epoch'] is not None or finished:
+            # This also covers an already-running process which cannot load new code.
+            reason = '训练结束（监控确认）' if finished else '达到早停条件，等待Codex确认停训'
+            event['summary'] = str(write_experiment_summary(LOG, reason))
             # Persist before dispatch to prevent duplicate Codex calls after restart.
             (STATE / 'trigger.json').write_text(json.dumps(event, indent=2))
             output = ROOT / 'logs/RealTime' / (datetime.now().strftime('%Y-%m-%d_%H-%M-%S') + '_早停触发Codex.log')

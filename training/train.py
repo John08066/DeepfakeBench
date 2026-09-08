@@ -45,6 +45,7 @@ from logger import create_logger, RankFilter      # 日志记录模块wat
 from path_config import TRAINING_ROOT, resolve_data_paths
 from experiment_metadata import write_run_metadata
 from early_stopping import ConsecutiveDeclineStopper
+from experiment_summary import write_experiment_summary
 
 # 命令行参数解析器，用于接收训练相关配置
 parser = argparse.ArgumentParser(description='Process some paths.') #创建一个 ArgumentParser 类型的对象
@@ -246,6 +247,7 @@ def main():
     # 开始训练  # start training
     trainer = Trainer(config, model, optimizer, scheduler, logger, metric_scoring, time_now=timenow)# 初始化训练器 # prepare the trainer
     stopper = ConsecutiveDeclineStopper(lower_is_better=metric_scoring == 'eer')
+    stop_reason = '正常完成训练计划'
     for epoch in range(config['start_epoch'], config['nEpochs'] + 1):
         trainer.model.epoch = epoch   # 更新模型当前训练的 epoch
         best_metric = trainer.train_epoch(epoch=epoch, train_data_loader=train_data_loader, test_data_loaders=test_data_loaders)  # 这句虽然只有几行，但它大概率触发了绝大多数实际工作 每个epoch训练并测试模型，返回最佳评估指标
@@ -263,11 +265,17 @@ def main():
             dist.broadcast(stop_flag, src=0)
             should_stop = bool(stop_flag.item())
         if should_stop:
+            stop_reason = '自动早停：连续4个epoch末平均指标恶化'
             logger.info('[EarlyStop] More than 3 consecutive declining epochs; retaining saved best checkpoints.')
             break
         if scheduler is not None:
             scheduler.step()  # 每个 epoch 结束后更新学习率，供下一个 epoch 使用
     logger.info(f"Stop Training on best Testing metric {parse_metric_for_print(best_metric)}")
+    if not config['ddp'] or dist.get_rank() == 0:
+        for handler in logger.handlers:
+            handler.flush()
+        summary = write_experiment_summary(os.path.join(logger_path, 'training.log'), stop_reason)
+        logger.info(f'Experiment summary saved to {summary}')
 
     if 'svdd' in config['model_name']:model.update_R(epoch)  # 如果模型为 'svdd' 类型，更新 R 参数    
     for writer in trainer.writers.values():writer.close()   # 关闭 TensorBoard 写入器（释放资源）# close the tensorboard writers
