@@ -33,9 +33,12 @@ def training_alive():
 
 def handoff_reason(text, rows, alive):
     """A trigger is not a stopped process: wait for clean training shutdown."""
+    if alive and trigger_epoch(rows) is not None:
+        # T2 already loaded the old four-decline rule: delegate safe shutdown.
+        return '连续3轮下降已满足；旧训练仍运行，交接Codex保护权重并停止训练后更新摘要'
     if alive or 'Stop Training on best Testing metric' not in text:
         return None
-    if '[EarlyStop] More than 3 consecutive declining epochs' in text:
+    if '[EarlyStop]' in text and 'retaining saved best checkpoints' in text:
         return '自动早停，训练主进程已退出'
     return '正常完成训练计划，训练主进程已退出'
 
@@ -63,7 +66,7 @@ def trigger_epoch(rows):
     previous, streak = None, 0
     for epoch, value in rows:
         streak = streak + 1 if previous and epoch == previous[0] + 1 and value < previous[1] else 0
-        if streak > 3:
+        if streak >= 3:
             return epoch
         previous = epoch, value
     return None

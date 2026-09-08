@@ -4,7 +4,7 @@ import math
 
 
 class ConsecutiveDeclineStopper:
-    """Stop after more than three successive worsening epoch-end metrics."""
+    """Stop after three successive worsening epoch-end metrics."""
 
     def __init__(self, max_declines=3, lower_is_better=False):
         self.max_declines = max_declines
@@ -21,4 +21,4 @@ class ConsecutiveDeclineStopper:
         )
         self.declines = self.declines + 1 if worse else 0
         self.previous = value
-        return self.declines > self.max_declines
+        return self.declines >= self.max_declines

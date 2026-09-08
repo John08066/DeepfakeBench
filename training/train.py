@@ -265,8 +265,8 @@ def main():
             dist.broadcast(stop_flag, src=0)
             should_stop = bool(stop_flag.item())
         if should_stop:
-            stop_reason = '自动早停：连续4个epoch末平均指标恶化'
-            logger.info('[EarlyStop] More than 3 consecutive declining epochs; retaining saved best checkpoints.')
+            stop_reason = '自动早停：连续3个epoch末平均指标恶化'
+            logger.info('[EarlyStop] 3 consecutive declining epochs; retaining saved best checkpoints.')
             break
         if scheduler is not None:
             scheduler.step()  # 每个 epoch 结束后更新学习率，供下一个 epoch 使用

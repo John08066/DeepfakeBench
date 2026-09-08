@@ -10,8 +10,8 @@ baseline：fcddae1；框架完整快照：1d377a7；早停提交：693c09b。
 
 执行顺序：
 每次实际早停、正常完成或用户主动收尾后，必须调用training/experiment_summary.py，将真实结束原因和结果保存到scripts/experiment_summaries/<运行名>_实验摘要.md。将完成的摘要纳入该次成果提交，不产生多个中间提交。已有T1与原始复现摘要保留。
-当前T2监控仅在训练结束日志存在且原主进程退出之后派发任务；主程序自行完成早停。配置下一项监控时必须更新LOG、STATE、TRAINING_PID及training_alive中的配置文件匹配条件，检查新监控能正确识别存活的训练。
-1. 读取脚本、Git、进程、最新完整epoch指标，重新验证事件。早停是epoch末三集平均AUC连续4次逐轮下降；持平/回升重置。不是连续4轮未创新高。未满足且未自然完成则报告并退出，不停止训练。
+阈值现为连续3轮下降。当前T2已加载旧4轮代码，所以监控在第3次下降时可提前派发：先保护权重、终止精确旧训练并确认所有训练GPU进程退出，再更新摘要和启动下一项；不得将提前派发误当旧训练已退出。之后新启动训练自身按3轮停止。配置下一项监控时必须更新LOG、STATE、TRAINING_PID及training_alive中的配置文件匹配条件。
+1. 读取脚本、Git、进程、最新完整epoch指标，重新验证事件。早停是epoch末三集平均AUC连续3次逐轮下降；持平/回升重置。不是连续3轮未创新高。未满足且未自然完成则报告并退出，不停止训练。
 2. 若满足，确认属于该项目的唯一训练进程以及父子树，保护并验证平均最佳checkpoint。不得在checkpoint写入中途终止；先保存稳定备份到checkpoints/对应实验目录。正常终止精确目标并确认GPU进程退出，不杀其他用户或项目进程。不得丢失已有最佳权重。
 3. 分析全部完成epoch、最佳三集平均checkpoint来源及各集AUC/AP/EER，写时间戳报告到logs/RealTime/。区分历史最佳与当轮指标，不夸称证明科研机制。当前test.py报告函数对不足五个集合会KeyError，统计功能、encoder接口、resume仍有未完成点，不能依据早期“全部完成”表述跳过实际代码检查。
 4. 下一项仅T3：identity / signed_diff / clip / concat。从原始本地预训练CLIP初始化，不加载前项训练后权重；其余训练条件与T1一致。用完整YAML及本地/home/zhaoting.ding/local_datasets。核验配置合并优先级、早停功能、checkpoint/resume和输出目录。先单进程小batch验证实际配置、forward/backward，再在tmux以GPU0启动唯一训练，验证至少两个不同迭代的loss。无第二训练并发。注意LoRA dropout使train模式identity双次编码不保证残差为零，不得声称严格负对照已通过训练模式验证。
