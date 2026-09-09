@@ -1,0 +1,3 @@
+# PRD monitor recovery: cron survives logout; periodic checks also recover after reboot.
+# No global shell/proxy environment is modified by this entry.
+*/6 * * * * PATH=/home/zhaoting.ding/.vscode-server/extensions/openai.chatgpt-26.5901.22334-linux-x64/bin/linux-x86_64:/usr/local/bin:/usr/bin:/bin /usr/bin/python3 /home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench/scripts/watch_prd_early_stop.py --once --dispatch >> /home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench/logs/RealTime/prd_monitor_recovery.log 2>&1
