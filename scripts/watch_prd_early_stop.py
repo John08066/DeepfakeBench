@@ -16,10 +16,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'training'))
 from experiment_summary import write_experiment_summary
-LOG = ROOT / 'logs/training/csy/lora_prd_t2_blur_signed_clip_restart_20260909_2026-09-09-09-45-04/training.log'
-STATE = ROOT / '.state/prd_t2_restart_20260909_watch'
+LOG = ROOT / 'logs/training/csy/lora_prd_t3_identity_signed_clip_20260909_2026-09-09-18-29-10/training.log'
+STATE = ROOT / '.state/prd_t3_identity_20260909_watch'
 DATASETS = {'Celeb-DF-v2', 'DFDCP', 'DFDC'}
-TRAINING_PID = 216128  # Restarted T2 main process, checked against its command below.
+TRAINING_PID = 3061325  # T3 main process, checked against its command below.
 MAX_ATTEMPTS = 3
 
 
@@ -59,7 +59,7 @@ def training_alive():
         state = (proc / 'stat').read_text().rsplit(')', 1)[1].split()[0]
     except FileNotFoundError:
         return False
-    if 'training/train.py' not in command or 'prd_t2_blur.yaml' not in command:
+    if 'training/train.py' not in command or 'prd_t3_identity.yaml' not in command:
         return False  # PID reuse is not the original training job.
     return state != 'Z'
 
