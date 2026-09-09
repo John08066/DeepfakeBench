@@ -13,13 +13,18 @@ flock -n 9 || { echo 'Another PRD launcher holds the training lock.'; exit 1; }
 /usr/bin/python3 -c 'import sys; sys.path.insert(0, "scripts"); from watch_prd_early_stop import project_training; p = project_training(); print("Existing training PIDs:", p); sys.exit(bool(p))'
 mkdir -p "logs/$task"
 set -o noclobber
-exec >"logs/$task/console.log" 2>&1
-echo "Training launch: $(date -Is); config=$config; task=$task; GPU=0"
+exec 8>"logs/$task/console.log"  # Refuse to overwrite an existing run log.
 set +e
-DEEPFAKE_DATA_ROOT=/home/zhaoting.ding/local_datasets \
-CUDA_VISIBLE_DEVICES=0 PYTHONUNBUFFERED=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
-    /home/zhaoting.ding/miniconda3/envs/PRD/bin/python -u training/train.py \
-    --detector_path "$config" --task_target "$task"
-code=$?
-echo "TRAINING_EXIT_CODE=$code at $(date -Is)"
-exit "$code"
+{
+    echo "Training launch: $(date -Is); config=$config; task=$task; GPU=0"
+    DEEPFAKE_DATA_ROOT=/home/zhaoting.ding/local_datasets \
+    CUDA_VISIBLE_DEVICES=0 PYTHONUNBUFFERED=1 HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 \
+        /home/zhaoting.ding/miniconda3/envs/PRD/bin/python -u training/train.py \
+        --detector_path "$config" --task_target "$task"
+    code=$?
+    echo "TRAINING_EXIT_CODE=$code at $(date -Is)"
+    exit "$code"
+} 2>&1 | tee /dev/fd/8  # Keep Python non-interactive while mirroring output to tmux.
+status=("${PIPESTATUS[@]}")
+test "${status[0]}" -eq 0 || exit "${status[0]}"  # Preserve the training exit code.
+exit "${status[1]}"  # Surface a logging failure when training itself succeeded.
