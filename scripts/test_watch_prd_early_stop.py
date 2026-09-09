@@ -93,6 +93,23 @@ class MonitorTest(unittest.TestCase):
             watch.tick(True, -1)
         self.call.assert_not_called()
 
+    def test_declining_training_must_finish_before_handoff(self):
+        rows = list(enumerate([.9, .8, .7, .6]))
+        self.assertIsNone(watch.handoff_reason('', rows, True))
+        self.assertIn('自动早停', watch.handoff_reason(
+            '[EarlyStop] retaining saved best checkpoints\nStop Training on best Testing metric', rows, False))
+
+    def test_normal_handoff_without_next_training_is_failure(self):
+        watch.LOG.write_text('Stop Training on best Testing metric')
+        watch.tick(True, -1)
+        self.assertEqual(json.loads(self.state.read_text())['phase'], 'codex_failed')
+
+    def test_normal_handoff_with_next_training(self):
+        watch.LOG.write_text('Stop Training on best Testing metric')
+        self.active.side_effect = [[], [456]]
+        watch.tick(True, -1)
+        self.assertEqual(json.loads(self.state.read_text())['phase'], 'codex_returned')
+
 
 if __name__ == '__main__':
     unittest.main()

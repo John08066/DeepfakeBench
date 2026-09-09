@@ -6,10 +6,10 @@
 
 ## 状态与重试
 
-- `.state/prd_t2_early_stop_watch/status.json`：最后检查时间、进程和事件原因。
+- `.state/prd_t2_restart_20260909_watch/status.json`：当前T2重跑的最后检查时间、进程和事件原因；旧STATE不再使用。
 - 同目录 `trigger.json`：交接次数、状态、报告路径、下次允许重试时间。
 - `dispatching` 中断后重新核对现场；失败至少间隔六分钟，总计最多三次。
-- `codex_returned` 表示 Codex 返回零退出码，不等于下一训练已验证成功。
+- `codex_returned` 表示 Codex 返回零退出码；正常交接还要求现场存在后续训练，但完整迭代验收仍须查看回调报告。
 - `exhausted` 保留失败记录，不无限消耗额度；`blocked_active_training` 禁止重复派发。
 - `error.json` 保存读取/状态异常；历史错误不代表本次检查也失败，应比较时间。
 - `logs/RealTime/prd_monitor_recovery.log` 为定时任务输出；交接输出单独按时间命名。
@@ -22,7 +22,8 @@
 监控和 Codex 子进程共享排他文件锁；重复监控拿不到锁就退出。
 重试前扫描同用户 `train.py` 进程，发现已有训练则暂缓交接。
 交接指令要求核对已有成果及前次输出，避免重做部分完成的动作。
-这不是跨任意人工启动命令的全局训练锁，也不是通用 exactly-once 事务。
+正式训练统一使用scripts/launch_prd_training.sh的独占训练锁。
+该锁不约束绕过启动器的人工命令，也不是通用 exactly-once 事务。
 
 切换实验时，正常交接需一起更新脚本中的 LOG、STATE、TRAINING_PID 与配置匹配条件，
 不重启仍在持锁的监控；由 cron 下一检查点接管。

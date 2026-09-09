@@ -16,10 +16,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'training'))
 from experiment_summary import write_experiment_summary
-LOG = ROOT / 'logs/training/csy/lora_prd_t2_blur_signed_clip_2026-09-09-00-04-18/training.log'
-STATE = ROOT / '.state/prd_t2_early_stop_watch'
+LOG = ROOT / 'logs/training/csy/lora_prd_t2_blur_signed_clip_restart_20260909_2026-09-09-09-45-04/training.log'
+STATE = ROOT / '.state/prd_t2_restart_20260909_watch'
 DATASETS = {'Celeb-DF-v2', 'DFDCP', 'DFDC'}
-TRAINING_PID = 1345785  # T2 main process, checked against its original command below.
+TRAINING_PID = 216128  # Restarted T2 main process, checked against its command below.
 MAX_ATTEMPTS = 3
 
 
@@ -66,9 +66,6 @@ def training_alive():
 
 def handoff_reason(text, rows, alive):
     """A trigger is not a stopped process: wait for clean training shutdown."""
-    if alive and trigger_epoch(rows) is not None:
-        # T2 already loaded the old four-decline rule: delegate safe shutdown.
-        return '连续3轮下降已满足；旧训练仍运行，交接Codex保护权重并停止训练后更新摘要'
     if alive:
         return None
     if 'Stop Training on best Testing metric' not in text:
@@ -181,6 +178,9 @@ def tick(armed, lock_fd):
     save_json(path, job)  # Survives reboot; interrupted dispatch is reconciled on retry.
     try:
         code = dispatch(event, output, lock_fd)
+        if code == 0 and not reason.startswith('异常退出') and not project_training():
+            code = 1
+            job['dispatch_error'] = '正常交接返回零但未发现后续训练，不能视为交接完成。'
         job.update(codex_exit_code=code, phase='codex_returned' if code == 0 else 'codex_failed')
     except (OSError, subprocess.TimeoutExpired) as error:
         job.update(dispatch_error=str(error), phase='codex_failed')
