@@ -6,7 +6,7 @@
 
 ## 状态与重试
 
-- `.state/prd_t2_restart_20260909_watch/status.json`：当前T2重跑的最后检查时间、进程和事件原因；旧STATE不再使用。
+- `.state/prd_r2_abs_diff_20260910_watch/status.json`：当前R2的最后检查时间、进程和事件原因；旧STATE只保留归档。
 - 同目录 `trigger.json`：交接次数、状态、报告路径、下次允许重试时间。
 - `dispatching` 中断后重新核对现场；失败至少间隔六分钟，总计最多三次。
 - `codex_returned` 表示 Codex 返回零退出码；正常交接还要求现场存在后续训练，但完整迭代验收仍须查看回调报告。
