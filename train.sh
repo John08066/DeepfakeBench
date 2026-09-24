@@ -1,4 +1,8 @@
 #!/bin/bash
+set -eu
+project_root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+cd "$project_root"
+python_bin=${PYTHON_BIN:-python}
 
 # ============================================================
 # DeepfakeBench Training Launcher
@@ -20,9 +24,9 @@
 # 适合调试、smoke test、小规模实验
 # ============================================================
 
-CUDA_VISIBLE_DEVICES=0 \
-python training/train.py \
-  --detector_path ./training/config/detector/lora.yaml
+CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0} \
+"$python_bin" training/train.py \
+  --detector_path ./training/config/detector/prd_probe_ablation.yaml "$@"
 
 
 # ============================================================

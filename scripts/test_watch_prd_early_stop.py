@@ -6,7 +6,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import watch_prd_early_stop as watch
 
@@ -17,10 +17,13 @@ class MonitorTest(unittest.TestCase):
         root = Path(self.temp.name)
         log = root / 'training.log'
         log.write_text('interrupted training')
+        detector = root / 'detector.yaml'
+        detector.write_text('model_name: lora')
         self.state = root / 'trigger.json'
         self.stack = contextlib.ExitStack()
         self.stack.enter_context(contextlib.redirect_stdout(io.StringIO()))
-        for key, value in [('STATE', root), ('LOG', log), ('ROOT', root)]:
+        for key, value in [('STATE', root), ('LOG', log), ('ROOT', root),
+                           ('DETECTOR_PATH', detector), ('RUN_ID', 'test_run')]:
             self.stack.enter_context(patch.object(watch, key, value))
         self.stack.enter_context(patch.object(watch, 'training_alive', return_value=False))
         self.active = self.stack.enter_context(patch.object(watch, 'project_training', return_value=[]))
@@ -84,7 +87,8 @@ class MonitorTest(unittest.TestCase):
         self.assertEqual(json.loads(self.state.read_text())['phase'], 'blocked_active_training')
 
     def test_network_filesystem_lock_contention(self):
-        with patch.object(watch.sys, 'argv', ['watch', '--once', '--dispatch']), \
+        with patch.object(watch.sys, 'argv', ['watch', '--once', '--log', 'training.log',
+                '--pid', '123', '--detector-path', 'detector.yaml', '--run-id', 'test_run']), \
                 patch.object(watch.fcntl, 'flock', side_effect=PermissionError(errno.EACCES, 'locked')):
             watch.main()
         self.call.assert_not_called()
@@ -119,7 +123,7 @@ class MonitorTest(unittest.TestCase):
         watch.LOG.write_text('Stop Training on best Testing metric')
         def finish(*args):
             watch.save_json(watch.STATE / 'queue_complete.json',
-                            {'experiment': 'F2', 'log': str(watch.LOG), 'status': 'complete'})
+                            {'run_id': 'test_run', 'log': str(watch.LOG), 'status': 'complete'})
             return 0
         self.call.side_effect = finish
         watch.tick(True, -1)
@@ -129,9 +133,59 @@ class MonitorTest(unittest.TestCase):
 
     def test_completion_marker_cannot_hide_abnormal_exit(self):
         watch.save_json(watch.STATE / 'queue_complete.json',
-                        {'experiment': 'F2', 'log': str(watch.LOG), 'status': 'complete'})
+                        {'run_id': 'test_run', 'log': str(watch.LOG), 'status': 'complete'})
         watch.tick(True, -1)
         self.assertEqual(json.loads(self.state.read_text())['phase'], 'codex_failed')
+
+    def test_old_queue_marker_does_not_complete_current_run(self):
+        watch.LOG.write_text('Stop Training on best Testing metric')
+        watch.save_json(watch.STATE / 'queue_complete.json',
+                        {'experiment': 'F2', 'log': str(watch.LOG), 'status': 'complete'})
+        self.assertFalse(watch.queue_complete())
+
+    def test_cli_requires_explicit_run(self):
+        with patch.object(watch.sys, 'argv', ['watch', '--once']), \
+                contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as error:
+            watch.main()
+        self.assertEqual(error.exception.code, 2)
+        self.call.assert_not_called()
+
+    def test_dispatch_requires_explicit_handoff_file(self):
+        args = ['watch', '--once', '--dispatch', '--log', 'training.log', '--pid', '123',
+                '--detector-path', 'detector.yaml', '--run-id', 'test_run']
+        with patch.object(watch.sys, 'argv', args), contextlib.redirect_stderr(io.StringIO()), \
+                self.assertRaises(SystemExit) as error:
+            watch.main()
+        self.assertEqual(error.exception.code, 2)
+        self.call.assert_not_called()
+
+    def test_state_cannot_be_reused_by_another_run(self):
+        watch.save_json(watch.STATE / 'run.json', {'run_id': 'previous_run'})
+        args = ['watch', '--once', '--log', 'training.log', '--pid', '123',
+                '--detector-path', 'detector.yaml', '--run-id', 'test_run',
+                '--state-dir', str(watch.STATE)]
+        with patch.object(watch.sys, 'argv', args), contextlib.redirect_stderr(io.StringIO()), \
+                self.assertRaises(SystemExit) as error:
+            watch.main()
+        self.assertEqual(error.exception.code, 2)
+        self.call.assert_not_called()
+
+    def test_only_current_checkout_training_blocks_launch(self):
+        proc = MagicMock()
+        proc.stat.return_value.st_uid = watch.os.getuid()
+        cwd = MagicMock()
+        cwd.resolve.return_value = watch.ROOT
+        cmdline = MagicMock()
+        cmdline.read_bytes.return_value = b'python\0training/train.py\0'
+        stat = MagicMock()
+        stat.read_text.return_value = '123 (python) S'
+        proc.__truediv__.side_effect = {'cwd': cwd, 'cmdline': cmdline, 'stat': stat}.__getitem__
+        self.assertTrue(watch.training_command(proc))
+        cwd.resolve.return_value = watch.ROOT / 'other_checkout'
+        self.assertIsNone(watch.training_command(proc))
+        cwd.resolve.return_value = watch.ROOT
+        stat.read_text.return_value = '123 (python) Z'
+        self.assertIsNone(watch.training_command(proc))
 
 
 if __name__ == '__main__':

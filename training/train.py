@@ -42,7 +42,7 @@ from detectors import DETECTOR         # 检测器模块
 from dataset import *                 # 数据集相关模块
 from metrics.utils import parse_metric_for_print     # 工具函数，用于格式化评价指标输出
 from logger import create_logger, RankFilter      # 日志记录模块wat
-from path_config import TRAINING_ROOT, resolve_data_paths
+from path_config import TRAINING_ROOT, project_path, resolve_data_paths, resolve_output_path
 from experiment_metadata import write_run_metadata
 from early_stopping import ConsecutiveDeclineStopper
 from experiment_summary import write_experiment_summary
@@ -198,9 +198,9 @@ def choose_metric(config):# 选择评价指标
 
 
 def main():
-    with open(args.detector_path, 'r') as f:   # 打开分类器的配置文件  配置文件参数优先级：命令行指定值 > train_config.yaml > detector YAML
+    with open(project_path(args.detector_path), 'r', encoding='utf-8') as f:   # 配置优先级：CLI > train_config.yaml > detector YAML
         config = yaml.safe_load(f)
-    with open(TRAINING_ROOT / 'config/train_config.yaml', 'r') as f:  # 打开训练配置文件，也就是训练集
+    with open(TRAINING_ROOT / 'config/train_config.yaml', 'r', encoding='utf-8') as f:  # 打开训练配置文件，也就是训练集
         config2 = yaml.safe_load(f)
     if 'label_dict' in config:config2['label_dict']=config['label_dict']
     config.update(config2)# 存在，则 config 中该键的值会被 config2 中对应的值替换。不存在，则会将该键值对添加到 config 中。
@@ -214,14 +214,23 @@ def main():
     config['save_feat'] = args.save_feat    # 配置是否保存训练特征
     config['ddp'] = args.ddp    # 设置分布式训练参数
     resolve_data_paths(config)
+    config['log_dir'] = str(resolve_output_path(config['log_dir']))
+    if config['ddp']:
+        dist.init_process_group(backend='nccl', timeout=timedelta(minutes=30))
   
     # 创建日志文件夹并初始化日志记录器  # create logger
-    timenow = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    timenow = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S-%f')
+    if config['ddp']:
+        run_time = [timenow]
+        dist.broadcast_object_list(run_time, src=0)
+        timenow = run_time[0]
     task_str = f"_{config['task_target']}" if config.get('task_target', None) is not None else ""  # dict.get()：安全读取 dict['key']：强制读取
     logger_path = os.path.join(config['log_dir'], config['model_name'] + task_str + '_' + timenow)  # 日志存储目录/日志文件夹名
-    os.makedirs(logger_path, exist_ok=True)    # 创建文件夹（若不存在则创建）
+    if not config['ddp'] or dist.get_rank() == 0:
+        os.makedirs(logger_path, exist_ok=False)    # 拒绝复用已有实验输出目录
+    if config['ddp']:
+        dist.barrier()
     logger = create_logger(os.path.join(logger_path, 'training.log'))   # 创建日志记录器 之后交给Trainer使用
-    write_run_metadata(logger_path, config)  # 保存配置、Git revision 和实验组件，供离线复核
     logger.info(f"Save log to {logger_path}")    # 记录日志文件存储路径
     logger.info("--------------- Configuration ---------------")  # 打印完整的配置信息 # print configuration
     params_string = "Parameters: \n"
@@ -233,20 +242,25 @@ def main():
     if config['cudnn']:cudnn.benchmark = True   # set cudnn benchmark if needed
     if config['ddp']:# 如果启用分布式数据并行（DDP），初始化通信进程组
         # dist.init_process_group(backend='gloo')
-        dist.init_process_group(backend='nccl', timeout=timedelta(minutes=30))  # 使用 NCCL 后端进行通信（适用于 GPU），设置通信超时时间为 30 分钟
         logger.addFilter(RankFilter(0))    # 仅记录主进程日志
 
     train_data_loader = prepare_training_data(config)    # prepare the training data loader
     test_data_loaders = prepare_testing_data(config)  # prepare the testing data loader
     model_class = DETECTOR[config['model_name']] # prepare the model (detector)
     model = model_class(config)   # 实例化模型  这就是大型框架常见的“插件化”设计：
+    if not config['ddp'] or dist.get_rank() == 0:
+        write_run_metadata(logger_path, config)  # 记录实际 seed 与模型已解析的权重路径
     optimizer = choose_optimizer(model, config)    # prepare the optimizer
     scheduler = choose_scheduler(config, optimizer)  # prepare the scheduler
     metric_scoring = choose_metric(config)  # prepare the metric
 
     # 开始训练  # start training
     trainer = Trainer(config, model, optimizer, scheduler, logger, metric_scoring, time_now=timenow)# 初始化训练器 # prepare the trainer
-    stopper = ConsecutiveDeclineStopper(lower_is_better=metric_scoring == 'eer')
+    early_stop = config.get('early_stopping', {})
+    stopper = ConsecutiveDeclineStopper(
+        max_declines=early_stop.get('max_declines', 3),
+        lower_is_better=metric_scoring == 'eer',
+    ) if early_stop.get('enabled', False) else None
     stop_reason = '正常完成训练计划'
     for epoch in range(config['start_epoch'], config['nEpochs'] + 1):
         trainer.model.epoch = epoch   # 更新模型当前训练的 epoch
@@ -256,7 +270,7 @@ def main():
         should_stop = False
         latest = getattr(trainer, 'latest_epoch_metric', None)
         if not config['ddp'] or dist.get_rank() == 0:
-            if latest is not None and latest[0] == epoch:
+            if stopper is not None and latest is not None and latest[0] == epoch:
                 should_stop = stopper.update(latest[1])
                 logger.info(f'[EarlyStop] epoch={epoch} current_avg_{metric_scoring}={latest[1]:.8f} consecutive_declines={stopper.declines} stop={should_stop}')
         if config['ddp']:
@@ -265,8 +279,8 @@ def main():
             dist.broadcast(stop_flag, src=0)
             should_stop = bool(stop_flag.item())
         if should_stop:
-            stop_reason = '自动早停：连续3个epoch末平均指标恶化'
-            logger.info('[EarlyStop] 3 consecutive declining epochs; retaining saved best checkpoints.')
+            stop_reason = f'自动早停：连续{stopper.max_declines}个epoch末平均指标恶化'
+            logger.info(f'[EarlyStop] {stopper.max_declines} consecutive declining epochs; retaining saved best checkpoints.')
             break
         if scheduler is not None:
             scheduler.step()  # 每个 epoch 结束后更新学习率，供下一个 epoch 使用

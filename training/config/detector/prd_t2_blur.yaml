@@ -33,6 +33,9 @@ std: [0.26862954, 0.26130258, 0.27577711]
 
 # Keep the original PRD training schedule available to train.py.
 nEpochs: 30
+early_stopping:
+  enabled: true
+  max_declines: 3
 start_epoch: 0
 save_epoch: 1
 rec_iter: 100

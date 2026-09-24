@@ -94,7 +94,8 @@ class LoraDetector(nn.Module):
             alt_path = probe_config.get('vae_path')
             if not alt_path:
                 raise ValueError('probe.type=sdvae_alt requires probe.vae_path; no weights are downloaded automatically.')
-            return VAEDataAugmentation(alt_path, clip_mean, clip_std)
+            alt_config = dict(config, vae_path=alt_path)
+            return VAEDataAugmentation(resolve_pretrained_path(alt_config, 'vae_path', alt_path), clip_mean, clip_std)
         raise ValueError(f'Unsupported probe.type: {probe_type}')
 
     def build_backbone(self, config):
@@ -102,14 +103,8 @@ class LoraDetector(nn.Module):
         clip_path = resolve_pretrained_path(
             config, 'clip_path', 'clip-vit-large-patch14'
         )
-        try:
-            # 优先加载本地
-            clip_model = CLIPModel.from_pretrained(clip_path)
-            logger.info(f"Loaded CLIP from local path: {clip_path}")
-        except OSError:
-            # 本地失败则加载 HuggingFace
-            logger.warning(f"Local path {clip_path} not found, trying huggingface hub...")
-            clip_model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14")
+        clip_model = CLIPModel.from_pretrained(clip_path, local_files_only=True)
+        logger.info(f"Loaded CLIP from local path: {clip_path}")
 
         # 我们只需要 CLIP 的 Vision 部分
         vision_model = clip_model.vision_model
@@ -250,11 +245,12 @@ class VAEDataAugmentation(BaseProbeOperator):
             # 使用 float16 加载以节省显存
             self.vae = AutoencoderKL.from_pretrained(
                 vae_path,
-                torch_dtype=torch.float16
+                torch_dtype=torch.float16,
+                local_files_only=True,
             )
         except Exception as e:
             logger.error(f"Failed to load VAE in float16: {e}. Attempting full precision.")
-            self.vae = AutoencoderKL.from_pretrained(vae_path)
+            self.vae = AutoencoderKL.from_pretrained(vae_path, local_files_only=True)
 
         # 3. 冻结 VAE
         self.vae.requires_grad_(False)

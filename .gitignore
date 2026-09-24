@@ -8,6 +8,7 @@ __pycache__/
 
 # 数据与实验输出
 datasets/
+pretrained/
 data/
 logs/
 runs/

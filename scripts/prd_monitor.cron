@@ -1,3 +1,8 @@
-# PRD monitor recovery: cron survives logout; periodic checks also recover after reboot.
-# No global shell/proxy environment is modified by this entry.
-*/6 * * * * PATH=/home/zhaoting.ding/.vscode-server/extensions/openai.chatgpt-26.5901.22334-linux-x64/bin/linux-x86_64:/usr/local/bin:/usr/bin:/bin /usr/bin/python3 /home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench/scripts/watch_prd_early_stop.py --once --dispatch >> /home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench/logs/RealTime/prd_monitor_recovery.log 2>&1
+# Optional template only: no active entry, no automatic installation or callback.
+# Set CHECKOUT and PYTHON_BIN to this server's checkout and activated environment.
+# Use the actual run log, PID, configuration and a unique run-id.
+# An explicit path is required by cron because its working directory is not the project.
+# CHECKOUT=/path/to/your/checkout
+# PYTHON_BIN=/path/to/your/environment/bin/python
+# */6 * * * * "$PYTHON_BIN" "$CHECKOUT/scripts/watch_prd_early_stop.py" --once --log logs/training/RUN/training.log --pid CURRENT_PID --detector-path training/config/detector/prd_probe_ablation.yaml --run-id UNIQUE_RUN
+# Observation only. Do not add --dispatch without a separately reviewed handoff file.

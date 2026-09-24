@@ -1,6 +1,6 @@
 mode: test
 lmdb: False
-data_root: null  # DEEPFAKE_DATA_ROOT overrides the server default.
+data_root: null  # DEEPFAKE_DATA_ROOT overrides <repository>/datasets.
 rgb_dir: DeepfakeBench_rgb/rgb
 lmdb_dir: DeepfakeBench/lmdb
 dataset_json_folder: DeepfakeBench/config/dataset_json

@@ -70,6 +70,9 @@ optimizer:
 # training config
 lr_scheduler: null   # learning rate scheduler
 nEpochs: 30   # number of epochs to train for
+early_stopping:
+  enabled: false  # Original reproduction schedule; PRD variants explicitly enable early stopping.
+  max_declines: 3
 start_epoch: 0   # manual epoch number (useful for restarts)
 save_epoch: 1   # interval epochs for saving models
 rec_iter: 100   # interval iterations for recording

@@ -1,5 +1,7 @@
 # DeepfakeBench: A Comprehensive Benchmark of Deepfake Detection (NeurIPS 2023 D&B)
 
+本分支的 PRD 多服务器实验请先阅读 [通用开发基线](docs/PORTABLE_BASELINE.md)：环境安装、数据与权重目录、预检和独立实验分支。下文保留上游说明，不代表当前 PRD 环境版本。
+
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-brightgreen.svg)](https://creativecommons.org/licenses/by-nc/4.0/) ![Release .10](https://img.shields.io/badge/Release-1.0-brightgreen) ![PyTorch](https://img.shields.io/badge/PyTorch-1.11-brightgreen) ![Python](https://img.shields.io/badge/Python-3.7.2-brightgreen)
 
 <b> Authors: <a href='https://yzy-stack.github.io/'>Zhiyuan Yan</a>, <a href='https://yzhang2016.github.io/'>Yong Zhang</a>, Xinhang Yuan, <a href='https://cse.buffalo.edu/~siweilyu/'>Siwei Lyu</a>, <a href='https://sites.google.com/site/baoyuanwu2015/'>Baoyuan Wu* </a>  </b>

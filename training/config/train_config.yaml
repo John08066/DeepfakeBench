@@ -1,7 +1,7 @@
 mode: train
 lmdb: true
 dry_run: false
-data_root: null  # DEEPFAKE_DATA_ROOT overrides the server default.
+data_root: null  # DEEPFAKE_DATA_ROOT overrides <repository>/datasets.
 rgb_dir: DeepfakeBench_rgb/rgb
 lmdb_dir: DeepfakeBench/lmdb
 dataset_json_folder: DeepfakeBench/config/dataset_json
@@ -9,7 +9,7 @@ dataset_json_folder: DeepfakeBench/config/dataset_json
 
 SWA: False
 save_avg: True
-log_dir: ./logs/training/csy/
+log_dir: ./logs/training/
 # label settings
 label_dict:
   # DFD

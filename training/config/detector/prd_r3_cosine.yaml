@@ -4,7 +4,7 @@ backbone_name: vit
 pretrained_root: null
 clip_path: clip-vit-large-patch14
 vae_path: vae_original
-data_root: /home/zhaoting.ding/local_datasets
+data_root: null
 
 train_dataset: [FaceForensics++]
 test_dataset: [Celeb-DF-v2, DFDCP, DFDC]
@@ -32,6 +32,9 @@ mean: [0.48145466, 0.4578275, 0.40821073]
 std: [0.26862954, 0.26130258, 0.27577711]
 
 nEpochs: 30
+early_stopping:
+  enabled: true
+  max_declines: 3
 start_epoch: 0
 save_epoch: 1
 rec_iter: 100

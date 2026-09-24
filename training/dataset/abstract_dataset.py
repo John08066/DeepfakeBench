@@ -30,6 +30,7 @@ from torchvision import transforms as T
 import albumentations as A
 
 from .albu import IsotropicResize
+from path_config import resolve_rgb_path
 
 # from utils.distortions import get_distortion_parameter, get_distortion_function
 sys.path.append('.')
@@ -354,9 +355,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
         """
         size = self.config['resolution']  # if self.mode == "train" else self.config['resolution']
         if not self.lmdb:
-            if not file_path[0] == '.':
-                file_path = f'{self.config["rgb_dir"]}/' + file_path.replace('\\',
-                                                                             '/')  # f'{self.config["rgb_dir"]}/' + file_path.replace('\\', '/')
+            file_path = resolve_rgb_path(file_path, self.config['rgb_dir'])
 
             assert os.path.exists(file_path), f"{file_path} does not exist"
             img = cv2.imread(file_path)
@@ -392,8 +391,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
         if file_path is None:
             return np.zeros((size, size, 1))
         if not self.lmdb:
-            if not file_path[0] == '.':
-                file_path = f'{self.config["rgb_dir"]}/' + file_path.replace('\\', '/')
+            file_path = resolve_rgb_path(file_path, self.config['rgb_dir'])
             if os.path.exists(file_path):
                 mask = cv2.imread(file_path, 0)
                 if mask is None:
@@ -434,8 +432,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
             return np.zeros((81, 2))
 
         if not self.lmdb:
-            if not file_path[0] == '.':
-                file_path = f'{self.config["rgb_dir"]}/' + file_path.replace('\\', '/')
+            file_path = resolve_rgb_path(file_path, self.config['rgb_dir'])
             if os.path.exists(file_path):
                 landmark = np.load(file_path)
                 landmark = self.rescale_landmarks(np.float32(landmark), original_size=256,
