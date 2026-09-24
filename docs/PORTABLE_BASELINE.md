@@ -63,7 +63,7 @@ export CUDA_VISIBLE_DEVICES=0
 
 2026-09-24 只读核对了 4090 现有 PRD 环境：Python 3.10.21、PyTorch 2.5.1+cu124、torchvision 0.20.1+cu124；`python -m pip check` 返回 `No broken requirements found.`。`requirements-prd.txt` 的版本来自该环境的 `importlib.metadata`，不是猜测或自动升级到最新版。
 
-**尚未在新服务器干净环境完整安装验证。** 该文件固定核心/运行入口依赖，但不是系统库、驱动及所有间接包的完整锁文件。当前 detector/dataset 注册模块会预先导入其他算法，因此包含 dlib、timm、fvcore 等兼容依赖；不要只安装 torch 和 transformers 就认为入口齐全。旧 `install.sh` / `Dockerfile` 对应上游历史环境，不等价于本轮 PRD 环境。
+2026-09-25 在 203-1 的隔离 `prd-common` 环境（Python 3.10.21）已完成依赖安装，`pip check`、39 项 CPU 回归测试及无卡导入通过。该机器复用了已有的 CUDA 12.4 依赖包，并从 4090 复制了匹配的 dlib wheel；这不是对任意新服务器执行下述在线安装命令的完整验证。203-1 当前无 GPU、数据和预训练权重，尚未运行真实训练 smoke。该文件固定核心/运行入口依赖，但不是系统库、驱动及所有间接包的完整锁文件。当前 detector/dataset 注册模块会预先导入其他算法，因此包含 dlib、timm、fvcore 等兼容依赖；不要只安装 torch 和 transformers 就认为入口齐全。旧 `install.sh` / `Dockerfile` 对应上游历史环境，不等价于本轮 PRD 环境。
 
 在新的、独立的 Python 3.10 环境中安装，不覆盖另一实验的环境：
 
