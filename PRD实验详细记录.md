@@ -8,7 +8,7 @@
 |---|---|---|---|
 | 4090-48G / GPU0 | SSH已验证；conda `PRD`；训练/测试数据在本地 `/home/zhaoting.ding/local_datasets` | `prd-research-4090` / `f570bed` | F1 orig运行，PID2528606；epoch22，epoch21末AUC 0.79045014、连续下降2；43480MiB、100% |
 | 4090-48G / GPU1 | 同服务器独立工作树；conda `PRD`；本地数据，NAS日志 | `codex/prd4090-gpu1-20260929` / `7810b2e` | T1运行，PID1155273；epoch9，epoch8末AUC 0.84476423、连续下降1；41008MiB、100% |
-| 203-1 / GPU0 | SSH别名 `203-1-新` 已验证；conda `prd-common`；V100 32GB；数据 `/datasets/Deepfake` | `prd-203-1-seed3407` / `3b281d4` | 当前无训练/tmux；nvidia-smi成功、0MiB。T2此前CUDA初始化失败；本次未验证PyTorch CUDA恢复，不能直接判定可恢复训练 |
+| 203-1 / GPU0 | SSH别名 `203-1-新`；conda `prd-common`；V100 32GB；数据 `/datasets/Deepfake` | `prd-203-1-seed3407` / `98ba9c0` | 10-03 14:12 SSH实查无训练/队列/tmux，GPU 0MiB；13:22 CUDA初始化及64×64前后向已通过。仅计划CPU诊断；GPU恢复根因未知 |
 
 路径索引：
 
@@ -125,7 +125,16 @@ C04（F1）训练退出0，但运行中Bash被原地重写导致外层127；权�
 | T2 blur三次重试 | task前缀`prd_t2_blur_seed3407_bs16_203_retry_20260930_`，a1于10-03 10:16:26、a2于10:17:56、a3于10:19:05启动；均在epoch0前`No CUDA GPUs are available`并退出1。无completion、无结果提交，属同一T2的三次失败 |
 | T3 identity | 本轮无状态目录及队列启动事件，未启动；不能记为失败或完成 |
 
-203与4090同时改变了训练BS、seed、硬件及环境，不能当作只改变随机种子的严格对照。203当前nvidia-smi恢复可读不等于已验证CUDA训练；需另行确认后才可认领新机制实验。
+203与4090同时改变了训练BS、seed、硬件及环境，不能当作只改变随机种子的严格对照。13:22小矩阵CUDA前后向实际通过，仅证明该时刻CUDA可用，不证明正式batch或未来稳定性。13:25准备的`run_prd_203_continue_20261003.sh`仍是未提交文件；14:12复核无新队列状态或训练进程，不能把准备当启动。14:14按用户新方向新增`W203/.state/prd_seed3407_bs16_continue_20261003/cancellation.json`及T2/T3 `continue_20261003_a1`状态目录的同名取消标记（`cancelled_before_start`）。旧脚本`set -e`及任务`mkdir`非-p门槛阻止进入launcher；脚本原文保留、无kill、旧失败证据不变；不是训练失败。脚本SHA256=`3b12b3d196c3c20bbf99ffd7dc38d7e9df2b793f0f5345d941d3275b92b5ed3e`。旧监控已删除，未宣称新监控已安装。
+
+### P04-D01 认领协议：域/标签混杂审计与统一视频清单
+
+- 状态：**已认领，尚未执行**，2026-10-03 14:14；负责人/对话：203 / `01a0e12a-41bd-7b81-999d-fd62332d03cb`；服务器203，仅CPU，不占GPU。共享表查重版本`d32c9b3`；N01/N02候选属4090，本项仅覆盖数据分布混杂和统一清单，不替代表示诊断。
+- 科学假设与否定标准：原始三目标域的真假比例可使域先验`P(fake|domain)`产生描述性池化AUC>0.55；若≤0.55不支持实质比例混杂。使用同一JSON索引的域×标签等量对照应给出AUC=0.5、互信息=0。不是外推分类器性能，不证明PRD实际上利用域偏差，也不能解释逐集AUC。
+- 输入：现有`/datasets/Deepfake/DeepfakeBench/config/dataset_json`的CDFv2/DFDCP/DFDC测试划分及当前detector标签映射；记录JSON SHA256、原始video/frame计数、空记录、重复帧路径与跨split精确video ID交集。不同视频/域的真实人物或伪造源谱系不能仅由文件名认定独立，将单列限制。
+- 固定协议：先统计所有有有效帧的视频；输出每域×二元标签`k=min(32,六格最小视频数)`视频；按`SHA256(P04-D01/v1|dataset|label|video_id)`升序选取，每视频排序中位帧。无随机seed搜索、无目标AUC调参。每行含domain、label、video_id、frame及JSON hash；同一视频多帧不作为独立样本。域分数的AUC仅按视频计数精确计算，同时报告原始分布和选中分布。
+- 代码/配置：服务器基线`98ba9c0`，沿用`training/config/detector/prd_t1_seed3407.yaml`的标签语义；诊断脚本实现后单独提交并记录SHA，不push训练代码。输出予定`W203/.state/p04_d01_20261003/`，不可覆盖。输入结构不符、任一域缺标签或SHA变化即停，不静默换数据。
+- 预算与停止：一次CPU诊断，单进程、墙钟≤300秒、地址空间≤2GiB、GPU=0、新训练=0；完成清单/统计/hash即停止。203后续GPU训练时限尚未明确，本项不依赖该预算，不扩展训练矩阵。无需长任务定时唤醒。
 
 ## 较早未形成正式结果的启动记录
 
