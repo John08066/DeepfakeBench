@@ -151,7 +151,7 @@ C04（F1）训练退出0，但运行中Bash被原地重写导致外层127；权�
 - 修正代码commit `47c7c78c02ec12bfec3c16c031c2c2aba3a683c4`，脚本SHA256 `8a66b0b917c704ccb18b202005bc202a5815ec866657e803dbe1764aea0755d9`；结果归档commit `03fc8f141a305ba66ac0087425e1b2845f94bcef`，仅203独立分支，未push实验代码。源/归档为`W203/.state/p04_d01_20261003_a2/`与`W203/scripts/experiment_summaries/p04_d01_20261003/`；包含result.json、manifest.jsonl、verification.json及首失败副本。无checkpoint、无新训练、无需长期监控。
 - SHA256：result.json=`8993e52001f672fac1c081d490eec6b899fee8566432492cc5a3aaf36bf85de0`；manifest.jsonl=`a3fdfe91ae7a9613b75d51d0be5a424a2671a21c6001080beab28fe711641c8f`；verification.json=`037fed15cb58282ae3bc704bf69cf4ae63ab808b5199b77b49d3c288a1bc2a2f`。
 - 输入JSON SHA256：CDFv2=`919030ca617e6eb78831fd19470ae2f252ba0452a7497e28014f65fa9c34c29d`；DFDCP=`fc01695baf1f61079edbe6333b4793c10d252523f0ad8341924fa1e1856c11f6`；DFDC=`ce41a6e936c134f9921747252d666288a0569763df8015d5f7bdeb5272c26796`；test_config=`9e4fe09ba45dd63c747c1454c4a1bbdb1986e0424d74d8ce58fb1a12c49ee060`，执行及复核期间未变化。
-- 聊天同步阻碍：本次可经官方App Server读取两条对话；向总对话resume报`already has an active writer`，官方proxy连接失败（10050），当前无官方thread消息工具。分工/结果报告本地保留待投递，不记作已收件；Git两表发布为有效全局同步。未修改会话数据库或接管其他写入者。
+- 聊天同步：先前resume的`active writer`拒绝与proxy连接失败（10050）为历史阻碍，2026-10-03 16:17已失效。P04-D01随D02报告通过官方stdio成功补投总对话，取得completed回执并由thread/turns/list读回（见D02收件记录）；未修改会话数据库或强制接管写入者。
 
 ## 较早未形成正式结果的启动记录
 
@@ -169,7 +169,7 @@ AUC由每目标全部donor的平均fake概率计算，CE则先计算每个donor�
 
 代码`f7cafcfc3c4caf51384ad3b052f8d937ab46d822`；归档`b5c546346a97583dd4b3d5adaa4cef9fd1b5191e`仅203、未push代码。摘要目录`W203/scripts/experiment_summaries/p04_d02_20261003/`含结果、配置/开始证据、CPU验证脚本、逐视频值、donor清单、图像内容hash、首失败副本及artifact_index；原始特征留在`W203/.state/p04_d02_20261003_a2/features.npz`。result.json SHA256=`c6c78f3ceaafae4007f6aedc9d4551f9e9bd72a1b86b9e586b022c2d20b15e46`；verification.json=`581215978c00be492870690005f6eccb80918ff5e89d1f320257b98cd4f7dc28`；features.npz=`93a0b1ce46300cb99781c5f5445c15fe07365a63ff92589a1f4760ec1ca452c5`。CUDA max allocated=1902303744字节，观察NVML约2734MiB；实际0次训练更新，未新增checkpoint/选轮/重训。任务已完成，不安装无用途的长期定时器；旧监控/旧取消标记均保持原状。
 
-总对话补投：用户确认HTML结束后，15:16及本轮完成后再次请求均被官方App Server `active writer`拒绝；没有收件回执。当前官方thread消息工具未暴露、控制socket路径不存在，未绕过写锁或改会话数据库。共享两表已有效发布；完整UTF-8报告保留在本机任务目录`prd-continue-20261003/p04_d02_report.json`，待官方投递恢复。以下保留认领、输入检查失败与最小修正记录。
+总对话补投：**2026-10-03 16:17:28已收件，实际验证**。历史15:16、完成后及16:13的resume曾返回`active writer`；用户重载后现场复核，总对话对应锁文件已不存在，本次thread/resume、turn/start均成功。目标`01a0d2a8-fad9-7933-b2af-141cae3bb029`，回执turn=`01a100d6-b322-7150-94cf-27e2004b2f5a`；收到`turn/completed`且status=completed，再由thread/turns/list读回同一turn及“已收到补投，本回复即为真实收件回执”。报告覆盖P04-D01/D02结论、协议、限制与归档，两表版本9e04b5b。总对话明确只确认收件、未执行代码/启动实验/修改分支/更新HTML。回执保存在本机任务目录`prd-continue-20261003/p04_d02_retry_receipt.json`；没有强制释放锁、结束其他进程或直接改写会话数据库。以前报错只代表当次请求，不作重载后仍占用的证据。以下保留认领、输入检查失败与最小修正记录。
 
 修正执行代码`f7cafcfc3c4caf51384ad3b052f8d937ab46d822`，诊断脚本SHA256=`54f232066f23b51e8cc0fba60a25d0a1a1bd978d50eab15334b22fde7c63472e`，启动器SHA256=`ed68497791edd299a0415dc793a551fead76f6aed0dc05bac9736c88f3ec06df`。语法检查通过，首轮没有提取任何图像特征；用新目录执行同一192视频及全部donor的唯一正式诊断。
 
