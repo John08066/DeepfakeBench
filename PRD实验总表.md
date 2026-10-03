@@ -6,11 +6,12 @@
 
 | 实验 / 科学问题与协议 | 唯一负责人 · 资源 | 工作树 / 启动commit · task | 状态与最后核验 | 下一检查 / 证据 |
 |---|---|---|---|---|
-| A01 / P06：F1原图，旧seed42收尾 | 4090 GPU0 Agent · 4090-48G/GPU0 | W0 / `f570bed` · `prd_f1_orig_seed42_gpu0_20260929` | 最后记录运行中，10-03 13:53；当前待负责人更新，占用未释放 | 原15:30预约已过时，不能当新预约；[A01/A02证据](PRD实验详细记录.md#run-4090) |
+| A01 / P06：F1原图，旧seed42收尾 | 4090 GPU0 Agent · 4090-48G/GPU0 | W0 / `f570bed` · `prd_f1_orig_seed42_gpu0_20260929` | 10-03 21:15实查PID2528606仍运行，末次DFDC评测；用户明确等待自然结束，F2取消保留 | 22:20单次监控负责旧组收尾及N01衔接；[旧证据](PRD实验详细记录.md#run-4090) |
+| N01-D01 + N01-T01/v1：残差幅度/方向信息 | 4090 GPU0 Agent · 4090-48G/GPU0，等待A01释放 | WN01 / `2ae9dea` · `n01_gpu0_20261003` | 10-03已授权认领；1216图清单/hash、真实两图CPU前向及衔接门槛测试通过；准备后等待旧组自然完成，尚非GPU训练已启动 | 固定T1编码器；统计诊断→5臂同结构/各500更新探测；4小时上限。[协议与证据](docs/prd/records/N01.md) |
 | A02 / P06：T1 VAE+concat，旧seed42已中止 | 4090 GPU1 Agent · 4090-48G/GPU1 | W1 / `7810b2e` · `prd_t1_seed42_gpu1_20260929` | 10-03 18:28用户主动中止，退出143；18:41核验本组/队列已退出、GPU1无计算进程。GPU1停用留给同门，须再次授权 | 部分权重已归档校验，非完整结果；中止提交`4579eb2`。监控已暂停并读回next_run为空；[A02记录](docs/prd/records/A02.md) |
 | P03-T01/v1：paired/rolled残差对应关系，同容量同预算各3596更新 | PRD-203-1 · 203-1/GPU0 | W203 / `a2cb1c2` · `p03_t01_20261003` | 10-03 17:33运行中，PID45964，两臂100步；无正式结果 | 现有有限观察器自适应检查；训练上限约23:20，不重试；[协议/证据](PRD实验详细记录.md#p03-t01) |
 
-W0=`/home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench`；W1=`/home/zhaoting.ding/prd-worktrees/gpu1-20260929`；W203=`/root/DeepfakeBench-prd-common`（SSH `203-1-新`）。分支分别为 `prd-research-4090`、`codex/prd4090-gpu1-20260929`、`prd-203-1-seed3407`。203负责人对话：`01a0e12a-41bd-7b81-999d-fd62332d03cb`。最后核验过期不代表空闲或训练失败。
+WN01=`/home/zhaoting.ding/prd-worktrees/gpu0-n01-20261003`，分支`codex/prd4090-n01-20261003`；W0=`/home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench`；W1=`/home/zhaoting.ding/prd-worktrees/gpu1-20260929`；W203=`/root/DeepfakeBench-prd-common`（SSH `203-1-新`）。分支分别为 `prd-research-4090`、`codex/prd4090-gpu1-20260929`、`prd-203-1-seed3407`。203负责人对话：`01a0e12a-41bd-7b81-999d-fd62332d03cb`。最后核验过期不代表空闲或训练失败。
 
 ## 已有结论与查重索引
 
@@ -22,11 +23,10 @@ W0=`/home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench`；W1=`/home/zhaoting.d
 | P04-D02，203完成 | 三域置换ΔCE −0.016609/+0.011377/−0.002096；未支持该checkpoint一致配对依赖，不代表残差无用 | [结果/特征](PRD实验详细记录.md#p04-d02) |
 | P03-D01/v1，203完成 | 两参照六格残差变化贡献6.04%–7.81%，满足≤10%条件；未覆盖常量作用，不是删支重训结论 | [冻结头诊断](PRD实验详细记录.md#p03-d01) |
 
-## 后续候选（未获准自动启动）
+## 后续候选（下列尚未获准自动启动）
 
 | ID / 科学问题 | 预留分工 | 启动前提 |
 |---|---|---|
-| N01 残差幅度与方向分离 | 4090 GPU0收尾后 | 先固定样本、编码器、容量、统计量与否定判据，再认领 |
 | N02 严格identity / blur / VAE等强度对照 | 暂停GPU1资源预留 | GPU1已中止并停用留给同门，须等用户再次通知才可认领使用；控制随机性与扰动强度，推理敏感性不冒充重训因果 |
 | N03 筛选机制的独立复核 | 203或未来服务器 | 等N01/N02证据；先固定划分、预算和授权，不补seed矩阵 |
 
