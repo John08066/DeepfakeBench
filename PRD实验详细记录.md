@@ -8,7 +8,7 @@
 |---|---|---|---|
 | 4090-48G / GPU0 | SSH已验证；conda `PRD`；训练/测试数据在本地 `/home/zhaoting.ding/local_datasets` | `prd-research-4090` / `f570bed` | F1 orig运行，PID2528606；epoch22，epoch21末AUC 0.79045014、连续下降2；43480MiB、100% |
 | 4090-48G / GPU1 | 同服务器独立工作树；conda `PRD`；本地数据，NAS日志 | `codex/prd4090-gpu1-20260929` / `7810b2e` | T1运行，PID1155273；epoch9，epoch8末AUC 0.84476423、连续下降1；41008MiB、100% |
-| 203-1 / GPU0 | SSH别名 `203-1-新`；conda `prd-common`；V100 32GB；数据 `/datasets/Deepfake` | `prd-203-1-seed3407` / `6c8bb32` | 10-03 16:52实际核验P03-D01进程/tmux已退出、exit0、归档hash通过、GPU0MiB；仅CPU两线程，0训练更新。P04-D01/D02及P03-D01完成；旧T2/T3取消保留，不自动扩展；未来CUDA稳定性及历史故障根因未知 |
+| 203-1 / GPU0 | SSH别名 `203-1-新`；conda `prd-common`；V100 32GB；数据 `/datasets/Deepfake` | `prd-203-1-seed3407` / `a2cb1c2` | 10-03 17:05实际核验无训练、GPU0MiB，盘余82GB；现认领P03-T01两臂新训练，待push读回和BS16/64烟测；旧T2/T3取消保留，历史GPU故障根因未知 |
 
 路径索引：
 
@@ -25,6 +25,15 @@
 2026-10-03 13:52已撤销四个未启动项：GPU0 `prd_f2_residual_seed42_gpu0_20260929`；GPU1 `prd_t2_blur_seed42_gpu1_20260929`、`prd_t3_identity_seed42_gpu1_20260929`、`prd_r2_abs_diff_seed42_gpu1_20260929`。各`.state/<task>/cancellation.json`记录`cancelled_before_start`和`training_started=false`，没有completion或console。原循环先完成当前组归档/Git，再执行下一任务`mkdir`（非-p）；`set -e`使它在已存在的取消状态目录处退出，未调用下一launcher。两卡当前训练保持运行，取消门槛与控制路径已实际核验，真实队列退出待当前组收尾验收。预期队列exit1不表示当前训练失败，禁止删除取消标记、复活旧队列或将取消项计为完成。证据：各树`.state/prd_dispatch_hold_20261003/decision.json`。曾尝试仅SIGSTOP父队列但随后仍S，未确认持续生效；实际控制不依赖该信号。
 
 监控仅继续当前A01/A02收尾：GPU0 `prd` 下一次2026-10-03 15:30；GPU1 `26-09-29-17-30-prd4090-gpu1` 下一次17:15，均北京时间单次预约。完成归档、结果提交并更新共享表后停止各自监控；不再要求旧有限队列所有取消项产生完成文件。
+
+## P03-T01/v1：残差对应关系配对训练（203已认领，尚未启动）
+
+- 负责人203对话`01a0e12a-41bd-7b81-999d-fd62332d03cb`；用户2026-10-03 17:03后明确要求启动新训练。W203/`prd-203-1-seed3407`，基线`b5fb097740a0815f468faac7d6feac402b29e518`，代码`a2cb1c20d5285a09f1bcc88cb8124cc3495a25c9`；只push共享文档，不push训练代码。fetch `456f7d8`及两对话最新记录后未发现同一训练干预认领；N01/N02仍属4090，N03未抢占。
+- 科学对照：paired正常拼接vs rolled仅训练时将残差半块循环错位1行；输入均`[16,2048]`、头均2048→1024→2、LoRA r32、VAE冻结。单进程持有两个独立模型，以相同增强张量交替更新、逐步恢复同一CPU/CUDA随机状态，匹配dropout；真实梯度经过roll流向donor，测试时两臂均恢复原配对。roll保持batch残差边缘分布但同时破坏残差/接收标签与原图配对关联，不能当作仅配对身份干预。
+- 数据与预算：复用FF++c23 train（已实查28768帧、1798批/epoch、每视频8帧），2epoch即每臂3596更新；各臂从相同预训练CLIP/VAE初始化，不读旧T1权重。seed3407、trainBS16/testBS64、原Adam lr0.0002/其他参数保留、无AMP/梯度累积；为两臂配对关闭cuDNN benchmark并启用deterministic。同一batch trace记录索引和增强后图像hash。全局最多6小时，GPU仍为现有203 V100，无额外租机；最多2个训练臂、0自动重试，不自动扩展。CPU干预形状/残差边缘分布/梯度路由/eval禁用已实际测试，完整BS16反向及BS64实图烟测待认领push后执行。
+- 评估和判据：沿用D01/D02固定192视频一帧、每域真假各32的清单及内容hash，正式只在第3596步保存最终权重并逐集评估，不按AUC选checkpoint、无早停。主量ΔCE=宏平均CE(rolled)−CE(paired)、ΔAUC=宏平均AUC(paired)−AUC(rolled)；两者分别≥0.05 nat及≥0.01才支持正确残差对应信息促进该预算下学习；任一≤0则未支持，否则不确定。逐视频logits、CE/AUC及初始化hash保存，独立numpy复算末指标；两个checkpoint严格reload、源/备份hash和中文结果Git后才算完成。小样本开发评估、单配对seed和短预算不能作总体显著性、等效或独立最终测试结论。
+- 启动与停止：`scripts/run_p03_t01.sh smoke|train CLAIM_SHA`，同持`.state/prd_training.lock`及`.state/prd_mechanism_203.lock`，tmux拟`prd203-p03-t01`。烟测每臂2次BS16更新、BS64完整192图评估，不计正式结果；通过后正式从预训练重建。非有限loss/梯度、输入错误、GPU/DataLoader异常、同视频donor比例≥2%、超时、归档/Git失败即停全任务，保留证据，不降低batch、不连环重试、不碰其他GPU使用者。不存在第二训练臂派发间隙：两臂属于同一个有限、同批次训练任务。
+- 路径：状态`W203/.state/p03_t01_20261003/`；正式输出`L203/mechanism/p03_t01_20261003/`；脚本`train_p03_t01.py`、`finalize_p03_t01.py`、`run_p03_t01.sh`及协议`p03_t01_protocol.json`均在scripts；归档拟`scripts/experiment_summaries/p03_t01_20261003/`。既有monitor改动及旧队列取消标记不动。当前工具未提供应用定时任务接口；正式启动后用有限本机非AI状态观察器作事件检查，实际安装/回执另记，PC离线不能保证汇报，服务器训练与6小时停止不依赖PC。
 
 ## P03-D01/v1：冻结分类头双分支贡献（203完成）
 
