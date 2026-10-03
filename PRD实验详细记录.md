@@ -8,7 +8,7 @@
 |---|---|---|---|
 | 4090-48G / GPU0 | SSH已验证；conda `PRD`；训练/测试数据在本地 `/home/zhaoting.ding/local_datasets` | `prd-research-4090` / `f570bed` | F1 orig运行，PID2528606；epoch22，epoch21末AUC 0.79045014、连续下降2；43480MiB、100% |
 | 4090-48G / GPU1 | 同服务器独立工作树；conda `PRD`；本地数据，NAS日志 | `codex/prd4090-gpu1-20260929` / `7810b2e` | T1运行，PID1155273；epoch9，epoch8末AUC 0.84476423、连续下降1；41008MiB、100% |
-| 203-1 / GPU0 | SSH别名 `203-1-新`；conda `prd-common`；V100 32GB；数据 `/datasets/Deepfake` | `prd-203-1-seed3407` / `98ba9c0` | 10-03 14:12 SSH实查无训练/队列/tmux，GPU 0MiB；13:22 CUDA初始化及64×64前后向已通过。仅计划CPU诊断；GPU恢复根因未知 |
+| 203-1 / GPU0 | SSH别名 `203-1-新`；conda `prd-common`；V100 32GB；数据 `/datasets/Deepfake` | `prd-203-1-seed3407` / `03fc8f1` | 10-03 14:22实查无训练；旧T2/T3续跑已取消。P04-D01 CPU诊断完成；14:12 GPU 0MiB、13:22 CUDA小矩阵前后向通过，仅为对应时刻证据，恢复根因未知 |
 
 路径索引：
 
@@ -129,13 +129,29 @@ C04（F1）训练退出0，但运行中Bash被原地重写导致外层127；权�
 
 ### P04-D01 认领协议：域/标签混杂审计与统一视频清单
 
-- 状态：**首次数值计算未完成；修正辅助split解析后复核**；认领2026-10-03 14:14、首次执行14:20；负责人/对话：203 / `01a0e12a-41bd-7b81-999d-fd62332d03cb`。认领提交`5324e24`已push并在203读回。服务器203，仅CPU，不占GPU。共享表查重版本`d32c9b3`；N01/N02候选属4090，本项仅覆盖数据分布混杂和统一清单，不替代表示诊断。
+- 状态：**完成，实际验证**；认领2026-10-03 14:14、首次执行14:20因辅助val结构停止；修正复核14:21:47→14:21:50完成，14:22独立sklearn及清单复核通过。负责人/对话：203 / `01a0e12a-41bd-7b81-999d-fd62332d03cb`。认领提交`5324e24`已push并在203读回；执行状态`7b1babe`、首失败及修正规则`bc5fe7c`均先发布后复核。服务器203，仅CPU，不占GPU。N01/N02候选属4090，本项仅覆盖数据分布混杂和统一清单，不替代表示诊断。
 - 科学假设与否定标准：原始三目标域的真假比例可使域先验`P(fake|domain)`产生描述性池化AUC>0.55；若≤0.55不支持实质比例混杂。使用同一JSON索引的域×标签等量对照应给出AUC=0.5、互信息=0。不是外推分类器性能，不证明PRD实际上利用域偏差，也不能解释逐集AUC。
 - 输入：现有`/datasets/Deepfake/DeepfakeBench/config/dataset_json`的CDFv2/DFDCP/DFDC测试划分及当前detector标签映射；记录JSON SHA256、原始video/frame计数、空记录、重复帧路径与跨split精确video ID交集。不同视频/域的真实人物或伪造源谱系不能仅由文件名认定独立，将单列限制。
 - 固定协议：先统计所有有有效帧的视频；输出每域×二元标签`k=min(32,六格最小视频数)`视频；按`SHA256(P04-D01/v1|dataset|label|video_id)`升序选取，每视频排序中位帧。无随机seed搜索、无目标AUC调参。每行含domain、label、video_id、frame及JSON hash；同一视频多帧不作为独立样本。域分数的AUC仅按视频计数精确计算，同时报告原始分布和选中分布。
 - 代码/配置：服务器基线`98ba9c0`；诊断代码`4a36bc13474a74f6b80b50a1766e090ff463c132`，`scripts/p04_d01.py` SHA256=`1a276be0f9a3b14beb96c845bdcbe8ff0a5bb8020ba57085693e379928836cde`，语法检查通过；未push训练代码。二元标签读取`training/config/test_config.yaml`，detector中的三目标域及test划分不变；video_id按loader的`label_string + '_' + 原始video_key`定义。输出`W203/.state/p04_d01_20261003/`，不可覆盖。输入结构不符、任一域缺标签或SHA变化即停，不静默换数据。
 - 预算与停止：一次CPU诊断，单进程、墙钟≤300秒、地址空间≤2GiB、GPU=0、新训练=0；完成清单/统计/hash即停止。203后续GPU训练时限尚未明确，本项不依赖该预算，不扩展训练矩阵。无需长任务定时唤醒。
 - 首次执行按结构检查停止：DFDC的`val`是含label/frames的单记录，不是video_id→record映射，导致TypeError；无最终统计或manifest。三域主`test`结构正常。保留首目录和`failure.json`；修复只把该辅助val标为“结构无效，重叠未知”，不更换test、样本规则或判据；CDFv2/DFDCP已发现val与test至少有同ID，需完整计数确认。修复复核使用新目录`.state/p04_d01_20261003_a2`，初次数秒加复核合计仍≤300秒。不是新机制实验或训练重试。
+
+完成结果（P04-D01/v1，视频记录为计数单位，不把帧视为独立重复；不声称人物/源视频族已独立）：
+
+| 域 | real / fake视频 | real / fake帧 | train/test同ID | val/test同ID |
+|---|---:|---:|---:|---:|
+| Celeb-DF-v2 | 178 / 340 | 5620 / 10800 | 410 | 518（全部test） |
+| DFDCP | 230 / 424 | 5901 / 11321 | 0 | 654（全部test） |
+| DFDC | 2315 / 2389 | 63265 / 68851 | 0（train为空） | 未知：val结构无效 |
+
+- 原始共5876视频，域先验描述性AUC `0.5463959558419725`，独立sklearn复算`0.5463959558419724`；互信息`0.0097737524334513 bit`。未超过0.55预登记标准，不能支持“实质域比例混杂”；这是标签先验描述性值，不是独立预测结果，也不解释逐集AUC。
+- 每域×标签32视频，共192视频/192帧；AUC=0.5，互信息=0。所有选中路径在源JSON内，无重复选中video或frame；各域test无空记录、无重复帧路径。未读LMDB图像内容，不声称图片可读性或来源谱系已核验。
+- 精确帧路径复核：CDFv2 val/test交集16420、train/test交集13010；DFDCP val/test交集17222、train/test为0。不能用现成val/test构造独立验证；CDF的train/test重合不等于PRD训练泄漏，因为现有训练集是FF++。DFDC的val视频数与交集不可用，JSON统计中的占位0不能解释成真实空划分。
+- 修正代码commit `47c7c78c02ec12bfec3c16c031c2c2aba3a683c4`，脚本SHA256 `8a66b0b917c704ccb18b202005bc202a5815ec866657e803dbe1764aea0755d9`；结果归档commit `03fc8f141a305ba66ac0087425e1b2845f94bcef`，仅203独立分支，未push实验代码。源/归档为`W203/.state/p04_d01_20261003_a2/`与`W203/scripts/experiment_summaries/p04_d01_20261003/`；包含result.json、manifest.jsonl、verification.json及首失败副本。无checkpoint、无新训练、无需长期监控。
+- SHA256：result.json=`8993e52001f672fac1c081d490eec6b899fee8566432492cc5a3aaf36bf85de0`；manifest.jsonl=`a3fdfe91ae7a9613b75d51d0be5a424a2671a21c6001080beab28fe711641c8f`；verification.json=`037fed15cb58282ae3bc704bf69cf4ae63ab808b5199b77b49d3c288a1bc2a2f`。
+- 输入JSON SHA256：CDFv2=`919030ca617e6eb78831fd19470ae2f252ba0452a7497e28014f65fa9c34c29d`；DFDCP=`fc01695baf1f61079edbe6333b4793c10d252523f0ad8341924fa1e1856c11f6`；DFDC=`ce41a6e936c134f9921747252d666288a0569763df8015d5f7bdeb5272c26796`；test_config=`9e4fe09ba45dd63c747c1454c4a1bbdb1986e0424d74d8ce58fb1a12c49ee060`，执行及复核期间未变化。
+- 聊天同步阻碍：本次可经官方App Server读取两条对话；向总对话resume报`already has an active writer`，官方proxy连接失败（10050），当前无官方thread消息工具。分工/结果报告本地保留待投递，不记作已收件；Git两表发布为有效全局同步。未修改会话数据库或接管其他写入者。
 
 ## 较早未形成正式结果的启动记录
 
