@@ -169,7 +169,7 @@ AUC由每目标全部donor的平均fake概率计算，CE则先计算每个donor�
 
 代码`f7cafcfc3c4caf51384ad3b052f8d937ab46d822`；归档`b5c546346a97583dd4b3d5adaa4cef9fd1b5191e`仅203、未push代码。摘要目录`W203/scripts/experiment_summaries/p04_d02_20261003/`含结果、配置/开始证据、CPU验证脚本、逐视频值、donor清单、图像内容hash、首失败副本及artifact_index；原始特征留在`W203/.state/p04_d02_20261003_a2/features.npz`。result.json SHA256=`c6c78f3ceaafae4007f6aedc9d4551f9e9bd72a1b86b9e586b022c2d20b15e46`；verification.json=`581215978c00be492870690005f6eccb80918ff5e89d1f320257b98cd4f7dc28`；features.npz=`93a0b1ce46300cb99781c5f5445c15fe07365a63ff92589a1f4760ec1ca452c5`。CUDA max allocated=1902303744字节，观察NVML约2734MiB；实际0次训练更新，未新增checkpoint/选轮/重训。任务已完成，不安装无用途的长期定时器；旧监控/旧取消标记均保持原状。
 
-总对话补投：用户确认HTML结束后，15:16仍被官方App Server `active writer`拒绝；没有收件回执。当前官方thread消息工具未暴露、控制socket路径不存在，未绕过写锁或改会话数据库。共享两表已有效发布；完整UTF-8报告保留待官方投递恢复。以下保留认领、输入检查失败与最小修正记录。
+总对话补投：用户确认HTML结束后，15:16及本轮完成后再次请求均被官方App Server `active writer`拒绝；没有收件回执。当前官方thread消息工具未暴露、控制socket路径不存在，未绕过写锁或改会话数据库。共享两表已有效发布；完整UTF-8报告保留在本机任务目录`prd-continue-20261003/p04_d02_report.json`，待官方投递恢复。以下保留认领、输入检查失败与最小修正记录。
 
 修正执行代码`f7cafcfc3c4caf51384ad3b052f8d937ab46d822`，诊断脚本SHA256=`54f232066f23b51e8cc0fba60a25d0a1a1bd978d50eab15334b22fde7c63472e`，启动器SHA256=`ed68497791edd299a0415dc793a551fead76f6aed0dc05bac9736c88f3ec06df`。语法检查通过，首轮没有提取任何图像特征；用新目录执行同一192视频及全部donor的唯一正式诊断。
 
