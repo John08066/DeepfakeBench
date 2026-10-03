@@ -10,7 +10,7 @@
 | N01-D01 + N01-T01/v1：残差幅度/方向信息 | 4090 GPU0 Agent · 4090-48G/GPU0，等待A01释放 | WN01 / `2ae9dea` · `n01_gpu0_20261003` | 10-03 21:35:34服务器等待器PID3492316启动；21:36核验waiting_old，未开始GPU计算，旧组自然收尾后自动接续 | 22:20单次预约已核对新指令/应用登记；统计诊断→5臂各500更新，4小时上限。[协议与证据](docs/prd/records/N01.md) |
 | A02 / P06：T1 VAE+concat，旧seed42已中止 | 4090 GPU1 Agent · 4090-48G/GPU1 | W1 / `7810b2e` · `prd_t1_seed42_gpu1_20260929` | 10-03 18:28用户主动中止，退出143；18:41核验本组/队列已退出、GPU1无计算进程。GPU1停用留给同门，须再次授权 | 部分权重已归档校验，非完整结果；中止提交`4579eb2`。监控已暂停并读回next_run为空；[A02记录](docs/prd/records/A02.md) |
 | N02-D01/v1：严格identity及等范数blur/VAE响应 | PRD-203-1 · 203-1/GPU0 | W203 / `31c1558` · `n02_d01_20261003` | 10-03 22:16:36正常退出0、归档`0fcd560`；22:23:40核验进程已退出、GPU0MiB | 已完成，0训练更新；VAE方向优势未获支持；[结果与限制](docs/prd/records/N02-D01.md) |
-| N02-T01/v1：等单位范数探针方向配对训练 | PRD-203-1 · 203-1/GPU0 | W203 / `4be5bc9` · `n02_t01_20261003` | 用户本轮明确要求立即新训练及监控；已认领，待push读回和BS16/64 smoke | VAE/blur各3596更新，6小时硬上限，固定终点；无自动扩展。[协议](docs/prd/records/N02-T01.md) |
+| N02-T01/v1：等单位范数探针方向配对训练 | PRD-203-1 · 203-1/GPU0 | W203 / `4be5bc9` · `n02_t01_20261003` | 10-03 22:42正式首批通过；PID107825/队列107810，GPU15576MiB/100%，两臂LoRA梯度非零 | 10-04 03:30 Windows单次任务已登记读回（非应用卡片），待实际唤醒；最多6小时。[协议/启动证据](docs/prd/records/N02-T01.md) |
 
 WN01=`/home/zhaoting.ding/prd-worktrees/gpu0-n01-20261003`，分支`codex/prd4090-n01-20261003`；W0=`/home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench`；W1=`/home/zhaoting.ding/prd-worktrees/gpu1-20260929`；W203=`/root/DeepfakeBench-prd-common`（SSH `203-1-新`）。分支分别为 `prd-research-4090`、`codex/prd4090-gpu1-20260929`、`prd-203-1-seed3407`。203负责人对话：`01a0e12a-41bd-7b81-999d-fd62332d03cb`。最后核验过期不代表空闲或训练失败。
 
