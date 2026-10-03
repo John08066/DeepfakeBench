@@ -8,7 +8,7 @@
 |---|---|---|---|
 | 4090-48G / GPU0 | SSH已验证；conda `PRD`；训练/测试数据在本地 `/home/zhaoting.ding/local_datasets` | `prd-research-4090` / `f570bed` | F1 orig运行，PID2528606；epoch22，epoch21末AUC 0.79045014、连续下降2；43480MiB、100% |
 | 4090-48G / GPU1 | 同服务器独立工作树；conda `PRD`；本地数据，NAS日志 | `codex/prd4090-gpu1-20260929` / `7810b2e` | T1运行，PID1155273；epoch9，epoch8末AUC 0.84476423、连续下降1；41008MiB、100% |
-| 203-1 / GPU0 | SSH别名 `203-1-新`；conda `prd-common`；V100 32GB；数据 `/datasets/Deepfake` | `prd-203-1-seed3407` / `b5c5463` | 10-03 15:27 P04-D02完成正常退出，15:28实查GPU 0MiB、tmux已退出；旧T2/T3取消保留。P04-D01与D02已归档。CUDA实际192图推理通过，未来稳定性及历史故障根因未知 |
+| 203-1 / GPU0 | SSH别名 `203-1-新`；conda `prd-common`；V100 32GB；数据 `/datasets/Deepfake` | `prd-203-1-seed3407` / `533da19` | 10-03 16:23实查无训练/诊断进程，GPU 0MiB；旧T2/T3取消保留。P04-D01/D02完成；P03-D01/v1已认领待启动，仅CPU两线程，GPU预算0；未来CUDA稳定性及历史故障根因未知 |
 
 路径索引：
 
@@ -25,6 +25,17 @@
 2026-10-03 13:52已撤销四个未启动项：GPU0 `prd_f2_residual_seed42_gpu0_20260929`；GPU1 `prd_t2_blur_seed42_gpu1_20260929`、`prd_t3_identity_seed42_gpu1_20260929`、`prd_r2_abs_diff_seed42_gpu1_20260929`。各`.state/<task>/cancellation.json`记录`cancelled_before_start`和`training_started=false`，没有completion或console。原循环先完成当前组归档/Git，再执行下一任务`mkdir`（非-p）；`set -e`使它在已存在的取消状态目录处退出，未调用下一launcher。两卡当前训练保持运行，取消门槛与控制路径已实际核验，真实队列退出待当前组收尾验收。预期队列exit1不表示当前训练失败，禁止删除取消标记、复活旧队列或将取消项计为完成。证据：各树`.state/prd_dispatch_hold_20261003/decision.json`。曾尝试仅SIGSTOP父队列但随后仍S，未确认持续生效；实际控制不依赖该信号。
 
 监控仅继续当前A01/A02收尾：GPU0 `prd` 下一次2026-10-03 15:30；GPU1 `26-09-29-17-30-prd4090-gpu1` 下一次17:15，均北京时间单次预约。完成归档、结果提交并更新共享表后停止各自监控；不再要求旧有限队列所有取消项产生完成文件。
+
+## P03-D01/v1：冻结分类头双分支贡献（203已认领待启动）
+
+- 负责人/对话：203分支`01a0e12a-41bd-7b81-999d-fd62332d03cb`；W203独立分支`prd-203-1-seed3407`，代码`533da194da2dc264baeeb2e752e4bcd40d8333a3`，基线`b5fb097740a0815f468faac7d6feac402b29e518`；训练代码不push。状态核验2026-10-03 16:23，正式启动须本认领push且远端读回、203资源和flock核验。当前无同问题同协议认领；保留4090 N01/N02分工。
+- 假设：残差样本间变化相对均值参照对冻结头的贡献很小；竞争解释为有贡献但不需精确样本配对。D02配对阴性与旧不等头容量AUC都不能区分。固定头、宽度、权重、数据和开发选择历史；没有新增训练、超参或seed复验。
+- 输入：D02归档`b5c5463`；特征`W203/.state/p04_d02_20261003_a2/features.npz` SHA256 `93a0b1ce46300cb99781c5f5445c15fe07365a63ff92589a1f4760ec1ca452c5`，行清单`per_video.json` SHA256 `ba3920f62069e1cc552b188478624235cb70910fffd9f33a6a2024ada2d07bf0`；192视频记录/每条1帧，每域真假各32，不能假设人物或源视频独立。沿用D01清单SHA `a3fdfe91ae7a9613b75d51d0be5a424a2671a21c6001080beab28fe711641c8f`。
+- checkpoint为D01已正常归档T1：`L203/training/lora_prd_t1_seed3407_bs16_203_retry_20260930_a1_2026-09-30-16-25-34-344158/test/avg/ckpt_best.pth`，SHA256 `bfd35a301ae126871053666b106a81a753521af79d5d08a6f29c73b401d5bf6f`。原训练seed3407/BS16/testBS64、FF++c23、最佳epoch3、早停epoch11、结果`3b281d4`；本项无训练batch或新checkpoint。
+- 协议：z/r分别`[192,1024]`，拼接`[192,2048]`经同一eval头输出`[192,2]`。f=logit_fake−logit_real。参照(z0,r0)分别是除本视频外全池191条、同域63条的均值，不使用标签/分数，不调参照。四状态00/10/01/11依次为f(z0,r0)、f(z,r0)、f(z0,r)、f(z,r)。phi_z=[f10−f00+f11−f01]/2，phi_r=[f01−f00+f11−f10]/2；检验phi_z+phi_r=f11−f00。BatchNorm使用保存统计量，dropout关闭。独立torch CPU重算全部192条×四状态×两参照，核对numpy主实现及原D02logits。
+- 预登记判据：逐域S=mean(abs(phi_r))/(mean(abs(phi_z))+mean(abs(phi_r)))；两个参照三域全部S≤0.10支持小变化贡献，任一S≥0.20否定统一小贡献，否则不确定；分母近零亦不确定。阈值是描述性实用界线，不是总体显著性检验。辅助报告四状态CE/AUC、真假标签对齐贡献均值、绝对交互项；不用目标AUC选择参照。
+- 有限预算/停止：一项诊断，CPU两线程，分析≤300秒、独立复核≤300秒，RSS≤4GiB，GPU0秒，0训练更新/0新权重。hash/shape/有限性/回放/闭合或预算失败即停，不扩展。独立flock `.state/prd_mechanism_203.lock`，新状态`.state/p03_d01_20261003/`，结果拟归档`scripts/experiment_summaries/p03_d01_20261003/`；保留其他monitor和旧队列证据。
+- 限制：只能评价该模型相对预设参照的响应；常量残差偏置可能有作用却被本比较消去，小贡献不能说整支无用。均值替换可能不在联合分布支持内；leave-one-out参照本身随接收样本改变，00状态AUC不表示可部署分类器。目标三集参与checkpoint/早停选择，仍为开发诊断；不作重训因果、独立最终测试或跨机器单因素结论。
 
 ## 结果口径
 
