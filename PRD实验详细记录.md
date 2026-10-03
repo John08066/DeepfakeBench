@@ -157,6 +157,8 @@ C04（F1）训练退出0，但运行中Bash被原地重写导致外层127；权�
 
 ### P04-D02 认领协议（2026-10-03，203独立分支；待启动）
 
+代码已就绪：203本地提交`9b3d3c30cf0e6d5ab2b41f9991daa582aedbe853`，`scripts/p04_d02.py` SHA256=`35c4aa1fc37ac5104001fd41df6f6adc91e170992315a3e6f964e4fd4119e8d2`，启动器`scripts/run_p04_d02.sh` SHA256=`c7c3cc10b7c608256403502fa07e422ccd4dd4cf1ac38883d89e7f3150b6cbc8`。py_compile/bash -n通过；代码尚未执行模型，未push训练分支。认领提交583e89a已在203读回。
+
 - 问题：残差r是否必须与原图特征z逐样本配对，还是同真假/同域可交换信号。竞争解释：分类头只利用标签或域的残差统计。固定现有T1平均最佳checkpoint（SHA256 `bfd35a301ae126871053666b106a81a753521af79d5d08a6f29c73b401d5bf6f`）、同一分类头容量、VAE、eval模式、z与192个固定视频；不改残差幅度、方向或探针，不与N01/N02重复。旧AUC和P04-D01元数据不能回答分类头的配对响应。
 - 数据：复用manifest `a3fdfe91ae7a9613b75d51d0be5a424a2671a21c6001080beab28fe711641c8f`；三域各real/fake32视频、每视频1帧。先核验源JSON/hash、所有LMDB图像可读性及内容hash，缺失即停、不替换。使用既有test的RGB/cubic resize/CLIP归一化。视频记录是统计单位，人物/伪造源家族未证独立，不报告独立样本显著性；目标集曾选checkpoint，仍是开发诊断。
 - 干预：对每个目标i，保留z_i；基线head([z_i,r_i])。三条件分别遍历同域同标签且j≠i的31个donor、同域异标签32个donor、异域同标签64个donor；用全部donor的均值，不按AUC选配对。保存每视频原始及干预交叉熵、真类margin、fake概率及域内AUC（干预AUC由每目标donor均值概率计算）。原/残差形状[192,1024]、head输入[batch,2048]、logits[batch,2]。
