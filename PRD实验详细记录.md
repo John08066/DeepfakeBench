@@ -20,6 +20,7 @@
 | <a id="n01"></a>N01-D01 / N01-T01/v1 | 固定T1表示的范数诊断与五臂源域分类头训练 | [N01协议及启动验收](docs/prd/records/N01.md)；WN01代码`2ae9dea`，等待A01自然退出；未产生正式结果 |
 | <a id="p03-t01"></a>P03-T01/v1 | 已完成；双臂3596步、正常退出、权重/备份hash和独立指标通过，预设判定不确定 | [完成记录](docs/prd/records/P03-T01.md)；W203归档`scripts/experiment_summaries/p03_t01_20261003/`，代码`a2cb1c2`、结果`875a472`，未push训练代码 |
 | <a id="p03-d02"></a>P03-D02/v1 | 已完成；J0.060423nat达预设响应判据，0训练更新，numpy复算通过 | [协议与结果](docs/prd/records/P03-D02.md)；W203代码`2f4fd2b`、结果`0bac70a`，归档`scripts/experiment_summaries/p03_d02_20261003/`，实验代码未push |
+| <a id="n02-d01"></a>N02-D01/v1 | 已认领，待push读回后执行；严格identity、固定sigma1与逐视频等范数特征干预 | [固定协议](docs/prd/records/N02-D01.md)；W203代码`31c1558`，`.state/n02_d01_20261003/`，非新增训练 |
 | <a id="p03-d01"></a>P03-D01/v1 | 冻结头Shapley协议、六格结果与独立验证 | [原细表](docs/prd/history/2026-10-03-34343d3/PRD实验详细记录.md) L46–L70；W203 `scripts/experiment_summaries/p03_d01_20261003/`，结果 `6c8bb32` |
 | <a id="history-4090"></a>H01–H12 / C01–C06 | 4090完整逐集AUC、旧失败、checkpoint与提交映射 | [原细表](docs/prd/history/2026-10-03-34343d3/PRD实验详细记录.md) L71–L76、L77–L150；按原记录ID检索，勿把R3重试计新机制 |
 | <a id="history-203"></a>203 T1 / 旧T2/T3 | seed3407原训练、失败、取消与跨机器限制 | [原细表](docs/prd/history/2026-10-03-34343d3/PRD实验详细记录.md) L151–L197；T1结果 `3b281d4`，旧取消不恢复 |

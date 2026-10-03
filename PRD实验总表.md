@@ -9,7 +9,7 @@
 | A01 / P06：F1原图，旧seed42收尾 | 4090 GPU0 Agent · 4090-48G/GPU0 | W0 / `f570bed` · `prd_f1_orig_seed42_gpu0_20260929` | 10-03 21:15实查PID2528606仍运行，末次DFDC评测；用户明确等待自然结束，F2取消保留 | 22:20单次监控负责旧组收尾及N01衔接；[旧证据](PRD实验详细记录.md#run-4090) |
 | N01-D01 + N01-T01/v1：残差幅度/方向信息 | 4090 GPU0 Agent · 4090-48G/GPU0，等待A01释放 | WN01 / `2ae9dea` · `n01_gpu0_20261003` | 10-03 21:35:34服务器等待器PID3492316启动；21:36核验waiting_old，未开始GPU计算，旧组自然收尾后自动接续 | 22:20单次预约已核对新指令/应用登记；统计诊断→5臂各500更新，4小时上限。[协议与证据](docs/prd/records/N01.md) |
 | A02 / P06：T1 VAE+concat，旧seed42已中止 | 4090 GPU1 Agent · 4090-48G/GPU1 | W1 / `7810b2e` · `prd_t1_seed42_gpu1_20260929` | 10-03 18:28用户主动中止，退出143；18:41核验本组/队列已退出、GPU1无计算进程。GPU1停用留给同门，须再次授权 | 部分权重已归档校验，非完整结果；中止提交`4579eb2`。监控已暂停并读回next_run为空；[A02记录](docs/prd/records/A02.md) |
-| 203本轮已收尾：P03-T01及P03-D02 | PRD-203-1 · 203-1/GPU0 | W203 / 训练`a2cb1c2`、诊断`2f4fd2b` | 10-03 21:54:43核验D02正常退出、归档exit0，PID103452已退出；无自动后续派发 | 结果见下表；等待N01机制证据再决定独立复核，不自动增加训练；[D02证据](docs/prd/records/P03-D02.md) |
+| N02-D01/v1：严格identity及等范数blur/VAE响应 | PRD-203-1 · 203-1/GPU0 | W203 / `31c1558` · `n02_d01_20261003` | 用户继续指令后认领；22:05实查P03两项均完成、无训练进程、GPU0MiB；待认领push读回启动 | 固定paired末权重及192视频，0训练更新、≤30分钟；仅203，不启用GPU1；[协议](docs/prd/records/N02-D01.md) |
 
 WN01=`/home/zhaoting.ding/prd-worktrees/gpu0-n01-20261003`，分支`codex/prd4090-n01-20261003`；W0=`/home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench`；W1=`/home/zhaoting.ding/prd-worktrees/gpu1-20260929`；W203=`/root/DeepfakeBench-prd-common`（SSH `203-1-新`）。分支分别为 `prd-research-4090`、`codex/prd4090-gpu1-20260929`、`prd-203-1-seed3407`。203负责人对话：`01a0e12a-41bd-7b81-999d-fd62332d03cb`。最后核验过期不代表空闲或训练失败。
 
@@ -29,7 +29,7 @@ WN01=`/home/zhaoting.ding/prd-worktrees/gpu0-n01-20261003`，分支`codex/prd409
 
 | ID / 科学问题 | 预留分工 | 启动前提 |
 |---|---|---|
-| N02 严格identity / blur / VAE等强度对照 | 暂停GPU1资源预留 | GPU1已中止并停用留给同门，须等用户再次通知才可认领使用；控制随机性与扰动强度，推理敏感性不冒充重训因果 |
+| N02 后续方法对照 | GPU1资源仍暂停；203仅认领上述冻结D01 | GPU1停用边界不变，须用户再次通知；本轮不授权新增训练。冻结响应不冒充重训因果，后续方法对照待诊断证据 |
 | N03 筛选机制的独立复核 | 203或未来服务器 | 等N01/N02证据；先固定划分、预算和授权，不补seed矩阵 |
 
 ## 维护规则
