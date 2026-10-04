@@ -15,10 +15,10 @@
 
 | 稳定ID | 要读的证据 | 文件与范围 / 所属归档 |
 |---|---|---|
-| <a id="run-4090"></a>A01 | 4090 GPU0进程、目录、旧预约与取消门槛 | [原细表](docs/prd/history/2026-10-03-34343d3/PRD实验详细记录.md) L5–L28；W0 `.state/`、日志及结果摘要 |
+| <a id="run-4090"></a>A01 | 旧F1 seed42于10-04正常完成epoch30；缺失归档完成记录已恢复，结果`d738d25` | [最终结果与恢复](docs/prd/records/A01.md)；旧F2保持取消，未重训 |
 | <a id="a02"></a>A02 | 4090 GPU1用户中止、部分权重归档与资源交接 | [A02记录](docs/prd/records/A02.md)；W1中止摘要提交 `4579eb2`，原失败记录保留，监控已暂停；启动背景见上述原细表 |
 | <a id="n04-t01"></a>N04-T01/v1 | 4090 GPU1三臂均完成3596步，退出0；未支持本固定预算下残差增量，权重/指标/Git已验收 | [协议与证据](docs/prd/records/N04-T01.md)；WN04代码`9144bb6`、结果`e486154`（实验代码未push），task `n04_t01_gpu1_20261004` |
-| <a id="n01"></a>N01-D01 / N01-T01/v1 | 固定T1表示的范数诊断与五臂源域分类头训练 | [N01协议及启动验收](docs/prd/records/N01.md)；WN01代码`2ae9dea`，等待A01自然退出；未产生正式结果 |
+| <a id="n01"></a>N01-D01 / N01-T01/v1 | 1216图、五头各500更新完成；direction−norm平均AUC +0.04769，2/3域胜，CE更差 | [完整结果与验收](docs/prd/records/N01.md)；WN01结果`0e910ea`，代码未push，监控已删除 |
 | <a id="p03-t01"></a>P03-T01/v1 | 已完成；双臂3596步、正常退出、权重/备份hash和独立指标通过，预设判定不确定 | [完成记录](docs/prd/records/P03-T01.md)；W203归档`scripts/experiment_summaries/p03_t01_20261003/`，代码`a2cb1c2`、结果`875a472`，未push训练代码 |
 | <a id="p03-d02"></a>P03-D02/v1 | 已完成；J0.060423nat达预设响应判据，0训练更新，numpy复算通过 | [协议与结果](docs/prd/records/P03-D02.md)；W203代码`2f4fd2b`、结果`0bac70a`，归档`scripts/experiment_summaries/p03_d02_20261003/`，实验代码未push |
 | <a id="n02-d01"></a>N02-D01/v1 | 10-03完成，退出0；等范数VAE方向优势未获支持，严格identity/RNG控制验证通过 | [协议与结果](docs/prd/records/N02-D01.md)；代码`31c1558`、结果`0fcd560`；0训练更新，非方法因果结论 |
