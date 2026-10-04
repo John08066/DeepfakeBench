@@ -33,7 +33,21 @@
 | <a id="p04-d01"></a>P04-D01 | 域/标签审计、固定192清单与输入hash | [原细表](docs/prd/history/2026-10-03-34343d3/PRD实验详细记录.md)中 `P04-D01` 小节；W203 `scripts/experiment_summaries/p04_d01_20261003/`，结果 `03fc8f1` |
 | <a id="p04-d02"></a>P04-D02/v1 | 配对干预、特征hash、失败修正及结果限制 | [原细表](docs/prd/history/2026-10-03-34343d3/PRD实验详细记录.md)中 `P04-D02` 小节；W203 `scripts/experiment_summaries/p04_d02_20261003/`，结果 `b5c5463` |
 
-W0/W1/W203的绝对路径见总表。原总表中的问题、候选及协议原文亦完整保留于[历史总表](docs/prd/history/2026-10-03-34343d3/PRD实验总表.md)；不作为当前指令或当前占用依据。两份历史文件停止日常追加，新事件只更新本任务记录及索引链接。
+工作树缩写见下方目录表。原总表中的问题、候选及协议原文亦完整保留于[历史总表](docs/prd/history/2026-10-03-34343d3/PRD实验总表.md)；不作为当前指令或当前占用依据。两份历史文件停止日常追加，新事件只更新本任务记录及索引链接。
+
+## 工作树目录（历史定位，非当前占用）
+
+| 缩写 | 服务器绝对目录 | 分支 |
+|---|---|---|
+| W0 | `/home/zhaoting.ding/disk/zhaoting.ding/DeepfakeBench` | `prd-research-4090` |
+| W1 | `/home/zhaoting.ding/prd-worktrees/gpu1-20260929` | `codex/prd4090-gpu1-20260929` |
+| W203 | `/root/DeepfakeBench-prd-common`（SSH `203-1-新`） | `prd-203-1-seed3407` |
+| WN01 | `/home/zhaoting.ding/prd-worktrees/gpu0-n01-20261003` | `codex/prd4090-n01-20261003` |
+| WN04 | `/home/zhaoting.ding/prd-worktrees/gpu1-n04-20261004` | `codex/prd4090-n04-20261004` |
+| WN05-0/1 | `/home/zhaoting.ding/prd-worktrees/gpu{0,1}-n05-20261004` | `codex/prd4090-n05-gpu{0,1}-20261004` |
+| WN06-0/1 | `/home/zhaoting.ding/prd-worktrees/gpu{0,1}-n06-20261004` | `codex/prd4090-n06-gpu{0,1}-20261004` |
+
+203负责人对话：`01a0e12a-41bd-7b81-999d-fd62332d03cb`。本表只解释历史记录中的目录缩写；当前任务与核验时间见总表。
 
 ## Git同步与并发写入
 
