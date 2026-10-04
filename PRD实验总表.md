@@ -6,7 +6,7 @@
 
 | 任务 / 问题 | 负责人 · 资源 | 运行身份 | 状态（北京时间） | 下一动作 / 证据 |
 |---|---|---|---|---|
-| Q04-T01/v1：冻结层级残差源域线性探针 | 203 Agent · 203-1-新/V100 GPU0 | `/root/DeepfakeBench-prd-common`；`prd-203-1-seed3407`；代码`ae3c6b7`；task `q04_t01_20261005` | 10-05 02:38已认领待启动；3个同维线性头各500更新，编码器冻结，1小时硬上限、无重试 | 固定CLS24/patch12均值/patch24均值；源train拟合、val选点、源test主判据，192目标视频仅描述；不重复4090 N07/E01。[协议](docs/prd/records/Q04-T01.md) |
+| Q04-T01/v1：冻结层级残差源域线性探针 | 203 Agent · 203-1-新/V100 GPU0 | `/root/DeepfakeBench-prd-common`；`prd-203-1-seed3407`；代码`ae3c6b7`；task `q04_t01_20261005` | 10-05 02:39:54实际SSH：02:39:34启动，首batch16真实前向通过、冻结特征提取中；三头各500更新/1小时硬上限 | 固定CLS24/patch12均值/patch24均值；源train拟合、val选点、源test主判据，192目标视频仅描述；不重复4090 N07/E01。[协议](docs/prd/records/Q04-T01.md) |
 | N07-T01/v1：原图 vs 原图+残差学习曲线与源域验证选点 | 4090 Agent · GPU0 original已完成 / GPU1 joint在途 | GPU0结果`c8fcf1c`；GPU1 /home/zhaoting.ding/prd-worktrees/gpu1-n07-20261004；task `n07_t01_gpu1_20261004` | 10-05 02:16 SSH核验GPU0完整21576更新/exit0并归档，源val选epoch5；GPU1仍运行，本次未改其训练/监控 | 单卡不作两臂优劣结论；GPU1最新预约05:30，等完整配对后汇总。GPU0接续下行全量评估。[协议/结果](docs/prd/records/N07-T01.md) |
 | N07-E01/v1：源域选点原图基线完整目标集评估 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-n07-e01-20261005；代码 `577d8c5`；task `n07_e01_original_gpu0_20261005` | 10-05 02:25实际SSH：三域smoke exit0，02:23正式评估PID80164运行中；固定N07源val最佳epoch5，0训练更新 | 三域完整test、每视频至多32帧，逐帧和视频指标均报告；不根据目标结果选点，GPU0原监控已登记10-05 03:15单次检查并读回，GPU1/203不改。[协议](docs/prd/records/N07-E01.md) |
 
