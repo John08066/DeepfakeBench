@@ -6,7 +6,8 @@
 
 | 任务 / 问题 | 负责人 · 资源 | 运行身份 | 状态（北京时间） | 下一动作 / 证据 |
 |---|---|---|---|---|
-| N07-T01/v1：原图 vs 原图+残差学习曲线与源域验证选点 | 4090 Agent · GPU0 original / GPU1 joint | /home/zhaoting.ding/prd-worktrees/gpu{0,1}-n07-20261004；代码 `7a2aaef`；task `n07_t01_gpu0_20261004`、`n07_t01_gpu1_20261004` | 10-04 23:04实际SSH：两卡smoke exit0后fresh正式运行，GPU0 400步、GPU1 100步，无failure；GPU1授权共享同门负载 | 每臂12epoch/21576步，源val每轮，2/4/8/12目标开发诊断；只按源val CE选点，12轮不等同收敛。原监控已ACTIVE：10-05 GPU1 00:30、GPU0 02:15（北京时间单次，已读回）；完成后按证据继续。[协议](docs/prd/records/N07-T01.md) |
+| N07-T01/v1：原图 vs 原图+残差学习曲线与源域验证选点 | 4090 Agent · GPU0 original已完成 / GPU1 joint在途 | GPU0结果`c8fcf1c`；GPU1 /home/zhaoting.ding/prd-worktrees/gpu1-n07-20261004；task `n07_t01_gpu1_20261004` | 10-05 02:16 SSH核验GPU0完整21576更新/exit0并归档，源val选epoch5；GPU1仍运行，本次未改其训练/监控 | 单卡不作两臂优劣结论；GPU1最新预约05:30，等完整配对后汇总。GPU0接续下行全量评估。[协议/结果](docs/prd/records/N07-T01.md) |
+| N07-E01/v1：源域选点原图基线完整目标集评估 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-n07-e01-20261005；代码 `577d8c5`；task `n07_e01_original_gpu0_20261005` | 已认领，尚未启动；固定N07源val最佳epoch5，0训练更新 | 三域完整test、每视频至多32帧，逐帧和视频指标均报告；不根据目标结果选点，沿用GPU0原监控。[协议](docs/prd/records/N07-E01.md) |
 
 4090现有资源授权上限仍为 **10-07 00:00**，用户最新指令已解除方案等待，4090按证据自主接续非重复实验。本项目任务结束不代表整卡空闲；状态过期须核验，不能据此重训或抢占。
 

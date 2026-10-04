@@ -252,3 +252,5 @@ git show refs/remotes/origin/codex/prd-progress:PRD实验总表.md
 - [N06-T01：残差训练配对与梯度干预](docs/prd/records/N06-T01.md)：4090两卡，复用N05 direction，持续机制研究授权于2026-10-04更新。
 
 - [N07-T01：原图与联合分支的训练轨迹和源域验证](docs/prd/records/N07-T01.md)：用户解除等待，4090双卡配对学习曲线，非seed/超参扫描。
+
+- [N07-E01：源域选点原图完整目标评估](docs/prd/records/N07-E01.md)：GPU0，固定epoch5，不更新训练或目标选点。
