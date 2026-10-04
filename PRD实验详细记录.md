@@ -53,3 +53,5 @@ git show refs/remotes/origin/codex/prd-progress:PRD实验总表.md
 - 原总表 SHA256：`6343b580f08b61fa32791bccb0090d520b3dd686eb42cbeccb5f49f4691e8477`。
 - 原细表 SHA256：`6e622fdf0213d65be7a87d240d0a84e18929b5af5f313476ad90e2d41e4f24b1`。
 - 此次仅改协作文档；不改变现有实验、取消标记、队列或监控。文档发布不等于已向其他运行中的对话投递消息。
+
+- [N06-T01：残差训练配对与梯度干预](docs/prd/records/N06-T01.md)：4090两卡，复用N05 direction，持续机制研究授权于2026-10-04更新。
