@@ -7,7 +7,7 @@
 | 任务 / 问题 | 负责人 · 资源 | 运行身份 | 状态（北京时间） | 下一动作 / 证据 |
 |---|---|---|---|---|
 | N01-T04/v1：残差单支signed/abs对照 | PRD-203-1 · 203-1-新/GPU0 | `/root/DeepfakeBench-prd-common`；`prd-203-1-seed3407` / `71b156a`；task `n01_t04_20261004` | 10-04 20:52核验运行中；各3596步、6小时上限，无重试 | 原定10-05 01:15单次检查，未来触发待验；先验收本批，再按本分支授权查重认领。[协议与状态](docs/prd/records/N01-T04.md) |
-| N07-T01/v1：原图 vs 原图+残差学习曲线与源域验证选点 | 4090 Agent · GPU0 original / GPU1 joint | /home/zhaoting.ding/prd-worktrees/gpu{0,1}-n07-20261004；代码 `7a2aaef`；task `n07_t01_gpu0_20261004`、`n07_t01_gpu1_20261004` | 用户已明确恢复自主持续派发；本批已认领，尚未启动，先smoke后fresh正式训练 | 每臂12epoch/21576步，源val每轮，2/4/8/12目标开发诊断；只按源val CE选点，12轮不等同收敛。沿用原监控ID恢复跟踪，完成后按证据继续。[协议](docs/prd/records/N07-T01.md) |
+| N07-T01/v1：原图 vs 原图+残差学习曲线与源域验证选点 | 4090 Agent · GPU0 original / GPU1 joint | /home/zhaoting.ding/prd-worktrees/gpu{0,1}-n07-20261004；代码 `7a2aaef`；task `n07_t01_gpu0_20261004`、`n07_t01_gpu1_20261004` | 10-04 23:04实际SSH：两卡smoke exit0后fresh正式运行，GPU0 400步、GPU1 100步，无failure；GPU1授权共享同门负载 | 每臂12epoch/21576步，源val每轮，2/4/8/12目标开发诊断；只按源val CE选点，12轮不等同收敛。原监控已ACTIVE：10-05 GPU1 00:30、GPU0 02:15（北京时间单次，已读回）；完成后按证据继续。[协议](docs/prd/records/N07-T01.md) |
 
 4090现有资源授权上限仍为 **10-07 00:00**，用户最新指令已解除方案等待，4090按证据自主接续非重复实验。本项目任务结束不代表整卡空闲；状态过期须核验，不能据此重训或抢占。
 
