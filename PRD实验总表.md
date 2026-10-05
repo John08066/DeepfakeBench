@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无新计算 | `/root/DeepfakeBench-prd-common`；现有实现`6cdc9a8`，第二权重/正式配置待定 | 10-05 06:00实际唤醒并同步共享及相关对话；第二权重缺口未变、无新授权候选，准备阻塞 | 等待第二重建器明确身份、已有路径及兼容配置；Q03仅准备阻塞。203现接续Q05-T03，原Codex监控随当前计算更新。[准备记录](docs/prd/records/Q03-P01.md) |
 | N10-T01/v1：固定小步有限差分残差校正 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-n10-20261005；代码 `8af41e9`；task `n10_t01_gpu1_20261005` | 10-05 19:07实际SSH：完整smoke/与N09初始化增强配对通过，正式PID1581566/runner1571048在训 | 固定1/16小步、h0冻结、12epoch21576更新、源val选点含0；原GPU1单次20:05已读回ACTIVE/next_run_at/原对话绑定。[协议与启动](docs/prd/records/N10-T01.md) |
-| Q09-T01/v1：固定未见NeuralTextures方法的PRD迁移 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-q09-20261005；代码 `19a4e95`；task `q09_t01_gpu0_20261005` | 10-05 20:34实际SSH：双smoke退出0且配对通过，fresh original PID2086308/runner2040068正式首步，joint待本组自动接续 | 固定排除NT的源train/val；每臂12epoch17268更新，8958帧280留出test视频；原GPU0单次21:15已读回。[协议与启动](docs/prd/records/Q09-T01.md) |
+| Q09-T01/v1：固定未见NeuralTextures方法的PRD迁移 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-q09-20261005；启动代码 `19a4e95`；task `q09_t01_gpu0_20261005` | 10-06 02:04实际SSH：original完整验收归档`5018ccd`；01:39服务器自动fresh接续joint PID3808699/runner2040068，1200/17268步 | 两臂完整配对尚未完成，不能给迁移优劣结论；原GPU0下一单次02:45核验完整epoch速度与验证开销。[分片验收与交接](docs/prd/records/Q09-T01.md) |
 
 4090现有资源授权上限仍为 **10-07 00:00**，用户最新指令已解除方案等待，4090按证据自主接续非重复实验。本项目任务结束不代表整卡空闲；状态过期须核验，不能据此重训或抢占。
 
