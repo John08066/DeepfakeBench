@@ -22,7 +22,7 @@
 | <a id="n07-e01"></a>N07-E01/v1 | 全量165758帧/5876视频、0训练更新；exit0/CPU指标/源备份/Git验收通过，宏视频AUC .88089326 / CE .50128075 | [完整结果](docs/prd/records/N07-E01.md)；结果 `17ef903` |
 | <a id="n08-t01"></a>N08-T01/v1 | 12轮21576更新/exit0；源val选epoch9，anchor严格未变，CPU指标/源备份/Git验收通过；192dev未显示跨域增益 | [完整结果](docs/prd/records/N08-T01.md)；结果 `dfc20de` |
 | <a id="n09-t02"></a>N09-T02/v1 | GPU1已启动同容量、同类别平衡的原图特征校正对照；12轮，跨卡smoke配对通过 | [协议](docs/prd/records/N09-T02.md)；代码 `cc3212f` |
-| <a id="n09-e01"></a>N09-E01/v1 | 已认领源选epoch7完整165758帧/5876视频评估，0训练更新，尚未启动 | [协议](docs/prd/records/N09-E01.md)；代码 `8a9d479` |
+| <a id="n09-e01"></a>N09-E01/v1 | 已实际启动固定源选epoch7完整165758帧/5876视频评估，smoke/清单通过，0训练更新 | [协议与启动](docs/prd/records/N09-E01.md)；代码 `8a9d479` |
 | <a id="n09-t01"></a>N09-T01/v1 | 12轮21576更新/exit0；源val选epoch7；完整trace/CPU/冻结anchor/源备份/Git验收通过，固定先验反向对照保留 | [结果](docs/prd/records/N09-T01.md)；结果 `f8283c6` |
 | <a id="n08-e01"></a>N08-E01/v1 | 完成165758帧；宏视频ΔAUC+.000998、CE增.023903，未获一致增益，0更新 | [协议](docs/prd/records/N08-E01.md)；代码 `5518713` |
 | <a id="q05-t01"></a>Q05-T01 | 正式在训：10-05 13:59启动，14:00实际SSH及首步LoRA梯度验收；2轮/每臂3596更新 | [协议与证据](docs/prd/records/Q05-T01.md) |
