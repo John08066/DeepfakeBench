@@ -21,7 +21,8 @@
 | <a id="n07-e02"></a>N07-E02/v1 | 完整165758帧验收；宏视频AUC .87151/CE .56574，较原图退步；配对区间已归档 | [结果](docs/prd/records/N07-E02.md)；结果 `87ba827`、比较 `b86183b` |
 | <a id="n07-e01"></a>N07-E01/v1 | 全量165758帧/5876视频、0训练更新；exit0/CPU指标/源备份/Git验收通过，宏视频AUC .88089326 / CE .50128075 | [完整结果](docs/prd/records/N07-E01.md)；结果 `17ef903` |
 | <a id="n08-t01"></a>N08-T01/v1 | 12轮21576更新/exit0；源val选epoch9，anchor严格未变，CPU指标/源备份/Git验收通过；192dev未显示跨域增益 | [完整结果](docs/prd/records/N08-T01.md)；结果 `dfc20de` |
-| <a id="q07-d01"></a>Q07-D01/v1 | GPU1修复后四域smoke退出0，正式响应几何已启动；三编码器/6576固定图/0更新 | [协议](docs/prd/records/Q07-D01.md)；代码 `c06a210` |
+| <a id="n10-t01"></a>N10-T01/v1 | 已预登记固定1/16有限差分校正，GPU1完整12轮，尚未启动 | [协议](docs/prd/records/N10-T01.md)；代码 `8af41e9` |
+| <a id="q07-d01"></a>Q07-D01/v1 | 完整6576图/exit0/CPU与归档Git验收；端点响应与小步外推差异大，LoRA增益变化依域/类，不直接当局部Jacobian | [完整几何量与区间](docs/prd/records/Q07-D01.md)；结果 `d9819cd` |
 | <a id="n09-e02"></a>N09-E02/v1 | 全量exit0/165758帧5876视频/CPU与归档Git验收；T01残差不及同容量原图校正，逐域及区间完整报告 | [结果与完整配对](docs/prd/records/N09-E02.md)；结果 `021b479`、汇总 `f16e2a3` |
 | <a id="n09-t02"></a>N09-T02/v1 | 12轮21576更新、exit0；源选epoch1；CPU/冻结anchor/备份/Git验收；两训练完整配对通过，192dev残差劣于原图校正，完整方法结论待全量 | [结果与配对](docs/prd/records/N09-T02.md)；结果 `f9326c9`、汇总 `a38ea8f` |
 | <a id="n09-e01"></a>N09-E01/v1 | 全量165758帧/5876视频验收，宏视频AUC .884118/CE .633255；对h0排序微升而三域CE更差，四项固定对照已配对 | [完整结果](docs/prd/records/N09-E01.md)；结果 `33356c7`、比较 `8d13dca` |
