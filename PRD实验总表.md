@@ -6,7 +6,8 @@
 
 | 任务 / 问题 | 负责人 · 资源 | 运行身份 | 状态（北京时间） | 下一动作 / 证据 |
 |---|---|---|---|---|
-| Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无新计算 | `/root/DeepfakeBench-prd-common`；现有实现`6cdc9a8`，第二权重/正式配置待定 | 10-05 06:00实际唤醒并同步共享及相关对话；第二权重缺口未变、无新授权候选，准备阻塞 | 等待第二重建器明确身份、已有路径及兼容配置；Q03仅准备阻塞。203现接续Q05-T04，原Codex监控随当前计算更新。[准备记录](docs/prd/records/Q03-P01.md) |
+| Q05-T05/v1：增量残差的双分支反传贡献 | 203 Agent · 203-1-新/V100 GPU0 | `/root/DeepfakeBench-prd-common`；代码`fc6ca75`；task `q05_t05_20261006` | 10-06 03:30验收T04后认领，待smoke | 只新训pre分支stop-gradient LoRA一臂，复用T03双反传；同前向/头及3596更新，3小时硬上限无重试。[协议](docs/prd/records/Q05-T05.md) |
+| Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无新计算 | `/root/DeepfakeBench-prd-common`；现有实现`6cdc9a8`，第二权重/正式配置待定 | 10-05 06:00实际唤醒并同步共享及相关对话；第二权重缺口未变、无新授权候选，准备阻塞 | 等待第二重建器明确身份、已有路径及兼容配置；Q03仅准备阻塞。203现接续Q05-T05，原Codex监控随当前计算更新。[准备记录](docs/prd/records/Q03-P01.md) |
 | N10-T01/v1：固定小步有限差分残差校正 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-n10-20261005；代码 `8af41e9`；task `n10_t01_gpu1_20261005` | 10-05 19:07实际SSH：完整smoke/与N09初始化增强配对通过，正式PID1581566/runner1571048在训 | 固定1/16小步、h0冻结、12epoch21576更新、源val选点含0；原GPU1单次20:05已读回ACTIVE/next_run_at/原对话绑定。[协议与启动](docs/prd/records/N10-T01.md) |
 | Q09-T01/v1：固定未见NeuralTextures方法的PRD迁移 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-q09-20261005；启动代码 `19a4e95`；task `q09_t01_gpu0_20261005` | 10-06 02:04实际SSH：original完整验收归档`5018ccd`；01:39服务器自动fresh接续joint PID3808699/runner2040068，1200/17268步 | 两臂完整配对尚未完成，不能给迁移优劣结论；原GPU0下一单次02:45核验完整epoch速度与验证开销。[分片验收与交接](docs/prd/records/Q09-T01.md) |
 
