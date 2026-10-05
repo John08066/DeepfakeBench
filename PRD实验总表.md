@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无新计算 | `/root/DeepfakeBench-prd-common`；现有实现`6cdc9a8`，第二权重/正式配置待定 | 10-05 06:00实际唤醒并同步共享及相关对话；第二权重缺口未变、无新授权候选，准备阻塞 | 等待第二重建器明确身份、已有路径及兼容配置；未下载/训练。原Codex任务06:03已核验PAUSED、无下一次运行，按本次指令停止空轮询。[准备记录](docs/prd/records/Q03-P01.md) |
 | N07-E02/v1：联合模型同清单完整目标评估 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-n07-e02-20261005；代码 `ff4ab0a`；task `n07_e02_joint_gpu1_20261005_verified` | 10-05 08:00实际SSH：三域smoke/完整清单检查exit0，正式评估PID1994181已开始 | 固定源val epoch3，0更新；同165758帧配对E01。原GPU1监控08:50单次已登记读回，GPU0/203不改。[协议/启动](docs/prd/records/N07-E02.md) |
-| N08-T01/v1：冻结原图基线的可学习残差校正 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-n08-20261005；代码 `ee7dace`；task `n08_t01_gpu0_20261005` | 10-05 03:45实际SSH：smoke exit0，正式PID535911已100/21576更新，无failure；固定原图，训练残差校正 | 完整12轮源val选点含epoch0；本GPU0原生监控04:45单次登记已读回，GPU1/203不改。[协议与启动](docs/prd/records/N08-T01.md) |
+| N08-E01/v1：残差校正源选模型完整目标评估 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-n08-e01-20261005；代码 `5518713`；task `n08_e01_gpu0_20261005` | 10-05 08:18认领待启动；N08训练完成并验收dfc20de，源val选epoch9 | 0更新、与E01原图完全同帧评估；不重复GPU1 joint，持续原GPU0监控。[协议](docs/prd/records/N08-E01.md) |
 
 4090现有资源授权上限仍为 **10-07 00:00**，用户最新指令已解除方案等待，4090按证据自主接续非重复实验。本项目任务结束不代表整卡空闲；状态过期须核验，不能据此重训或抢占。
 
