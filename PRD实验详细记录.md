@@ -21,7 +21,8 @@
 | <a id="n07-e02"></a>N07-E02/v1 | 完整165758帧验收；宏视频AUC .87151/CE .56574，较原图退步；配对区间已归档 | [结果](docs/prd/records/N07-E02.md)；结果 `87ba827`、比较 `b86183b` |
 | <a id="n07-e01"></a>N07-E01/v1 | 全量165758帧/5876视频、0训练更新；exit0/CPU指标/源备份/Git验收通过，宏视频AUC .88089326 / CE .50128075 | [完整结果](docs/prd/records/N07-E01.md)；结果 `17ef903` |
 | <a id="n08-t01"></a>N08-T01/v1 | 12轮21576更新/exit0；源val选epoch9，anchor严格未变，CPU指标/源备份/Git验收通过；192dev未显示跨域增益 | [完整结果](docs/prd/records/N08-T01.md)；结果 `dfc20de` |
-| <a id="n09-t02"></a>N09-T02/v1 | GPU1已启动同容量、同类别平衡的原图特征校正对照；12轮，跨卡smoke配对通过 | [协议](docs/prd/records/N09-T02.md)；代码 `cc3212f` |
+| <a id="n09-e02"></a>N09-E02/v1 | 已认领原图校正源选epoch1完整165758帧/5876视频评估，0更新，尚未启动 | [协议](docs/prd/records/N09-E02.md)；代码 `d2155c1` |
+| <a id="n09-t02"></a>N09-T02/v1 | 12轮21576更新、exit0；源选epoch1；CPU/冻结anchor/备份/Git验收；两训练完整配对通过，192dev残差劣于原图校正，完整方法结论待全量 | [结果与配对](docs/prd/records/N09-T02.md)；结果 `f9326c9`、汇总 `a38ea8f` |
 | <a id="n09-e01"></a>N09-E01/v1 | 已实际启动固定源选epoch7完整165758帧/5876视频评估，smoke/清单通过，0训练更新 | [协议与启动](docs/prd/records/N09-E01.md)；代码 `8a9d479` |
 | <a id="n09-t01"></a>N09-T01/v1 | 12轮21576更新/exit0；源val选epoch7；完整trace/CPU/冻结anchor/源备份/Git验收通过，固定先验反向对照保留 | [结果](docs/prd/records/N09-T01.md)；结果 `f8283c6` |
 | <a id="n08-e01"></a>N08-E01/v1 | 完成165758帧；宏视频ΔAUC+.000998、CE增.023903，未获一致增益，0更新 | [协议](docs/prd/records/N08-E01.md)；代码 `5518713` |
