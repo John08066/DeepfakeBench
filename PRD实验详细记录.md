@@ -21,7 +21,7 @@
 | <a id="n07-e02"></a>N07-E02/v1 | GPU1认领同清单全量joint源选权重评估，0训练更新 | [协议](docs/prd/records/N07-E02.md)；代码 `bb9483a` |
 | <a id="n07-e01"></a>N07-E01/v1 | 全量165758帧/5876视频、0训练更新；exit0/CPU指标/源备份/Git验收通过，宏视频AUC .88089326 / CE .50128075 | [完整结果](docs/prd/records/N07-E01.md)；结果 `17ef903` |
 | <a id="n08-t01"></a>N08-T01/v1 | 12轮21576更新/exit0；源val选epoch9，anchor严格未变，CPU指标/源备份/Git验收通过；192dev未显示跨域增益 | [完整结果](docs/prd/records/N08-T01.md)；结果 `dfc20de` |
-| <a id="n09-t01"></a>N09-T01/v1 | GPU0认领固定源频数平衡损失的残差校正，12轮非扫参 | [协议](docs/prd/records/N09-T01.md)；代码 `49c17e1` |
+| <a id="n09-t01"></a>N09-T01/v1 | GPU0已启动固定源频数平衡损失的残差校正；12轮非扫参，固定先验对照反向结果一并保留 | [协议](docs/prd/records/N09-T01.md)；代码 `49c17e1` |
 | <a id="n08-e01"></a>N08-E01/v1 | 完成165758帧；宏视频ΔAUC+.000998、CE增.023903，未获一致增益，0更新 | [协议](docs/prd/records/N08-E01.md)；代码 `5518713` |
 | <a id="q03-p01"></a>Q03-P01 | 准备阻塞：第二兼容重建器缺失；10-05 06:00交接无新输入，原Codex任务已暂停空轮询；无新计算，不计实验结果 | [前置与方案](docs/prd/records/Q03-P01.md) |
 | <a id="q04-t01"></a>Q04-T01/v1 | 三头各500更新/退出0；最终patch vs CLS源test ΔbalancedCE−0.04530、ΔAUC−0.06878，未支持预设优势；独立CPU/strict reload/源备份验收通过 | [完整结果](docs/prd/records/Q04-T01.md)；W203代码`ae3c6b7`、结果`6cdc9a8` |
