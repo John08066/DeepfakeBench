@@ -30,6 +30,7 @@
 | <a id="q08-d01"></a>Q08-D01/v1 | 修复后smoke退出0、正式冻结特征提取已启动；六源选线性头/完整源及三目标域，旧预检失败保留 | [协议与启动](docs/prd/records/Q08-D01.md)；代码 `b62792a` |
 | <a id="n09-t01"></a>N09-T01/v1 | 12轮21576更新/exit0；源val选epoch7；完整trace/CPU/冻结anchor/源备份/Git验收通过，固定先验反向对照保留 | [结果](docs/prd/records/N09-T01.md)；结果 `f8283c6` |
 | <a id="n08-e01"></a>N08-E01/v1 | 完成165758帧；宏视频ΔAUC+.000998、CE增.023903，未获一致增益，0更新 | [协议](docs/prd/records/N08-E01.md)；代码 `5518713` |
+| <a id="q05-t06"></a>Q05-T06 | 已认领待smoke：固定初始pre编码器参照，复用T05移动stop-gradient参照控制 | [协议与证据](docs/prd/records/Q05-T06.md) |
 | <a id="q05-t05"></a>Q05-T05 | 已验收：3596更新/exit0；双反传/stop_pre宏AUC .852865/.564128、CE .478417/.997567，支持固定预算双路径收益 | [协议与完整证据](docs/prd/records/Q05-T05.md) |
 | <a id="q05-t04"></a>Q05-T04 | 已验收：仅head3596更新/encoder0/exit0；适配/冻结宏AUC .852865/.648112、CE .478417/.836995，支持固定预算适配收益 | [协议与完整证据](docs/prd/records/Q05-T04.md) |
 | <a id="q05-t03"></a>Q05-T03 | 已验收：仅新增增量臂3596更新/exit0；增量/pre宏AUC .852865/.665365、CE .478417/.780749，支持固定预算增量收益 | [协议与完整证据](docs/prd/records/Q05-T03.md) |
