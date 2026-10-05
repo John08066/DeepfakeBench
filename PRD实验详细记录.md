@@ -272,4 +272,4 @@ git show refs/remotes/origin/codex/prd-progress:PRD实验总表.md
 
 - [N07-E01：源域选点原图完整目标评估](docs/prd/records/N07-E01.md)：GPU0，固定epoch5，不更新训练或目标选点。
 
-- [Q09-T01/v1：固定未见NeuralTextures方法迁移](docs/prd/records/Q09-T01.md)，4090 GPU0，已认领准备。
+- [Q09-T01/v1：固定未见NeuralTextures方法迁移](docs/prd/records/Q09-T01.md)，4090 GPU0，双smoke配对通过、original正式训练中。
