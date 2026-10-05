@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | Q05-T02/v1：去原图直通的VAE/预处理残差收益 | 203 Agent · 203-1-新/V100 GPU0 | `/root/DeepfakeBench-prd-common`；代码`c07d423`；task `q05_t02_20261005` | 10-05 18:42实际SSH：smoke退出0，正式PID200918/runner200904在训，首步两臂LoRA梯度非零 | 固定2epoch各3596更新，6小时硬上限；原Codex23:00单次登记读回，服务器自主归档。[协议](docs/prd/records/Q05-T02.md) |
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无新计算 | `/root/DeepfakeBench-prd-common`；现有实现`6cdc9a8`，第二权重/正式配置待定 | 10-05 06:00实际唤醒并同步共享及相关对话；第二权重缺口未变、无新授权候选，准备阻塞 | 等待第二重建器明确身份、已有路径及兼容配置；Q03仅准备阻塞。203现接续Q05-T02，原Codex监控随当前计算更新。[准备记录](docs/prd/records/Q03-P01.md) |
-| N10-T01/v1：固定小步有限差分残差校正 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-n10-20261005；代码 `8af41e9`；task `n10_t01_gpu1_20261005` | 10-05 19:07实际SSH：完整smoke/与N09初始化增强配对通过，正式PID1581566/runner1571048在训 | 固定1/16小步、h0冻结、12epoch21576更新、源val选点含0；原GPU1单次20:05拟登记。[协议与启动](docs/prd/records/N10-T01.md) |
+| N10-T01/v1：固定小步有限差分残差校正 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-n10-20261005；代码 `8af41e9`；task `n10_t01_gpu1_20261005` | 10-05 19:07实际SSH：完整smoke/与N09初始化增强配对通过，正式PID1581566/runner1571048在训 | 固定1/16小步、h0冻结、12epoch21576更新、源val选点含0；原GPU1单次20:05已读回ACTIVE/next_run_at/原对话绑定。[协议与启动](docs/prd/records/N10-T01.md) |
 | Q08-D01/v1：适配前后残差线性可读性 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-q08-20261005；代码 `b62792a`；task `q08_d01_gpu0_20261005_verified` | 10-05 16:39实际SSH：修复后smoke退出0，正式特征提取PID749735/runner745599运行，源train首64图完成 | 固定三编码器/六线性头，完整源/目标；CPU头各12epoch，源val选点；原GPU0单次17:30登记已核验。旧smoke失败保留。[协议与启动](docs/prd/records/Q08-D01.md) |
 
 4090现有资源授权上限仍为 **10-07 00:00**，用户最新指令已解除方案等待，4090按证据自主接续非重复实验。本项目任务结束不代表整卡空闲；状态过期须核验，不能据此重训或抢占。
