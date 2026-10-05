@@ -6,7 +6,6 @@
 
 | 任务 / 问题 | 负责人 · 资源 | 运行身份 | 状态（北京时间） | 下一动作 / 证据 |
 |---|---|---|---|---|
-| Q05-D01/v1：VAE内部预处理对照 | 203 Agent · 203-1-新/GPU0 | `/root/DeepfakeBench-prd-common`；代码`c415786`；task `q05_d01_20261005` | 10-05已认领待启动；用户本轮授权接续，13:39实际SSH无研究训练、显存0MiB | 严格identity/预处理往返/完整VAE，冻结0更新、900秒硬上限；不重复Q01/N09。[协议](docs/prd/records/Q05-D01.md) |
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无新计算 | `/root/DeepfakeBench-prd-common`；现有实现`6cdc9a8`，第二权重/正式配置待定 | 10-05 06:00实际唤醒并同步共享及相关对话；第二权重缺口未变、无新授权候选，准备阻塞 | 等待第二重建器明确身份、已有路径及兼容配置；未下载/训练。原Codex任务06:03已核验PAUSED、无下一次运行，按本次指令停止空轮询。[准备记录](docs/prd/records/Q03-P01.md) |
 | N09-T02/v1：类别平衡校正的同容量原图特征对照 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-n09-t02-20261005；代码 `cc3212f`；task `n09_t02_gpu1_20261005` | 10-05 10:17实际SSH：smoke/跨卡配对通过，正式PID2753930已200/21576步 | 固定12轮，与GPU0残差校正配对；原GPU1监控12:00单次已登记读回，不改GPU0/203。[协议](docs/prd/records/N09-T02.md) |
 | N09-T01/v1：源类别先验平衡残差校正 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-n09-20261005；代码 `49c17e1`；task `n09_t01_gpu0_20261005` | 10-05 09:58实际SSH：smoke/与N08配对通过，正式PID2656591已100/21576步 | 源频数确定损失权重、12轮固定预算，不扫参；原GPU0监控11:00单次已登记读回。[协议](docs/prd/records/N09-T01.md) |
