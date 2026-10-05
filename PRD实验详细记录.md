@@ -22,7 +22,8 @@
 | <a id="n07-e01"></a>N07-E01/v1 | 全量165758帧/5876视频、0训练更新；exit0/CPU指标/源备份/Git验收通过，宏视频AUC .88089326 / CE .50128075 | [完整结果](docs/prd/records/N07-E01.md)；结果 `17ef903` |
 | <a id="n08-t01"></a>N08-T01/v1 | 12轮21576更新/exit0；源val选epoch9，anchor严格未变，CPU指标/源备份/Git验收通过；192dev未显示跨域增益 | [完整结果](docs/prd/records/N08-T01.md)；结果 `dfc20de` |
 | <a id="n10-t01"></a>N10-T01/v1 | 12轮21576更新/exit0/完整配对、CPU源选点与anchor及归档Git验收通过；源选epoch12，192dev宏AUC .841797/CE .706172，完整评估待完成 | [完整训练结果](docs/prd/records/N10-T01.md)；结果 `45836d8` |
-| <a id="n10-e01"></a>N10-E01/v1 | 固定小步校正源选epoch12同清单完整目标评估已启动；smoke退出0/清单配对通过，165758帧5876视频，正式结果待验收 | [协议](docs/prd/records/N10-E01.md)；代码 `4b34c5e` |
+| <a id="n11-t01"></a>N11-T01/v1 | 源域线性正交化残差校正已预登记认领；复用Q08冻结特征，与raw r/z同容量校正完整12轮及全量目标比较，未启动 | [协议](docs/prd/records/N11-T01.md)；代码 `483599a` |
+| <a id="n10-e01"></a>N10-E01/v1 | 全165758帧5876视频验收；小步对原图校正宏视频AUC低.00842、CE高.06417，两个配对区间均负，不支持特有收益 | [全量与完整对照](docs/prd/records/N10-E01.md)；结果 `1bad00e`/配对 `cef6c81` |
 | <a id="q07-d01"></a>Q07-D01/v1 | 完整6576图/exit0/CPU与归档Git验收；端点响应与小步外推差异大，LoRA增益变化依域/类，不直接当局部Jacobian | [完整几何量与区间](docs/prd/records/Q07-D01.md)；结果 `d9819cd` |
 | <a id="n09-e02"></a>N09-E02/v1 | 全量exit0/165758帧5876视频/CPU与归档Git验收；T01残差不及同容量原图校正，逐域及区间完整报告 | [结果与完整配对](docs/prd/records/N09-E02.md)；结果 `021b479`、汇总 `f16e2a3` |
 | <a id="n09-t02"></a>N09-T02/v1 | 12轮21576更新、exit0；源选epoch1；CPU/冻结anchor/备份/Git验收；两训练完整配对通过，192dev残差劣于原图校正，完整方法结论待全量 | [结果与配对](docs/prd/records/N09-T02.md)；结果 `f9326c9`、汇总 `a38ea8f` |

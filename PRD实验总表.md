@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | Q05-T06/v1：固定初始pre参照与移动参照 | 203 Agent · 203-1-新/V100 GPU0 | `/root/DeepfakeBench-prd-common`；代码`086c7b0`；task `q05_t06_20261006` | 10-06 05:45实际SSH：smoke退出0，正式PID231482/runner231468在训，1/3596步 | 只新增固定初始pre参照一臂，复用T05 moving控制；原Codex07:30单次已登记读回。[证据](docs/prd/records/Q05-T06.md) |
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无新计算 | `/root/DeepfakeBench-prd-common`；现有实现`6cdc9a8`，第二权重/正式配置待定 | 10-05 06:00实际唤醒并同步共享及相关对话；第二权重缺口未变、无新授权候选，准备阻塞 | 等待第二重建器明确身份、已有路径及兼容配置；Q03仅准备阻塞。203现接续Q05-T06，原Codex监控随当前计算更新。[准备记录](docs/prd/records/Q03-P01.md) |
-| N10-E01/v1：固定小步校正源选完整目标评估 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-n10-e01-20261006；代码 `4b34c5e`；task `n10_e01_gpu1_20261006` | 10-06 03:51实际SSH：smoke及全部清单配对exit0，fresh正式359598/runner356159在评估 | 固定源选epoch12，同清单165758帧/5876视频；原GPU1单次04:45已登记读回，非结束保证。[协议与启动](docs/prd/records/N10-E01.md) |
+| N11-T01/v1：源域线性正交化残差校正 | 4090 Agent · GPU1研究槽（CPU复用缓存，无GPU计算） | /home/zhaoting.ding/prd-worktrees/gpu1-n11-20261006；代码 `483599a`；task `n11_t01_gpu1_20261006` | 10-06本轮：N10全量已验收发布；本项查重/源投影协议及h0 CPU复现通过，认领待push/readback后启动 | 固定h0，e/raw r/z三同容量校正各12轮，同165758帧5876视频完整比较；不重复提取Q08或端到端训练，不代操作GPU0/203。[协议](docs/prd/records/N11-T01.md) |
 | Q09-T01/v1：固定未见NeuralTextures方法的PRD迁移 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-q09-20261005；启动代码 `19a4e95`；task `q09_t01_gpu0_20261005` | 10-06 02:04实际SSH：original完整验收归档`5018ccd`；01:39服务器自动fresh接续joint PID3808699/runner2040068，1200/17268步 | 两臂完整配对尚未完成，不能给迁移优劣结论；原GPU0下一单次02:45核验完整epoch速度与验证开销。[分片验收与交接](docs/prd/records/Q09-T01.md) |
 
 4090现有资源授权上限仍为 **10-07 00:00**，用户最新指令已解除方案等待，4090按证据自主接续非重复实验。本项目任务结束不代表整卡空闲；状态过期须核验，不能据此重训或抢占。
