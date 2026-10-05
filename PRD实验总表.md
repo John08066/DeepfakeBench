@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | Q05-T01/v1：VAE超出内部预处理的训练收益 | 203 Agent · 203-1-新/V100 GPU0 | `/root/DeepfakeBench-prd-common`；代码`2168560`；task `q05_t01_20261005` | 10-05 14:00实际SSH：smoke退出0，正式PID189834/runner189820在训，首步双臂LoRA梯度非零 | 固定2epoch各3596更新，6小时硬超时；原Codex监控18:30单次已读回，不是旧短诊断。[协议](docs/prd/records/Q05-T01.md) |
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无新计算 | `/root/DeepfakeBench-prd-common`；现有实现`6cdc9a8`，第二权重/正式配置待定 | 10-05 06:00实际唤醒并同步共享及相关对话；第二权重缺口未变、无新授权候选，准备阻塞 | 等待第二重建器明确身份、已有路径及兼容配置；Q03仅准备阻塞。203现接续Q05-T01，原Codex监控随当前计算更新。[准备记录](docs/prd/records/Q03-P01.md) |
-| Q07-D01/v1：残差响应幅度、方向敏感度与非线性 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-q07-20261005；代码 `c06a210`；task `q07_d01_gpu1_20261005_checked` | 10-05 18:27修复后重新认领，尚未启动 | 6576固定图、三冻结编码器、VAE方向/等幅噪声；0更新，2小时上限；claim push及4090读回后smoke/正式。[协议](docs/prd/records/Q07-D01.md) |
+| Q07-D01/v1：残差响应幅度、方向敏感度与非线性 | 4090 Agent · GPU1 | /home/zhaoting.ding/prd-worktrees/gpu1-q07-20261005；代码 `c06a210`；task `q07_d01_gpu1_20261005_checked` | 10-05 18:27实际SSH：四域smoke退出0，正式PID1366197/runner1363850运行、绑定GPU1 | 6576固定图、三冻结编码器、VAE方向/等幅噪声；0更新，2小时上限；原GPU1监控接续，下一18:55单次拟登记。[协议与启动](docs/prd/records/Q07-D01.md) |
 | Q08-D01/v1：适配前后残差线性可读性 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-q08-20261005；代码 `b62792a`；task `q08_d01_gpu0_20261005_verified` | 10-05 16:39实际SSH：修复后smoke退出0，正式特征提取PID749735/runner745599运行，源train首64图完成 | 固定三编码器/六线性头，完整源/目标；CPU头各12epoch，源val选点；原GPU0单次17:30登记已核验。旧smoke失败保留。[协议与启动](docs/prd/records/Q08-D01.md) |
 
 4090现有资源授权上限仍为 **10-07 00:00**，用户最新指令已解除方案等待，4090按证据自主接续非重复实验。本项目任务结束不代表整卡空闲；状态过期须核验，不能据此重训或抢占。
