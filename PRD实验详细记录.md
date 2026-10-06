@@ -31,7 +31,7 @@
 | <a id="q08-d01"></a>Q08-D01/v1 | 修复后smoke退出0、正式冻结特征提取已启动；六源选线性头/完整源及三目标域，旧预检失败保留 | [协议与启动](docs/prd/records/Q08-D01.md)；代码 `b62792a` |
 | <a id="n09-t01"></a>N09-T01/v1 | 12轮21576更新/exit0；源val选epoch7；完整trace/CPU/冻结anchor/源备份/Git验收通过，固定先验反向对照保留 | [结果](docs/prd/records/N09-T01.md)；结果 `f8283c6` |
 | <a id="n08-e01"></a>N08-E01/v1 | 完成165758帧；宏视频ΔAUC+.000998、CE增.023903，未获一致增益，0更新 | [协议](docs/prd/records/N08-E01.md)；代码 `5518713` |
-| <a id="q05-e01"></a>Q05-E01 | 实际运行：冻结末权重源域视频复核，0更新 | [协议与证据](docs/prd/records/Q05-E01.md) |
+| <a id="q05-e01"></a>Q05-E01 | 已验收exit0/0更新：支持源视频收益延伸；ΔbalancedCE+.61104124、ΔAUC+.43988520 | [完整协议与证据](docs/prd/records/Q05-E01.md) |
 | <a id="q05-d02"></a>Q05-D02 | 已验收0更新/exit0：not_supported；同checkpoint推理响应，非重训因果 | [完整证据](docs/prd/records/Q05-D02.md) |
 | <a id="q05-t06"></a>Q05-T06 | 已验收：3596更新/exit0；固定/移动参照宏AUC .791992/.564128、CE .625441/.997567，支持固定预算固定参照收益 | [协议与完整证据](docs/prd/records/Q05-T06.md) |
 | <a id="q05-t05"></a>Q05-T05 | 已验收：3596更新/exit0；双反传/stop_pre宏AUC .852865/.564128、CE .478417/.997567，支持固定预算双路径收益 | [协议与完整证据](docs/prd/records/Q05-T05.md) |
