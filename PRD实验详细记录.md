@@ -17,7 +17,7 @@
 
 | 稳定ID | 要读的证据 | 文件与范围 / 所属归档 |
 |---|---|---|
-| <a id="q05-e03"></a>Q05-E03/v1 | 实际GPU评测：T03全目标预测，复用E02fixed，0更新；Codex12:45单次已读回 | [协议](docs/prd/records/Q05-E03.md) |
+| <a id="q05-e03"></a>Q05-E03/v1 | 已验收0更新/exit0：dual vs fixed宏AUC .908182/.865306；ΔbalancedCE+.092674，CE/AUC配对区间均正，支持固定预算预设dual收益 | [全量结果与限制](docs/prd/records/Q05-E03.md)；结果`2b653b0` |
 | <a id="q10-t01"></a>Q10-T01/v1 | 真实smoke通过但完整预算28.16h>24h；正式未启动，待32h上限授权 | [固定协议与启动证据](docs/prd/records/Q10-T01.md) |
 | <a id="n07-t01"></a>N07-T01/v1 | 两臂21576更新完成；joint归档故障已恢复，跨卡完整配对通过；源选AUC增而CE劣，阶段排序不稳 | [结果/恢复](docs/prd/records/N07-T01.md)；GPU1 `9dcae4a`，汇总 `46e9908` |
 | <a id="n07-e02"></a>N07-E02/v1 | 完整165758帧验收；宏视频AUC .87151/CE .56574，较原图退步；配对区间已归档 | [结果](docs/prd/records/N07-E02.md)；结果 `87ba827`、比较 `b86183b` |
