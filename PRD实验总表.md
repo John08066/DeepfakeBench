@@ -6,7 +6,7 @@
 
 | 任务 / 问题 | 负责人 · 资源 | 运行身份 | 状态（北京时间） | 下一动作 / 证据 |
 |---|---|---|---|---|
-| Q10-T01/v1：增量是否提供原图之外的收益 | 203 Agent · 203-1-新/V100 GPU0 | `/root/DeepfakeBench-prd-common`；正式代码`97c7db3`；task `q10_t01_20261006` | 10-06 15:53用户再次要求接续，32h有限方案已说明，已部署待启动 | 两臂fresh各12轮21576更新，Adam/BS不变；有界smoke通过后自主正式，源选/完整评测。[协议](docs/prd/records/Q10-T01.md) |
+| Q10-T01/v1：增量是否提供原图之外的收益 | 203 Agent · 203-1-新/V100 GPU0 | `/root/DeepfakeBench-prd-common`；代码`97c7db3`；task `q10_t01_20261006` | 10-06 15:59实际SSH：正式主PID259659/runner257812，original真实训练 | smoke退出0后fresh正式；原图→增量各21576步，32h有限；18:15 Codex单次已读回。[证据](docs/prd/records/Q10-T01.md) |
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，无研究计算运行 | `/root/DeepfakeBench-prd-common`；第二权重/正式配置待定 | 10-06 11:18实际SSH：既有权重目录仅CLIP/原VAE；当时可认领池为空，第二重建器前置仍阻塞 | Q05-E02已完整验收归档、原监控已结束；下方新增候选均不依赖第二重建器，可按已有授权查重认领，尚无自动接续。[缺口与证据](docs/prd/records/Q03-P01.md) |
 | N11-T01/v1：源域线性正交化残差校正 | 4090 Agent · GPU1研究槽（CPU复用缓存，无GPU计算） | /home/zhaoting.ding/prd-worktrees/gpu1-n11-20261006；代码 `073171c`；task `n11_t01_gpu1_20261006_verified` | 10-06 06:52实际SSH：verified smoke退出0，正式三头各21576/完整预测exit0，runner1385980仍独立CPU配对/归档，未完整验收 | e/raw r/z冻结同容量完整比较；旧计数预检失败保留；原GPU1下一07:05单次已读回，不改GPU0/203。[协议与实际阶段](docs/prd/records/N11-T01.md) |
 | Q09-T01/v1：固定未见NeuralTextures方法的PRD迁移 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-q09-20261005；启动代码 `19a4e95`；task `q09_t01_gpu0_20261005` | 10-06 02:04实际SSH：original完整验收归档`5018ccd`；01:39服务器自动fresh接续joint PID3808699/runner2040068，1200/17268步 | 两臂完整配对尚未完成，不能给迁移优劣结论；原GPU0下一单次02:45核验完整epoch速度与验证开销。[分片验收与交接](docs/prd/records/Q09-T01.md) |
