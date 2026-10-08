@@ -6,7 +6,8 @@
 
 | 任务 / 问题 | 负责人 · 资源 | 运行身份 | 状态（北京时间） | 下一动作 / 证据 |
 |---|---|---|---|---|
-| Q12-T01/v1：VAE增量与固定blur替代 | 203 Agent · 203-1-新/V100 GPU0 · 对话01a0e12a-41bd-7b81-999d-fd62332d03cb | `/root/DeepfakeBench-prd-common`；代码`dda58c1`；task `q12_t01_20261008` | 10-08已认领待真实预算测速；Q10对照完整验收 | 新增sigma1 blur增量联合单臂12轮21576更新，≤12h含评测/归档；预算通过才fresh正式。[协议](docs/prd/records/Q12-T01.md) |
+| Q15-P01/v1：固定局部patch关系响应 | 203 Agent · 203-1-新/V100 GPU0 · 对话01a0e12a-41bd-7b81-999d-fd62332d03cb | `/root/DeepfakeBench-prd-common`；代码`4c792e2`；task `q15_p01_20261008` | 10-08已认领待真实资源/首批预算核验 | 冻结最终patch、固定480邻边/共同空间置换，四962参数头各500更新；≤4h，零编码器更新。[协议](docs/prd/records/Q15-P01.md) |
+| **Q12-T01：固定blur增量联合（预算待解）** | 原12轮/21576更新协议不变，Q10VAE对照可复用 | 8步真实测速预计20.31h>12h；正式未启动，未产生科学结果，不缩轮/扩预算 | 203已归档预算不通过；新可行资源窗口或另行明确预算授权前不派发。[预检证据](docs/prd/records/Q12-T01.md) |
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，仅准备项，不占计算槽 | `/root/DeepfakeBench-prd-common`；第二权重/正式配置待定 | 10-06 11:18实际SSH：既有权重目录仅CLIP/原VAE；当时可认领池为空，第二重建器前置仍阻塞 | Q05-E02已完整验收归档、原监控已结束；下方新增候选均不依赖第二重建器，可按已有授权查重认领，尚无自动接续。[缺口与证据](docs/prd/records/Q03-P01.md) |
 | N11-T01/v1：源域线性正交化残差校正 | 4090 Agent · GPU1研究槽（CPU复用缓存，无GPU计算） | /home/zhaoting.ding/prd-worktrees/gpu1-n11-20261006；代码 `073171c`；task `n11_t01_gpu1_20261006_verified` | 10-06 06:52实际SSH：verified smoke退出0，正式三头各21576/完整预测exit0，runner1385980仍独立CPU配对/归档，未完整验收 | e/raw r/z冻结同容量完整比较；旧计数预检失败保留；原GPU1下一07:05单次已读回，不改GPU0/203。[协议与实际阶段](docs/prd/records/N11-T01.md) |
 | Q09-T01/v1：固定未见NeuralTextures方法的PRD迁移 | 4090 Agent · GPU0 | /home/zhaoting.ding/prd-worktrees/gpu0-q09-20261005；启动代码 `19a4e95`；task `q09_t01_gpu0_20261005` | 10-06 02:04实际SSH：original完整验收归档`5018ccd`；01:39服务器自动fresh接续joint PID3808699/runner2040068，1200/17268步 | 两臂完整配对尚未完成，不能给迁移优劣结论；原GPU0下一单次02:45核验完整epoch速度与验证开销。[分片验收与交接](docs/prd/records/Q09-T01.md) |
@@ -19,7 +20,6 @@
 
 | ID / 待回答问题 | 最小对照与交付 | 预算与前置 | 状态 / 负责人 |
 |---|---|---|---|
-| **[Q15-P01：局部关系变化是否比幅度更有用？](docs/prd/plans/2026-10-06-mechanism-candidates.md#q15-p01)** | 冻结末层patch、固定480邻边；关系差 vs 原始关系/幅度/共同空间置换，四个等参数头 | 现有预训练CLIP/VAE即可，不等Q10；各500头更新，含提取/归档≤4h，0编码器更新 | **可认领 · 优先3**；未认领 |
 | **[Q14-P01：同图blur响应能否校准VAE响应？](docs/prd/plans/2026-10-06-mechanism-candidates.md#q14-p01)** | 同一冻结encoder：去平行项 vs 原增量/错配blur；报告被删分量及较大三视图参考，不把blur当纯干扰 | Q10、Q12完整验收；各500头更新，含提取/归档≤4h，0编码器更新 | **待前置 · 优先4**；未认领 |
 | **[Q16-P01：固定中点二阶响应是否有独特可读性？](docs/prd/plans/2026-10-06-mechanism-candidates.md#q16-p01)** | 冻结κ=f(Px)−2f(midpoint)+f(Gx) vs 中点/一阶响应；不靠新增视图宣称创新 | 现有冻结模型即可；各500头更新，含提取/归档≤4h；新颖性待核验，不自动升级全训 | **备选可认领 · 优先5**；未认领 |
 
