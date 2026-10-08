@@ -6,7 +6,6 @@
 
 | 任务 / 问题 | 负责人 · 资源 | 运行身份 | 状态（北京时间） | 下一动作 / 证据 |
 |---|---|---|---|---|
-| Q17-D01/v2：固定端点与分支梯度诊断 | 203 Agent · 203-1-新/V100 GPU0 · 对话01a0e12a-41bd-7b81-999d-fd62332d03cb | `/root/DeepfakeBench-prd-common`；代码`cd9ca0a`；task `q17_d01_20261009_v2` | v1清单表示断言失败/exit1/0梯度批已归档`66fab47`；CPU核验192核心字段完全相同，07:04:01实际启动runner828362/main828374，2026-10-09T07:05:40.420849+08:00 SSH核验cwd/UID/命令/CPU增长；当前梯度批2/64，首批预算门通过 | 科学协议/32批/两端点不变；v2≤7000秒，连同v1仍≤2h/0更新；认领读回及现场资源双锁通过；运行中，0更新。[记录](docs/prd/records/Q17-D01.md) |
 | Q03-P01：跨重建器准备（非实验） | 203 Agent · 203-1-新，仅准备项，不占计算槽 | `/root/DeepfakeBench-prd-common`；第二权重/正式配置待定 | 10-06 11:18实际SSH：既有权重目录仅CLIP/原VAE；当时可认领池为空，第二重建器前置仍阻塞 | Q05-E02已完整验收归档、原监控已结束；下方新增候选均不依赖第二重建器，可按已有授权查重认领，尚无自动接续。[缺口与证据](docs/prd/records/Q03-P01.md) |
 | N11-T01/v1：源域线性正交化残差校正 | 4090 Agent · GPU1研究槽（CPU复用缓存，无GPU计算） | /home/zhaoting.ding/prd-worktrees/gpu1-n11-20261006；代码 `073171c`；task `n11_t01_gpu1_20261006_verified` | 10-06 06:52实际SSH：verified smoke退出0，正式三头各21576/完整预测exit0，runner1385980仍独立CPU配对/归档，未完整验收 | e/raw r/z冻结同容量完整比较；旧计数预检失败保留；原GPU1下一07:05单次已读回，不改GPU0/203。[协议与实际阶段](docs/prd/records/N11-T01.md) |
 | Q14-P01/v1：同图blur响应校准VAE响应 | 4090 Agent · GPU0 · 对话01a0d3ae-1b19-77a3-bca2-245eec3b7e83 | `/home/zhaoting.ding/prd-worktrees/gpu0-q14-20261009`；原代码`9752356`，修复`b43aa89`；task `q14_p01_gpu0_20261009` | 10-09 07:16 GPU smoke144图exit0；CPU预检NumPy参数名错误exit1，0头更新/正式未启动，进程已退出 | 原失败完整保留并本地备份；两处参数修复及缓存CPU投影通过。遵守0自动重试，等待用户批准修正版新目录预检；未重启。[协议与证据](docs/prd/records/Q14-P01.md) |
