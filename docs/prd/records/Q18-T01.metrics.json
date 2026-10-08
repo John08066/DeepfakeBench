@@ -1,0 +1,705 @@
+{
+  "verified": true,
+  "result_commit": "9a08a9ed3ec6b0204abef1bb8cf9086f423420a2",
+  "hash_count_previously_verified": 27,
+  "trace_sha256": "2629723c7633ed994799bf701863e49220db7db2dca7baaa085803cdb87eec69",
+  "metrics": {
+    "original_aux": {
+      "selected_epoch": 12,
+      "source_val_ce": 0.11825976369007687,
+      "ce8_to12_relative_improvement": 0.4597834576813056,
+      "endpoints": {
+        "source_best": {
+          "source": {
+            "video": {
+              "auc": 0.9946301020408164,
+              "ce": 0.11324029866405033,
+              "balanced_ce": 0.0791284709261525
+            },
+            "frame": {
+              "auc": 0.9858025749362245,
+              "ce": 0.19332220368979852,
+              "balanced_ce": 0.14270128642832375
+            },
+            "domains": {
+              "FaceForensics++": {
+                "video": {
+                  "auc": 0.9946301020408164,
+                  "ce": 0.11324029866405033,
+                  "balanced_ce": 0.0791284709261525
+                },
+                "frame": {
+                  "auc": 0.9858025749362245,
+                  "ce": 0.19332220368979852,
+                  "balanced_ce": 0.14270128642832375
+                },
+                "videos": 700,
+                "frames": 5600
+              }
+            },
+            "macro_video": {
+              "auc": 0.9946301020408164,
+              "ce": 0.11324029866405033,
+              "balanced_ce": 0.0791284709261525
+            },
+            "macro_frame": {
+              "auc": 0.9858025749362245,
+              "ce": 0.19332220368979852,
+              "balanced_ce": 0.14270128642832375
+            }
+          },
+          "target": {
+            "video": {
+              "auc": 0.8549975255133031,
+              "ce": 0.6748354184223294,
+              "balanced_ce": 0.6441869007632834
+            },
+            "frame": {
+              "auc": 0.8155676840817926,
+              "ce": 0.8578140465576568,
+              "balanced_ce": 0.8185499052664819
+            },
+            "domains": {
+              "Celeb-DF-v2": {
+                "video": {
+                  "auc": 0.8798083278255122,
+                  "ce": 0.976903054999252,
+                  "balanced_ce": 0.7610850198374077
+                },
+                "frame": {
+                  "auc": 0.8255329457364341,
+                  "ce": 1.1935547039511627,
+                  "balanced_ce": 0.9397397119425333
+                },
+                "videos": 518,
+                "frames": 4139
+              },
+              "DFDC": {
+                "video": {
+                  "auc": 0.8526735659389191,
+                  "ce": 0.6504010798753359,
+                  "balanced_ce": 0.6440242539436826
+                },
+                "frame": {
+                  "auc": 0.8150336960514182,
+                  "ce": 0.8306345267853273,
+                  "balanced_ce": 0.8197045118248459
+                },
+                "videos": 4704,
+                "frames": 36072
+              },
+              "DFDCP": {
+                "video": {
+                  "auc": 0.88435192780968,
+                  "ce": 0.611330973129075,
+                  "balanced_ce": 0.5197545701070475
+                },
+                "frame": {
+                  "auc": 0.8427945150206386,
+                  "ce": 0.7763141573474874,
+                  "balanced_ce": 0.6652967384737768
+                },
+                "videos": 654,
+                "frames": 5021
+              }
+            },
+            "macro_video": {
+              "auc": 0.8722779405247038,
+              "ce": 0.7462117026678877,
+              "balanced_ce": 0.6416212812960459
+            },
+            "macro_frame": {
+              "auc": 0.827787052269497,
+              "ce": 0.9335011293613258,
+              "balanced_ce": 0.8082469874137187
+            }
+          }
+        },
+        "terminal": {
+          "source": {
+            "video": {
+              "auc": 0.9946301020408164,
+              "ce": 0.11324029866405033,
+              "balanced_ce": 0.0791284709261525
+            },
+            "frame": {
+              "auc": 0.9858025749362245,
+              "ce": 0.19332220368979852,
+              "balanced_ce": 0.14270128642832375
+            },
+            "domains": {
+              "FaceForensics++": {
+                "video": {
+                  "auc": 0.9946301020408164,
+                  "ce": 0.11324029866405033,
+                  "balanced_ce": 0.0791284709261525
+                },
+                "frame": {
+                  "auc": 0.9858025749362245,
+                  "ce": 0.19332220368979852,
+                  "balanced_ce": 0.14270128642832375
+                },
+                "videos": 700,
+                "frames": 5600
+              }
+            },
+            "macro_video": {
+              "auc": 0.9946301020408164,
+              "ce": 0.11324029866405033,
+              "balanced_ce": 0.0791284709261525
+            },
+            "macro_frame": {
+              "auc": 0.9858025749362245,
+              "ce": 0.19332220368979852,
+              "balanced_ce": 0.14270128642832375
+            }
+          },
+          "target": {
+            "video": {
+              "auc": 0.8549975255133031,
+              "ce": 0.6748354184223294,
+              "balanced_ce": 0.6441869007632834
+            },
+            "frame": {
+              "auc": 0.8155676840817926,
+              "ce": 0.8578140465576568,
+              "balanced_ce": 0.8185499052664819
+            },
+            "domains": {
+              "Celeb-DF-v2": {
+                "video": {
+                  "auc": 0.8798083278255122,
+                  "ce": 0.976903054999252,
+                  "balanced_ce": 0.7610850198374077
+                },
+                "frame": {
+                  "auc": 0.8255329457364341,
+                  "ce": 1.1935547039511627,
+                  "balanced_ce": 0.9397397119425333
+                },
+                "videos": 518,
+                "frames": 4139
+              },
+              "DFDC": {
+                "video": {
+                  "auc": 0.8526735659389191,
+                  "ce": 0.6504010798753359,
+                  "balanced_ce": 0.6440242539436826
+                },
+                "frame": {
+                  "auc": 0.8150336960514182,
+                  "ce": 0.8306345267853273,
+                  "balanced_ce": 0.8197045118248459
+                },
+                "videos": 4704,
+                "frames": 36072
+              },
+              "DFDCP": {
+                "video": {
+                  "auc": 0.88435192780968,
+                  "ce": 0.611330973129075,
+                  "balanced_ce": 0.5197545701070475
+                },
+                "frame": {
+                  "auc": 0.8427945150206386,
+                  "ce": 0.7763141573474874,
+                  "balanced_ce": 0.6652967384737768
+                },
+                "videos": 654,
+                "frames": 5021
+              }
+            },
+            "macro_video": {
+              "auc": 0.8722779405247038,
+              "ce": 0.7462117026678877,
+              "balanced_ce": 0.6416212812960459
+            },
+            "macro_frame": {
+              "auc": 0.827787052269497,
+              "ce": 0.9335011293613258,
+              "balanced_ce": 0.8082469874137187
+            }
+          }
+        }
+      }
+    },
+    "residual_aux": {
+      "selected_epoch": 10,
+      "source_val_ce": 0.13795228198953302,
+      "ce8_to12_relative_improvement": 0.5009679355122998,
+      "endpoints": {
+        "source_best": {
+          "source": {
+            "video": {
+              "auc": 0.993061224489796,
+              "ce": 0.1036050607531679,
+              "balanced_ce": 0.07261638132065358
+            },
+            "frame": {
+              "auc": 0.9856353635204081,
+              "ce": 0.17700389277649578,
+              "balanced_ce": 0.15372757473167784
+            },
+            "domains": {
+              "FaceForensics++": {
+                "video": {
+                  "auc": 0.993061224489796,
+                  "ce": 0.1036050607531679,
+                  "balanced_ce": 0.07261638132065358
+                },
+                "frame": {
+                  "auc": 0.9856353635204081,
+                  "ce": 0.17700389277649578,
+                  "balanced_ce": 0.15372757473167784
+                },
+                "videos": 700,
+                "frames": 5600
+              }
+            },
+            "macro_video": {
+              "auc": 0.993061224489796,
+              "ce": 0.1036050607531679,
+              "balanced_ce": 0.07261638132065358
+            },
+            "macro_frame": {
+              "auc": 0.9856353635204081,
+              "ce": 0.17700389277649578,
+              "balanced_ce": 0.15372757473167784
+            }
+          },
+          "target": {
+            "video": {
+              "auc": 0.8648881344490129,
+              "ce": 0.6769247843848158,
+              "balanced_ce": 0.6483045695637686
+            },
+            "frame": {
+              "auc": 0.8212726198766258,
+              "ce": 0.9321913426584828,
+              "balanced_ce": 0.8949012128812229
+            },
+            "domains": {
+              "Celeb-DF-v2": {
+                "video": {
+                  "auc": 0.9257766027759419,
+                  "ce": 0.5684044708763778,
+                  "balanced_ce": 0.46353669632040945
+                },
+                "frame": {
+                  "auc": 0.8727371181030551,
+                  "ce": 0.7826391265088919,
+                  "balanced_ce": 0.6525451234499118
+                },
+                "videos": 518,
+                "frames": 4139
+              },
+              "DFDC": {
+                "video": {
+                  "auc": 0.8565536607217927,
+                  "ce": 0.6884742100194655,
+                  "balanced_ce": 0.6819433785434735
+                },
+                "frame": {
+                  "auc": 0.8156693302192431,
+                  "ce": 0.9456652665573632,
+                  "balanced_ce": 0.9343396798078447
+                },
+                "videos": 4704,
+                "frames": 36072
+              },
+              "DFDCP": {
+                "video": {
+                  "auc": 0.8752255947497949,
+                  "ce": 0.6798070844031332,
+                  "balanced_ce": 0.5838858671696217
+                },
+                "frame": {
+                  "auc": 0.8265609359359359,
+                  "ce": 0.9586731669490118,
+                  "balanced_ce": 0.8323402074757731
+                },
+                "videos": 654,
+                "frames": 5021
+              }
+            },
+            "macro_video": {
+              "auc": 0.8858519527491765,
+              "ce": 0.6455619217663254,
+              "balanced_ce": 0.5764553140111682
+            },
+            "macro_frame": {
+              "auc": 0.8383224614194114,
+              "ce": 0.8956591866717556,
+              "balanced_ce": 0.8064083369111765
+            }
+          }
+        },
+        "terminal": {
+          "source": {
+            "video": {
+              "auc": 0.9929719387755102,
+              "ce": 0.16193705594798916,
+              "balanced_ce": 0.1103971236085256
+            },
+            "frame": {
+              "auc": 0.9843658322704081,
+              "ce": 0.25208865929575497,
+              "balanced_ce": 0.189657114277085
+            },
+            "domains": {
+              "FaceForensics++": {
+                "video": {
+                  "auc": 0.9929719387755102,
+                  "ce": 0.16193705594798916,
+                  "balanced_ce": 0.1103971236085256
+                },
+                "frame": {
+                  "auc": 0.9843658322704081,
+                  "ce": 0.25208865929575497,
+                  "balanced_ce": 0.189657114277085
+                },
+                "videos": 700,
+                "frames": 5600
+              }
+            },
+            "macro_video": {
+              "auc": 0.9929719387755102,
+              "ce": 0.16193705594798916,
+              "balanced_ce": 0.1103971236085256
+            },
+            "macro_frame": {
+              "auc": 0.9843658322704081,
+              "ce": 0.25208865929575497,
+              "balanced_ce": 0.189657114277085
+            }
+          },
+          "target": {
+            "video": {
+              "auc": 0.8659019227384771,
+              "ce": 0.7570233548708702,
+              "balanced_ce": 0.719834838176029
+            },
+            "frame": {
+              "auc": 0.824066439694292,
+              "ce": 1.004383989196393,
+              "balanced_ce": 0.9544814529311194
+            },
+            "domains": {
+              "Celeb-DF-v2": {
+                "video": {
+                  "auc": 0.8684401850627892,
+                  "ce": 1.1212528077526802,
+                  "balanced_ce": 0.8712889406487667
+                },
+                "frame": {
+                  "auc": 0.8191764602246818,
+                  "ce": 1.3952209801899769,
+                  "balanced_ce": 1.0971984589769535
+                },
+                "videos": 518,
+                "frames": 4139
+              },
+              "DFDC": {
+                "video": {
+                  "auc": 0.8627456475729743,
+                  "ce": 0.7341767651561809,
+                  "balanced_ce": 0.7263437676760014
+                },
+                "frame": {
+                  "auc": 0.822963371631831,
+                  "ce": 0.9767585904758834,
+                  "balanced_ce": 0.9627157032712764
+                },
+                "videos": 4704,
+                "frames": 36072
+              },
+              "DFDCP": {
+                "video": {
+                  "auc": 0.9101415094339623,
+                  "ce": 0.6328635711172318,
+                  "balanced_ce": 0.5226071673915911
+                },
+                "frame": {
+                  "auc": 0.859814168100685,
+                  "ce": 0.8806694058312828,
+                  "balanced_ce": 0.730275909489357
+                },
+                "videos": 654,
+                "frames": 5021
+              }
+            },
+            "macro_video": {
+              "auc": 0.8804424473565753,
+              "ce": 0.8294310480086976,
+              "balanced_ce": 0.7067466252387864
+            },
+            "macro_frame": {
+              "auc": 0.8339846666523992,
+              "ce": 1.0842163254990478,
+              "balanced_ce": 0.9300633572458623
+            }
+          }
+        }
+      }
+    }
+  },
+  "paired": {
+    "id": "Q18-T01/v1",
+    "primary_endpoint": "source_best target macro video AUC",
+    "verdict": "supported_development_ranking_gain",
+    "paired": {
+      "source_best": {
+        "macro_video_delta": {
+          "auc": 0.013574012224472742,
+          "ce": 0.10064978090156229,
+          "balanced_ce": 0.06516596728487767
+        },
+        "macro_video_ci95": {
+          "auc": [
+            0.006384525726059138,
+            0.02105465362897994
+          ],
+          "ce": [
+            0.07403560088569777,
+            0.12892211436236542
+          ],
+          "balanced_ce": [
+            0.042799490912229975,
+            0.08881580196921515
+          ]
+        },
+        "domains": {
+          "Celeb-DF-v2": {
+            "video_delta": {
+              "auc": 0.045968274950429655,
+              "ce": 0.4084985841228742,
+              "balanced_ce": 0.2975483235169983
+            },
+            "frame_delta": {
+              "auc": 0.047204172366621,
+              "ce": 0.4109155774422708,
+              "balanced_ce": 0.28719458849262147
+            },
+            "video_ci95": {
+              "auc": [
+                0.029789738929279566,
+                0.06265862524785185
+              ],
+              "ce": [
+                0.3437194531310339,
+                0.47530271509622174
+              ],
+              "balanced_ce": [
+                0.24573446102160032,
+                0.35076904911858015
+              ]
+            }
+          },
+          "DFDC": {
+            "video_delta": {
+              "auc": 0.0038800947828736554,
+              "ce": -0.03807313014412961,
+              "balanced_ce": -0.037919124599790965
+            },
+            "frame_delta": {
+              "auc": 0.0006356341678249722,
+              "ce": -0.11503073977203582,
+              "balanced_ce": -0.11463516798299878
+            },
+            "video_ci95": {
+              "auc": [
+                -0.0021157808421789076,
+                0.010059524078592761
+              ],
+              "ce": [
+                -0.05943757173609309,
+                -0.016771157681849877
+              ],
+              "balanced_ce": [
+                -0.059091135658392545,
+                -0.016947453694406363
+              ]
+            }
+          },
+          "DFDCP": {
+            "video_delta": {
+              "auc": -0.009126333059885083,
+              "ce": -0.06847611127405817,
+              "balanced_ce": -0.06413129706257414
+            },
+            "frame_delta": {
+              "auc": -0.016233579084702687,
+              "ce": -0.1823590096015244,
+              "balanced_ce": -0.1670434690019963
+            },
+            "video_ci95": {
+              "auc": [
+                -0.021145918785890117,
+                0.004061474569319314
+              ],
+              "ce": [
+                -0.11141988623100026,
+                -0.020548977615084535
+              ],
+              "balanced_ce": [
+                -0.10275630985479786,
+                -0.02243359508245676
+              ]
+            }
+          }
+        }
+      },
+      "terminal": {
+        "macro_video_delta": {
+          "auc": 0.008164506831871532,
+          "ce": -0.08321934534080988,
+          "balanced_ce": -0.0651253439427405
+        },
+        "macro_video_ci95": {
+          "auc": [
+            0.0015167997019978592,
+            0.014813932455941788
+          ],
+          "ce": [
+            -0.11037470449892474,
+            -0.0572566392437379
+          ],
+          "balanced_ce": [
+            -0.08707035374964513,
+            -0.04380064765602367
+          ]
+        },
+        "domains": {
+          "Celeb-DF-v2": {
+            "video_delta": {
+              "auc": -0.011368142762723021,
+              "ce": -0.1443497527534282,
+              "balanced_ce": -0.11020392081135899
+            },
+            "frame_delta": {
+              "auc": -0.0063564855117522745,
+              "ce": -0.20166627623881417,
+              "balanced_ce": -0.1574587470344202
+            },
+            "video_ci95": {
+              "auc": [
+                -0.026057914738929277,
+                0.0019501817580965869
+              ],
+              "ce": [
+                -0.2056451245413913,
+                -0.07918721748792207
+              ],
+              "balanced_ce": [
+                -0.15925612782458587,
+                -0.05961840465508965
+              ]
+            }
+          },
+          "DFDC": {
+            "video_delta": {
+              "auc": 0.010072081634055263,
+              "ce": -0.083775685280845,
+              "balanced_ce": -0.08231951373231883
+            },
+            "frame_delta": {
+              "auc": 0.007929675580412798,
+              "ce": -0.14612406369055608,
+              "balanced_ce": -0.14301119144643049
+            },
+            "video_ci95": {
+              "auc": [
+                0.00533953767583061,
+                0.01469325300355213
+              ],
+              "ce": [
+                -0.10335076597338098,
+                -0.06499929347434469
+              ],
+              "balanced_ce": [
+                -0.10165181195425772,
+                -0.06377274644345954
+              ]
+            }
+          },
+          "DFDCP": {
+            "video_delta": {
+              "auc": 0.025789581624282354,
+              "ce": -0.021532597988156765,
+              "balanced_ce": -0.0028525972845435676
+            },
+            "frame_delta": {
+              "auc": 0.017019653080046382,
+              "ce": -0.1043552484837954,
+              "balanced_ce": -0.06497917101558015
+            },
+            "video_ci95": {
+              "auc": [
+                0.013359567268252697,
+                0.039961802707137166
+              ],
+              "ce": [
+                -0.06665179269174804,
+                0.022224473606369498
+              ],
+              "balanced_ce": [
+                -0.0410768481358837,
+                0.03420093145416672
+              ]
+            }
+          }
+        }
+      }
+    },
+    "bootstrap": {
+      "replicates": 2000,
+      "unit": "video",
+      "stratified_by": "domain and class",
+      "seed": 20261008
+    },
+    "limitations": "Repeated target development, not independent final test; 8-frame mean-logit aggregation; single training seed; Q10 cross-machine background only; fixed-weight CIs do not include identity/content and training-repeat uncertainty",
+    "baseline_role": "Q10 is cross-machine background, not an additional strict paired control"
+  },
+  "completion": {
+    "id": "Q18-T01/v1",
+    "status": "completed",
+    "time": "2026-10-09T03:43:48.539329+08:00",
+    "exit_code": 0,
+    "independent_cpu_verified": true,
+    "backup": "/home/zhaoting.ding/prd-artifact-backups/q18_t01_gpu0_20261008",
+    "artifact_sha256": {
+      "native192_responses.json": "5e2c46814d80918e48eba7eb41c587e82eca1ed1f0127d83c3168985623ca69e",
+      "evaluation_manifest.json": "ac5121d948e23b5c00f36b30e606224380e2ef18a566a04c4dae8c60438e988a",
+      "original_aux_terminal.pth": "0c8a7ca6fed9be82596a114eec28bd79b835eecbe7c8fb488a388455d50a89da",
+      "source_val_manifest.json": "55db09ed79a1b6af293a1ecce314193a8fac39d3d8b9048cde8964974130ed5e",
+      "residual_aux_terminal_target_frame_logits.npy": "f7a8e4d23a993b270a787a92a98112e2895997f480078bf1132886a946f007eb",
+      "original_aux_source_best.pth": "428c56f0d272d7c0586f90a61233e352ed1b3994f15eebe17f8c65fd9ef22b5d",
+      "residual_aux_learning_curve.json": "9afd147e88426d783548f2624bff28e2aa04193e4651ab82b2c46d0b5f17c6f1",
+      "paired.json": "4310874e5fe9520df5182e6c36ff353ac6f654772d5e5629eff76081b154b3cf",
+      "original_aux_summary.json": "4dff8df260475f4a41208a6a286b0218dd1560a333d91b2e8982a711b00f211e",
+      "original_aux_learning_curve.json": "9b6f9d9081811e1e60f48057a285e0b7bdf2c328e62136cca95421a68726afc8",
+      "original_aux_terminal_target_frame_logits.npy": "fa3a55217179d00c9ce21d5c2dbad15e9db465858f32a8206c64224a19c94078",
+      "residual_aux_batch_trace.jsonl": "2629723c7633ed994799bf701863e49220db7db2dca7baaa085803cdb87eec69",
+      "original_aux_terminal_source_frame_logits.npy": "17bc57a7c03934f591fcc55923740e5ad0a237d69314a68a4fcfb9e5970c77a9",
+      "residual_aux_source_best_target_frame_logits.npy": "9ca745205afd9beb1b63fe1a206d19d2b272595498ffe5db7190f5d26a7a8271",
+      "result.json": "51afa9c204414ebff6330d45b8f8658feeb47c4aaec60e81eb5e0bfb3e78afa0",
+      "target_manifest.json": "971845b8d4cc03ff1865bafadc80413654497e9776896110016519965967035d",
+      "train_manifest.json": "48147abddab2ffd813bce112743624088baddbf144a051671c1ffc513a5b7e69",
+      "source_test_manifest.json": "40a7826122d55a91b864dc8f19ab376130dedfb6b8debb33990b56b9d7c6f445",
+      "residual_aux_terminal.pth": "e302668c982047e81d369b189825ef6e56a697219be7ab2d635df1c366624f7f",
+      "residual_aux_source_best_source_frame_logits.npy": "08556e5d1a4f0c7c683a795d3432aa7bf0272b2fe4c077ca411767b3ca2871f3",
+      "residual_aux_source_best.pth": "2eb658bec852298c4c3eb83fafa3325e5f77025bb0fb5accca8c0935afcf447c",
+      "original_aux_source_best_source_frame_logits.npy": "17bc57a7c03934f591fcc55923740e5ad0a237d69314a68a4fcfb9e5970c77a9",
+      "residual_aux_summary.json": "16cd60b91d7abbd0e2ee5ff42701ceb24dc42d363c48f8c30c5253e611de8d8f",
+      "original_aux_source_best_target_frame_logits.npy": "fa3a55217179d00c9ce21d5c2dbad15e9db465858f32a8206c64224a19c94078",
+      "run_metadata.json": "62a2cd7d128b8b1ba8d80db67f4efb323f93d9e8230e1e8ebf331ce3c3184664",
+      "residual_aux_terminal_source_frame_logits.npy": "e8fe06393d7f020c5cf10548669adf76f7b7fee0bb3d61be996775b316bddc35",
+      "original_aux_batch_trace.jsonl": "2629723c7633ed994799bf701863e49220db7db2dca7baaa085803cdb87eec69"
+    },
+    "source_plus_backup_bytes": 11288972392,
+    "verdict": "supported_development_ranking_gain",
+    "code_commit": "79a981aa457c3aa1d071c5019ef5ada5668d1374",
+    "claim_commit": "8fb23f8274d5b48bdba43f5325c988f33509c107",
+    "result_commit": "9a08a9ed3ec6b0204abef1bb8cf9086f423420a2"
+  }
+}
