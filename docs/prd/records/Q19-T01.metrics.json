@@ -1,0 +1,718 @@
+{
+  "result_commit": "04051dacd91e3cdee74bf23c67e28b0f20ad3078",
+  "result": {
+    "id": "Q19-T01/v1",
+    "run_id": "q19_t01_gpu0_20261009",
+    "status": "compute_completed",
+    "started_at": "2026-10-09T09:16:55.484223+08:00",
+    "ended_at": "2026-10-09T20:54:17.042269+08:00",
+    "code_commit": "d7adc8dac25a02c4c09ce6989feabf40f72a316d",
+    "claim_commit": "f147707bc75b22dac45dcec7cdde839e5090f02d",
+    "steps_per_arm": 21576,
+    "outputs": {
+      "shared": {
+        "steps": 21576,
+        "source_best_epoch": 12,
+        "source_best_val_ce": 0.11421553233831408,
+        "checkpoints": {
+          "source_best": {
+            "checkpoint": "/home/zhaoting.ding/prd-worktrees/gpu0-q19-20261009/.state/q19_t01_gpu0_20261009/artifacts/shared_source_best.pth",
+            "checkpoint_sha256": "ff6c5d29b1c5874e314d64b2e956a6b39a576e12190d00381548d99a1428038b",
+            "strict_reload_max_error": 0,
+            "source_test": {
+              "video": {
+                "auc": 0.9949617346938775,
+                "ce": 0.08888385693823403,
+                "balanced_ce": 0.06845611582075437
+              },
+              "frame": {
+                "auc": 0.9858635602678572,
+                "ce": 0.16335634684553654,
+                "balanced_ce": 0.1373130774107803
+              },
+              "domains": {
+                "FaceForensics++": {
+                  "video": {
+                    "auc": 0.9949617346938775,
+                    "ce": 0.08888385693823403,
+                    "balanced_ce": 0.06845611582075437
+                  },
+                  "frame": {
+                    "auc": 0.9858635602678572,
+                    "ce": 0.16335634684553654,
+                    "balanced_ce": 0.1373130774107803
+                  },
+                  "videos": 700,
+                  "frames": 5600
+                }
+              },
+              "macro_video": {
+                "auc": 0.9949617346938775,
+                "ce": 0.08888385693823403,
+                "balanced_ce": 0.06845611582075437
+              },
+              "macro_frame": {
+                "auc": 0.9858635602678572,
+                "ce": 0.16335634684553654,
+                "balanced_ce": 0.1373130774107803
+              }
+            },
+            "target": {
+              "video": {
+                "auc": 0.8769271033340753,
+                "ce": 0.5565226225778076,
+                "balanced_ce": 0.5335342815259756
+              },
+              "frame": {
+                "auc": 0.8351788352315676,
+                "ce": 0.7390587062796428,
+                "balanced_ce": 0.7093339449535725
+              },
+              "domains": {
+                "Celeb-DF-v2": {
+                  "video": {
+                    "auc": 0.8911764705882352,
+                    "ce": 0.7676405211447473,
+                    "balanced_ce": 0.6032285173701017
+                  },
+                  "frame": {
+                    "auc": 0.841643089582556,
+                    "ce": 0.9743803318554375,
+                    "balanced_ce": 0.7758299575555414
+                  },
+                  "videos": 518,
+                  "frames": 4139
+                },
+                "DFDC": {
+                  "video": {
+                    "auc": 0.8710933029083082,
+                    "ce": 0.5513474199381576,
+                    "balanced_ce": 0.5463942786422289
+                  },
+                  "frame": {
+                    "auc": 0.8311319236950483,
+                    "ce": 0.7318548408235844,
+                    "balanced_ce": 0.7233789507156049
+                  },
+                  "videos": 4704,
+                  "frames": 36072
+                },
+                "DFDCP": {
+                  "video": {
+                    "auc": 0.9265689089417556,
+                    "ce": 0.42653039285187316,
+                    "balanced_ce": 0.37631103605494587
+                  },
+                  "frame": {
+                    "auc": 0.8808550474631935,
+                    "ce": 0.5968283988653261,
+                    "balanced_ce": 0.5293341790992334
+                  },
+                  "videos": 654,
+                  "frames": 5021
+                }
+              },
+              "macro_video": {
+                "auc": 0.8962795608127664,
+                "ce": 0.581839444644926,
+                "balanced_ce": 0.5086446106890922
+              },
+              "macro_frame": {
+                "auc": 0.8512100202469326,
+                "ce": 0.7676878571814494,
+                "balanced_ce": 0.6761810291234599
+              }
+            }
+          },
+          "terminal": {
+            "checkpoint": "/home/zhaoting.ding/prd-worktrees/gpu0-q19-20261009/.state/q19_t01_gpu0_20261009/artifacts/shared_terminal.pth",
+            "checkpoint_sha256": "f8a5fb94212b52fdfe7d7c115aa9ff611c5eb4bf8064dbee44565f948d9ea8ef",
+            "strict_reload_max_error": 0,
+            "source_test": {
+              "video": {
+                "auc": 0.9949617346938775,
+                "ce": 0.08888385693823403,
+                "balanced_ce": 0.06845611582075437
+              },
+              "frame": {
+                "auc": 0.9858635602678572,
+                "ce": 0.16335634684553654,
+                "balanced_ce": 0.1373130774107803
+              },
+              "domains": {
+                "FaceForensics++": {
+                  "video": {
+                    "auc": 0.9949617346938775,
+                    "ce": 0.08888385693823403,
+                    "balanced_ce": 0.06845611582075437
+                  },
+                  "frame": {
+                    "auc": 0.9858635602678572,
+                    "ce": 0.16335634684553654,
+                    "balanced_ce": 0.1373130774107803
+                  },
+                  "videos": 700,
+                  "frames": 5600
+                }
+              },
+              "macro_video": {
+                "auc": 0.9949617346938775,
+                "ce": 0.08888385693823403,
+                "balanced_ce": 0.06845611582075437
+              },
+              "macro_frame": {
+                "auc": 0.9858635602678572,
+                "ce": 0.16335634684553654,
+                "balanced_ce": 0.1373130774107803
+              }
+            },
+            "target": {
+              "video": {
+                "auc": 0.8769271033340753,
+                "ce": 0.5565226225778076,
+                "balanced_ce": 0.5335342815259756
+              },
+              "frame": {
+                "auc": 0.8351788352315676,
+                "ce": 0.7390587062796428,
+                "balanced_ce": 0.7093339449535725
+              },
+              "domains": {
+                "Celeb-DF-v2": {
+                  "video": {
+                    "auc": 0.8911764705882352,
+                    "ce": 0.7676405211447473,
+                    "balanced_ce": 0.6032285173701017
+                  },
+                  "frame": {
+                    "auc": 0.841643089582556,
+                    "ce": 0.9743803318554375,
+                    "balanced_ce": 0.7758299575555414
+                  },
+                  "videos": 518,
+                  "frames": 4139
+                },
+                "DFDC": {
+                  "video": {
+                    "auc": 0.8710933029083082,
+                    "ce": 0.5513474199381576,
+                    "balanced_ce": 0.5463942786422289
+                  },
+                  "frame": {
+                    "auc": 0.8311319236950483,
+                    "ce": 0.7318548408235844,
+                    "balanced_ce": 0.7233789507156049
+                  },
+                  "videos": 4704,
+                  "frames": 36072
+                },
+                "DFDCP": {
+                  "video": {
+                    "auc": 0.9265689089417556,
+                    "ce": 0.42653039285187316,
+                    "balanced_ce": 0.37631103605494587
+                  },
+                  "frame": {
+                    "auc": 0.8808550474631935,
+                    "ce": 0.5968283988653261,
+                    "balanced_ce": 0.5293341790992334
+                  },
+                  "videos": 654,
+                  "frames": 5021
+                }
+              },
+              "macro_video": {
+                "auc": 0.8962795608127664,
+                "ce": 0.581839444644926,
+                "balanced_ce": 0.5086446106890922
+              },
+              "macro_frame": {
+                "auc": 0.8512100202469326,
+                "ce": 0.7676878571814494,
+                "balanced_ce": 0.6761810291234599
+              }
+            }
+          }
+        }
+      },
+      "split": {
+        "steps": 21576,
+        "source_best_epoch": 8,
+        "source_best_val_ce": 0.14597881143578562,
+        "checkpoints": {
+          "source_best": {
+            "checkpoint": "/home/zhaoting.ding/prd-worktrees/gpu0-q19-20261009/.state/q19_t01_gpu0_20261009/artifacts/split_source_best.pth",
+            "checkpoint_sha256": "379c935dec76d5f422a9ddfb8a9193ef42f5db6c9b46ae81ee5b4fabaf2cb2cb",
+            "strict_reload_max_error": 0,
+            "source_test": {
+              "video": {
+                "auc": 0.9893877551020408,
+                "ce": 0.1276018421135308,
+                "balanced_ce": 0.09643618078316223
+              },
+              "frame": {
+                "auc": 0.9807834422831632,
+                "ce": 0.1890435796208688,
+                "balanced_ce": 0.15912623642111742
+              },
+              "domains": {
+                "FaceForensics++": {
+                  "video": {
+                    "auc": 0.9893877551020408,
+                    "ce": 0.1276018421135308,
+                    "balanced_ce": 0.09643618078316223
+                  },
+                  "frame": {
+                    "auc": 0.9807834422831632,
+                    "ce": 0.1890435796208688,
+                    "balanced_ce": 0.15912623642111742
+                  },
+                  "videos": 700,
+                  "frames": 5600
+                }
+              },
+              "macro_video": {
+                "auc": 0.9893877551020408,
+                "ce": 0.1276018421135308,
+                "balanced_ce": 0.09643618078316223
+              },
+              "macro_frame": {
+                "auc": 0.9807834422831632,
+                "ce": 0.1890435796208688,
+                "balanced_ce": 0.15912623642111742
+              }
+            },
+            "target": {
+              "video": {
+                "auc": 0.8726844272963895,
+                "ce": 0.5746877163489301,
+                "balanced_ce": 0.551033914484144
+              },
+              "frame": {
+                "auc": 0.833260369069081,
+                "ce": 0.7496548269910608,
+                "balanced_ce": 0.7190681105939031
+              },
+              "domains": {
+                "Celeb-DF-v2": {
+                  "video": {
+                    "auc": 0.9317415730337079,
+                    "ce": 0.6437129382474556,
+                    "balanced_ce": 0.5056483352058159
+                  },
+                  "frame": {
+                    "auc": 0.8846137503627244,
+                    "ce": 0.8234943135935918,
+                    "balanced_ce": 0.6536971535683889
+                  },
+                  "videos": 518,
+                  "frames": 4139
+                },
+                "DFDC": {
+                  "video": {
+                    "auc": 0.8631544687810492,
+                    "ce": 0.5827811774109427,
+                    "balanced_ce": 0.5774534153312718
+                  },
+                  "frame": {
+                    "auc": 0.825713407861705,
+                    "ce": 0.7579315773135454,
+                    "balanced_ce": 0.7487589501821692
+                  },
+                  "videos": 4704,
+                  "frames": 36072
+                },
+                "DFDCP": {
+                  "video": {
+                    "auc": 0.9104901558654636,
+                    "ce": 0.46180284512699715,
+                    "balanced_ce": 0.41195870317475747
+                  },
+                  "frame": {
+                    "auc": 0.8632037936813217,
+                    "ce": 0.6293241015020059,
+                    "balanced_ce": 0.5671664629422143
+                  },
+                  "videos": 654,
+                  "frames": 5021
+                }
+              },
+              "macro_video": {
+                "auc": 0.9017953992267401,
+                "ce": 0.5627656535951318,
+                "balanced_ce": 0.498353484570615
+              },
+              "macro_frame": {
+                "auc": 0.8578436506352504,
+                "ce": 0.736916664136381,
+                "balanced_ce": 0.6565408555642575
+              }
+            }
+          },
+          "terminal": {
+            "checkpoint": "/home/zhaoting.ding/prd-worktrees/gpu0-q19-20261009/.state/q19_t01_gpu0_20261009/artifacts/split_terminal.pth",
+            "checkpoint_sha256": "c1c2948fdcdc6fa90778607d89dee6fb5a8b3e1341f35fce82e332b8b2c5a3cd",
+            "strict_reload_max_error": 0,
+            "source_test": {
+              "video": {
+                "auc": 0.9935969387755103,
+                "ce": 0.07185280228913468,
+                "balanced_ce": 0.0898133901070845
+              },
+              "frame": {
+                "auc": 0.9844686702806122,
+                "ce": 0.1345467266250914,
+                "balanced_ce": 0.1703389589212049
+              },
+              "domains": {
+                "FaceForensics++": {
+                  "video": {
+                    "auc": 0.9935969387755103,
+                    "ce": 0.07185280228913468,
+                    "balanced_ce": 0.0898133901070845
+                  },
+                  "frame": {
+                    "auc": 0.9844686702806122,
+                    "ce": 0.1345467266250914,
+                    "balanced_ce": 0.1703389589212049
+                  },
+                  "videos": 700,
+                  "frames": 5600
+                }
+              },
+              "macro_video": {
+                "auc": 0.9935969387755103,
+                "ce": 0.07185280228913468,
+                "balanced_ce": 0.0898133901070845
+              },
+              "macro_frame": {
+                "auc": 0.9844686702806122,
+                "ce": 0.1345467266250914,
+                "balanced_ce": 0.1703389589212049
+              }
+            },
+            "target": {
+              "video": {
+                "auc": 0.8400993568431117,
+                "ce": 0.5829423932430725,
+                "balanced_ce": 0.5839243689391582
+              },
+              "frame": {
+                "auc": 0.8017971533415474,
+                "ce": 0.7782205917529915,
+                "balanced_ce": 0.7796911294549898
+              },
+              "domains": {
+                "Celeb-DF-v2": {
+                  "video": {
+                    "auc": 0.8547587574355586,
+                    "ce": 0.6764157488628656,
+                    "balanced_ce": 0.5675172040813301
+                  },
+                  "frame": {
+                    "auc": 0.8053789433320897,
+                    "ce": 0.8826420796200869,
+                    "balanced_ce": 0.7516325903846879
+                  },
+                  "videos": 518,
+                  "frames": 4139
+                },
+                "DFDC": {
+                  "video": {
+                    "auc": 0.8391728829127743,
+                    "ce": 0.5948838134974892,
+                    "balanced_ce": 0.5954194490917011
+                  },
+                  "frame": {
+                    "auc": 0.8031223930581238,
+                    "ce": 0.7947587987113061,
+                    "balanced_ce": 0.7958599485690259
+                  },
+                  "videos": 4704,
+                  "frames": 36072
+                },
+                "DFDCP": {
+                  "video": {
+                    "auc": 0.8826599671862181,
+                    "ce": 0.4230163395919579,
+                    "balanced_ce": 0.4558551279576395
+                  },
+                  "frame": {
+                    "auc": 0.83916887393011,
+                    "ce": 0.5733277935689186,
+                    "balanced_ce": 0.6093862517329586
+                  },
+                  "videos": 654,
+                  "frames": 5021
+                }
+              },
+              "macro_video": {
+                "auc": 0.8588638691781837,
+                "ce": 0.5647719673174375,
+                "balanced_ce": 0.5395972603768903
+              },
+              "macro_frame": {
+                "auc": 0.8158900701067745,
+                "ce": 0.7502428906334372,
+                "balanced_ce": 0.7189595968955574
+              }
+            }
+          }
+        }
+      }
+    },
+    "batch_augmentation_head_rng_identical": true,
+    "initial_hashes": {
+      "shared": "0cab5cb4b248e8f51c680a5cfe857e62baf96ef5119e1db8345b0267707139d3",
+      "split": "0cab5cb4b248e8f51c680a5cfe857e62baf96ef5119e1db8345b0267707139d3"
+    },
+    "trainable_parameters": {
+      "shared": 5248002,
+      "split": 5248002
+    },
+    "early_stop_epoch": null,
+    "limitations": "Repeated target development, not independent final test; 8-frame mean-logit aggregation; single training seed; Q10 cross-machine background only; fixed-weight CIs do not include identity/content and training-repeat uncertainty"
+  },
+  "paired": {
+    "id": "Q19-T01/v1",
+    "primary_endpoint": "source_best target macro video AUC",
+    "verdict": "inconclusive",
+    "paired": {
+      "source_best": {
+        "macro_video_delta": {
+          "auc": 0.005515838413973739,
+          "ce": 0.01907379104979423,
+          "balanced_ce": 0.010291126118477156
+        },
+        "macro_video_ci95": {
+          "auc": [
+            -0.0019646847888554557,
+            0.013246802115459245
+          ],
+          "ce": [
+            -0.004778869503391196,
+            0.0424044510887862
+          ],
+          "balanced_ce": [
+            -0.009484762426162531,
+            0.02955767093873522
+          ]
+        },
+        "domains": {
+          "Celeb-DF-v2": {
+            "video_delta": {
+              "auc": 0.04056510244547262,
+              "ce": 0.12392758289729178,
+              "balanced_ce": 0.09758018216428588
+            },
+            "frame_delta": {
+              "auc": 0.042970660780168424,
+              "ce": 0.15088601826184567,
+              "balanced_ce": 0.12213280398715254
+            },
+            "video_ci95": {
+              "auc": [
+                0.0228651685393259,
+                0.058514953734302676
+              ],
+              "ce": [
+                0.06367377499540393,
+                0.17990286711754436
+              ],
+              "balanced_ce": [
+                0.05088854711460285,
+                0.1412252433983542
+              ]
+            }
+          },
+          "DFDC": {
+            "video_delta": {
+              "auc": -0.007938834127259042,
+              "ce": -0.031433757472785095,
+              "balanced_ce": -0.03105913668904292
+            },
+            "frame_delta": {
+              "auc": -0.005418515833343296,
+              "ce": -0.026076736489961005,
+              "balanced_ce": -0.02537999946656433
+            },
+            "video_ci95": {
+              "auc": [
+                -0.013456871713134482,
+                -0.0023754121436714245
+              ],
+              "ce": [
+                -0.047247666899464164,
+                -0.014721750917502843
+              ],
+              "balanced_ce": [
+                -0.046779095330703464,
+                -0.014429621542019311
+              ]
+            }
+          },
+          "DFDCP": {
+            "video_delta": {
+              "auc": -0.01607875307629203,
+              "ce": -0.03527245227512399,
+              "balanced_ce": -0.0356476671198116
+            },
+            "frame_delta": {
+              "auc": -0.017651253781871823,
+              "ce": -0.03249570263667978,
+              "balanced_ce": -0.037832283842980874
+            },
+            "video_ci95": {
+              "auc": [
+                -0.029460623461853967,
+                -0.002798143970467547
+              ],
+              "ce": [
+                -0.07014884623002601,
+                0.00145657653255685
+              ],
+              "balanced_ce": [
+                -0.06823691728105671,
+                -0.0023226898501818977
+              ]
+            }
+          }
+        },
+        "macro_frame_delta": {
+          "auc": 0.006633630388317768,
+          "ce": 0.030771193045068295,
+          "balanced_ce": 0.019640173559202445
+        }
+      },
+      "terminal": {
+        "macro_video_delta": {
+          "auc": -0.03741569163458269,
+          "ce": 0.01706747732748848,
+          "balanced_ce": -0.030952649687798095
+        },
+        "macro_video_ci95": {
+          "auc": [
+            -0.044883558052415326,
+            -0.03069724074160151
+          ],
+          "ce": [
+            -0.005208310089561562,
+            0.03951456159493332
+          ],
+          "balanced_ce": [
+            -0.05285920086106534,
+            -0.010805922855291536
+          ]
+        },
+        "domains": {
+          "Celeb-DF-v2": {
+            "video_delta": {
+              "auc": -0.03641771315267661,
+              "ce": 0.09122477228188175,
+              "balanced_ce": 0.03571131328877164
+            },
+            "frame_delta": {
+              "auc": -0.036264146250466256,
+              "ce": 0.09173825223535059,
+              "balanced_ce": 0.024197367170853523
+            },
+            "video_ci95": {
+              "auc": [
+                -0.05234633179114324,
+                -0.021827081956377944
+              ],
+              "ce": [
+                0.039569851476521034,
+                0.14213036189445358
+              ],
+              "balanced_ce": [
+                -0.008646304824489071,
+                0.0786467184279594
+              ]
+            }
+          },
+          "DFDC": {
+            "video_delta": {
+              "auc": -0.031920419995533966,
+              "ce": -0.04353639355933159,
+              "balanced_ce": -0.04902517044947219
+            },
+            "frame_delta": {
+              "auc": -0.028009530636924462,
+              "ce": -0.06290395788772163,
+              "balanced_ce": -0.07248099785342099
+            },
+            "video_ci95": {
+              "auc": [
+                -0.03747117141470057,
+                -0.026445484026409855
+              ],
+              "ce": [
+                -0.06208770501592317,
+                -0.024102519231258317
+              ],
+              "balanced_ce": [
+                -0.06759977606045985,
+                -0.029747569581869304
+              ]
+            }
+          },
+          "DFDCP": {
+            "video_delta": {
+              "auc": -0.0439089417555375,
+              "ce": 0.003514053259915273,
+              "balanced_ce": -0.07954409190269363
+            },
+            "frame_delta": {
+              "auc": -0.04168617353308357,
+              "ce": 0.023500605296407517,
+              "balanced_ce": -0.08005207263372516
+            },
+            "video_ci95": {
+              "auc": [
+                -0.058636689909762084,
+                -0.03113053732567684
+              ],
+              "ce": [
+                -0.0356873581077724,
+                0.0420398172824325
+              ],
+              "balanced_ce": [
+                -0.12272925830287727,
+                -0.04022605530749857
+              ]
+            }
+          }
+        },
+        "macro_frame_delta": {
+          "auc": -0.035319950140158096,
+          "ce": 0.01744496654801216,
+          "balanced_ce": -0.04277856777209754
+        }
+      }
+    },
+    "bootstrap": {
+      "replicates": 2000,
+      "unit": "video",
+      "stratified_by": "domain and class",
+      "seed": 20261008
+    },
+    "limitations": "Repeated target development, not independent final test; 8-frame mean-logit aggregation; single training seed; Q10 cross-machine background only; fixed-weight CIs do not include identity/content and training-repeat uncertainty",
+    "baseline_role": "Q10 is cross-machine background, not an additional strict paired control"
+  },
+  "verification": {
+    "at": "2026-10-09T21:17:25.613234+08:00",
+    "artifact_hash_count": 27,
+    "source_backup_hashes": true,
+    "git_bytes": true,
+    "trace_sha256": "6742ac520f094aa41f540ae609a9e39e50b4b0ed1fc31b76636cf5b3c9024fd9",
+    "steps_per_arm": 21576,
+    "source_plus_backup_bytes": 11288863210,
+    "independent_cpu_metrics": true,
+    "source_selection": true,
+    "strictreload": true,
+    "completion_time": "2026-10-09T20:54:45.040413+08:00",
+    "backup": "/home/zhaoting.ding/prd-artifact-backups/q19_t01_gpu0_20261009",
+    "macro_frame_note": "Derived equal-domain means from independently verified per-domain frame metrics; video conditional CIs are unchanged"
+  }
+}
