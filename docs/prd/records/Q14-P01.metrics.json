@@ -1,0 +1,304 @@
+{
+  "result_commit": "b3b6b1ed7a2c0eaa2aea388f65801c870d42f6a9",
+  "code_commit": "245bec0ab95962fce143de0cb94bf9249464c3a1",
+  "result": {
+    "id": "Q14-P01/v1",
+    "task": "q14_p01_gpu0_20261009_verified",
+    "heads": {
+      "e": {
+        "selected_step": 10,
+        "source_val_balanced_ce": 0.6235968083142375,
+        "total_updates": 500,
+        "parameters": 2050,
+        "metrics": {
+          "val": {
+            "auc": 0.9661607142857144,
+            "ce": 0.7382524354042522,
+            "balanced_ce": 0.623596808314248
+          },
+          "test": {
+            "auc": 0.9452168367346939,
+            "ce": 0.9506266672850312,
+            "balanced_ce": 0.8249651030936309
+          },
+          "target_dev": {
+            "Celeb-DF-v2": {
+              "auc": 0.8271484375,
+              "ce": 1.9210533571127228,
+              "balanced_ce": 1.9210533571127226
+            },
+            "DFDC": {
+              "auc": 0.7568359375,
+              "ce": 3.5975821004422737,
+              "balanced_ce": 3.5975821004422737
+            },
+            "DFDCP": {
+              "auc": 0.673828125,
+              "ce": 3.293348404679754,
+              "balanced_ce": 3.293348404679754
+            }
+          },
+          "target_macro": {
+            "auc": 0.7526041666666666,
+            "ce": 2.9373279540782504,
+            "balanced_ce": 2.9373279540782504
+          }
+        }
+      },
+      "rG": {
+        "selected_step": 500,
+        "source_val_balanced_ce": 0.5563493643241861,
+        "total_updates": 500,
+        "parameters": 2050,
+        "metrics": {
+          "val": {
+            "auc": 0.9533928571428572,
+            "ce": 0.44689803062128897,
+            "balanced_ce": 0.5563493643247288
+          },
+          "test": {
+            "auc": 0.9474872448979591,
+            "ce": 0.5598445970403292,
+            "balanced_ce": 0.6575845054017386
+          },
+          "target_dev": {
+            "Celeb-DF-v2": {
+              "auc": 0.8779296875,
+              "ce": 0.8294680634687907,
+              "balanced_ce": 0.8294680634687905
+            },
+            "DFDC": {
+              "auc": 0.7421875,
+              "ce": 2.931602216539258,
+              "balanced_ce": 2.9316022165392575
+            },
+            "DFDCP": {
+              "auc": 0.7275390625,
+              "ce": 2.315864914563992,
+              "balanced_ce": 2.3158649145639925
+            }
+          },
+          "target_macro": {
+            "auc": 0.7825520833333334,
+            "ce": 2.025645064857347,
+            "balanced_ce": 2.025645064857347
+          }
+        }
+      },
+      "p": {
+        "selected_step": 10,
+        "source_val_balanced_ce": 0.44887927788198534,
+        "total_updates": 500,
+        "parameters": 2050,
+        "metrics": {
+          "val": {
+            "auc": 0.9203188775510204,
+            "ce": 0.5197971378056291,
+            "balanced_ce": 0.4488792778819659
+          },
+          "test": {
+            "auc": 0.8860331632653061,
+            "ce": 0.7043341871486152,
+            "balanced_ce": 0.6236267012614218
+          },
+          "target_dev": {
+            "Celeb-DF-v2": {
+              "auc": 0.6943359375,
+              "ce": 0.9156218343331652,
+              "balanced_ce": 0.9156218343331654
+            },
+            "DFDC": {
+              "auc": 0.62890625,
+              "ce": 2.1122968616637534,
+              "balanced_ce": 2.1122968616637534
+            },
+            "DFDCP": {
+              "auc": 0.5126953125,
+              "ce": 1.9071621814804336,
+              "balanced_ce": 1.9071621814804336
+            }
+          },
+          "target_macro": {
+            "auc": 0.6119791666666666,
+            "ce": 1.6450269591591173,
+            "balanced_ce": 1.6450269591591173
+          }
+        }
+      },
+      "e_wrong": {
+        "selected_step": 500,
+        "source_val_balanced_ce": 0.5357287992705789,
+        "total_updates": 500,
+        "parameters": 2050,
+        "metrics": {
+          "val": {
+            "auc": 0.9546683673469387,
+            "ce": 0.4279451192286509,
+            "balanced_ce": 0.5357287992740346
+          },
+          "test": {
+            "auc": 0.9502551020408163,
+            "ce": 0.5698128106477504,
+            "balanced_ce": 0.6564123971936888
+          },
+          "target_dev": {
+            "Celeb-DF-v2": {
+              "auc": 0.8779296875,
+              "ce": 0.8700711590876734,
+              "balanced_ce": 0.8700711590876734
+            },
+            "DFDC": {
+              "auc": 0.7529296875,
+              "ce": 2.9270285670797156,
+              "balanced_ce": 2.9270285670797156
+            },
+            "DFDCP": {
+              "auc": 0.7119140625,
+              "ce": 2.4815890501788624,
+              "balanced_ce": 2.4815890501788624
+            }
+          },
+          "target_macro": {
+            "auc": 0.7809244791666666,
+            "ce": 2.092896258782084,
+            "balanced_ce": 2.092896258782084
+          }
+        }
+      },
+      "three_views": {
+        "selected_step": 500,
+        "source_val_balanced_ce": 0.7089275834222757,
+        "total_updates": 500,
+        "parameters": 6146,
+        "metrics": {
+          "val": {
+            "auc": 0.9668622448979592,
+            "ce": 0.7460165552421891,
+            "balanced_ce": 0.708927583500737
+          },
+          "test": {
+            "auc": 0.9643494897959184,
+            "ce": 0.8786082806041801,
+            "balanced_ce": 0.7816532587399205
+          },
+          "target_dev": {
+            "Celeb-DF-v2": {
+              "auc": 0.84765625,
+              "ce": 2.4633869368172103,
+              "balanced_ce": 2.4633869368172103
+            },
+            "DFDC": {
+              "auc": 0.7236328125,
+              "ce": 5.3021011666734585,
+              "balanced_ce": 5.3021011666734585
+            },
+            "DFDCP": {
+              "auc": 0.7509765625,
+              "ce": 3.106941838115395,
+              "balanced_ce": 3.1069418381153953
+            }
+          },
+          "target_macro": {
+            "auc": 0.7740885416666666,
+            "ce": 3.624143313868688,
+            "balanced_ce": 3.624143313868688
+          }
+        }
+      }
+    },
+    "diagnostics": {
+      "zero_blur": 0,
+      "near_zero_blur": 0,
+      "max_orthogonality_relative": 2.7201635869509833e-16,
+      "blur_norm_min": 3.1147672632182424,
+      "blur_norm_median": 7.593194891905485
+    },
+    "encoder_updates": 0,
+    "cpu_fit_seconds": 6.669780192998587,
+    "limitations": "Frozen readout; repeatedly explored source and target; blur not pure nuisance; orthogonality not independence; no end-to-end claim."
+  },
+  "paired": {
+    "primary": "e versus both rG and e_wrong, source test",
+    "verdict": "not_supported",
+    "comparisons": {
+      "rG": {
+        "delta_auc": -0.0022704081632651807,
+        "delta_balanced_ce": -0.16738059769189229,
+        "ce_ci95": [
+          -0.3698837624078739,
+          0.022112481291108103
+        ],
+        "control_metrics": {
+          "auc": 0.9474872448979591,
+          "ce": 0.5598445970403292,
+          "balanced_ce": 0.6575845054017386
+        },
+        "verdict": "not_supported"
+      },
+      "e_wrong": {
+        "delta_auc": -0.005038265306122391,
+        "delta_balanced_ce": -0.1685527058999421,
+        "ce_ci95": [
+          -0.3650394578888395,
+          0.011505333668332406
+        ],
+        "control_metrics": {
+          "auc": 0.9502551020408163,
+          "ce": 0.5698128106477504,
+          "balanced_ce": 0.6564123971936888
+        },
+        "verdict": "not_supported"
+      },
+      "p": {
+        "delta_auc": 0.0591836734693878,
+        "delta_balanced_ce": -0.20133840183220908,
+        "ce_ci95": [
+          -0.5125308596794843,
+          0.08775667472082971
+        ],
+        "control_metrics": {
+          "auc": 0.8860331632653061,
+          "ce": 0.7043341871486152,
+          "balanced_ce": 0.6236267012614218
+        },
+        "verdict": "not_supported"
+      },
+      "three_views": {
+        "delta_auc": -0.01913265306122447,
+        "delta_balanced_ce": -0.04331184435371038,
+        "ce_ci95": [
+          -0.36108575162562184,
+          0.29437192468647083
+        ],
+        "control_metrics": {
+          "auc": 0.9643494897959184,
+          "ce": 0.8786082806041801,
+          "balanced_ce": 0.7816532587399205
+        },
+        "verdict": "not_supported"
+      },
+      "e_same_label_wrong": {
+        "delta_auc": 0.001071428571428612,
+        "delta_balanced_ce": 0.06548097811327669,
+        "ce_ci95": [
+          -0.0036825643766130686,
+          0.13798913561395207
+        ],
+        "control_metrics": {
+          "auc": 0.9441454081632653,
+          "ce": 1.041029438827207,
+          "balanced_ce": 0.8904460812069076
+        },
+        "verdict": "inconclusive"
+      }
+    },
+    "exact_same_image_value": false,
+    "bootstrap": {
+      "samples": 2000,
+      "groups": 70,
+      "seed": 20261005,
+      "unit": "source/donor connected components"
+    },
+    "limitations": "fixed models and reused source test; no training/identity uncertainty; wrong same-label is descriptive distribution shift, not deployable"
+  }
+}
